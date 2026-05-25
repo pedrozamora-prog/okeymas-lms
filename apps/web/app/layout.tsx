@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: { default: "Okeymas LMS", template: "%s | Okeymas LMS" },
   description: "Plataforma de formación profesional Okeymas LMS",
-  icons: { icon: "/favicon.ico" },
+  icons: { icon: "/favicon.png", apple: "/favicon.png" },
 };
 
 export const viewport: Viewport = {
