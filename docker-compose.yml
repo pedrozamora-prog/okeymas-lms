@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: yelau_lms_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: yelau
+      POSTGRES_PASSWORD: yelau2024
+      POSTGRES_DB: yelau_fit_lms
+    ports:
+      - "5432:5432"
+    volumes:
+      - yelau_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  yelau_postgres_data:

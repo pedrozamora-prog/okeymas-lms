@@ -1,0 +1,417 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── ENUMS ───────────────────────────────────────────────────────────────────
+
+enum Role {
+  SUPER_ADMIN
+  BRANCH_ADMIN
+  INSTRUCTOR
+  EMPLOYEE
+}
+
+enum CourseStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum LessonType {
+  VIDEO
+  PDF
+  QUIZ
+  LIVE_CLASS
+  SCORM
+}
+
+enum EnrollmentStatus {
+  ENROLLED
+  IN_PROGRESS
+  COMPLETED
+  EXPIRED
+}
+
+enum CertificateType {
+  COMPLETION
+  PROFESSIONAL
+}
+
+enum Department {
+  ADMINISTRACION
+  RECEPCION
+  LIMPIEZA
+  MONITOR
+  DEPORTIVO
+}
+
+// ─── ORGANIZATION (SUCURSAL / GYM) ───────────────────────────────────────────
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  logoUrl   String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users       User[]
+  courses     Course[]
+  liveClasses LiveClass[]
+
+  @@map("organizations")
+}
+
+// ─── USER ────────────────────────────────────────────────────────────────────
+
+model User {
+  id             String    @id @default(cuid())
+  name           String
+  email          String    @unique
+  emailVerified  DateTime?
+  hashedPassword String?
+  image          String?
+  role           Role       @default(EMPLOYEE)
+  department     Department?
+  phone          String?
+  isActive       Boolean    @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  accounts      Account[]
+  sessions      Session[]
+  enrollments   Enrollment[]
+  progress      LessonProgress[]
+  instructing   LiveClass[]      @relation("LiveClassInstructor")
+  attendance    LiveAttendance[]
+  points        UserPoints?
+  badges        UserBadge[]
+  certificates  Certificate[]
+
+  @@map("users")
+}
+
+// ─── AUTH (NextAuth) ─────────────────────────────────────────────────────────
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ─── COURSE ──────────────────────────────────────────────────────────────────
+
+model Course {
+  id           String       @id @default(cuid())
+  title        String
+  description  String?
+  thumbnailUrl String?
+  status       CourseStatus @default(DRAFT)
+  departments  Department[]
+  isRequired   Boolean      @default(false)
+  order        Int          @default(0)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  certificateEnabled      Boolean         @default(false)
+  certificateType         CertificateType @default(COMPLETION)
+  certificateValidityDays Int?
+  certSignerName          String?
+  certSignerTitle         String?
+
+  modules      Module[]
+  enrollments  Enrollment[]
+  paths        LearningPathCourse[]
+  certificates Certificate[]
+
+  @@map("courses")
+}
+
+model Module {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  courseId String
+  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  lessons Lesson[]
+
+  @@map("modules")
+}
+
+model Lesson {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  type        LessonType
+  videoUrl    String?
+  fileUrl     String?
+  duration    Int?
+  order       Int        @default(0)
+  isRequired  Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  moduleId String
+  module   Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  quiz       Quiz?
+  liveClass  LiveClass?
+  progress   LessonProgress[]
+
+  @@map("lessons")
+}
+
+// ─── QUIZ ────────────────────────────────────────────────────────────────────
+
+model Quiz {
+  id              String   @id @default(cuid())
+  passingScore    Int      @default(70)
+  maxAttempts     Int      @default(3)
+  timeLimitMins   Int?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  lessonId String @unique
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  questions QuizQuestion[]
+
+  @@map("quizzes")
+}
+
+model QuizQuestion {
+  id        String   @id @default(cuid())
+  text      String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  quizId String
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  options QuizOption[]
+
+  @@map("quiz_questions")
+}
+
+model QuizOption {
+  id        String  @id @default(cuid())
+  text      String
+  isCorrect Boolean @default(false)
+  order     Int     @default(0)
+
+  questionId String
+  question   QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("quiz_options")
+}
+
+// ─── ENROLLMENT & PROGRESS ───────────────────────────────────────────────────
+
+model Enrollment {
+  id          String           @id @default(cuid())
+  status      EnrollmentStatus @default(ENROLLED)
+  enrolledAt  DateTime         @default(now())
+  completedAt DateTime?
+  expiresAt   DateTime?
+  score       Int?
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@map("enrollments")
+}
+
+model LessonProgress {
+  id          String    @id @default(cuid())
+  completed   Boolean   @default(false)
+  score       Int?
+  attempts    Int       @default(0)
+  timeSpent   Int       @default(0)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+  @@map("lesson_progress")
+}
+
+// ─── LIVE CLASSES ────────────────────────────────────────────────────────────
+
+model LiveClass {
+  id           String    @id @default(cuid())
+  title        String
+  scheduledAt  DateTime
+  durationMins Int       @default(60)
+  roomUrl      String?
+  recordingUrl String?
+  isRecurring  Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  instructorId   String
+  instructor     User         @relation("LiveClassInstructor", fields: [instructorId], references: [id])
+  lessonId       String?      @unique
+  lesson         Lesson?      @relation(fields: [lessonId], references: [id])
+
+  attendance LiveAttendance[]
+
+  @@map("live_classes")
+}
+
+model LiveAttendance {
+  id         String    @id @default(cuid())
+  joinedAt   DateTime  @default(now())
+  leftAt     DateTime?
+  durationS  Int?
+
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  liveClassId String
+  liveClass   LiveClass @relation(fields: [liveClassId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, liveClassId])
+  @@map("live_attendance")
+}
+
+// ─── LEARNING PATHS ──────────────────────────────────────────────────────────
+
+model LearningPath {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  courses LearningPathCourse[]
+
+  @@map("learning_paths")
+}
+
+model LearningPathCourse {
+  order  Int @default(0)
+
+  pathId   String
+  path     LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  courseId String
+  course   Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@id([pathId, courseId])
+  @@map("learning_path_courses")
+}
+
+// ─── GAMIFICATION ────────────────────────────────────────────────────────────
+
+model UserPoints {
+  id        String   @id @default(cuid())
+  total     Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_points")
+}
+
+model Badge {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  imageUrl    String?
+  points      Int     @default(0)
+
+  users UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  earnedAt DateTime @default(now())
+
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeId String
+  badge   Badge  @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, badgeId])
+  @@map("user_badges")
+}
+
+// ─── CERTIFICATES ────────────────────────────────────────────────────────────
+
+model Certificate {
+  id          String          @id @default(cuid())
+  courseTitle String
+  type        CertificateType @default(COMPLETION)
+  issuedAt    DateTime        @default(now())
+  expiresAt   DateTime?
+  fileUrl     String?
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId String?
+  course   Course? @relation(fields: [courseId], references: [id], onDelete: SetNull)
+
+  @@map("certificates")
+}
