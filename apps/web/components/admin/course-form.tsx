@@ -15,7 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Save, Sparkles, Award, Users } from "lucide-react";
+import { Loader2, Save, Sparkles, Award, Users, ImagePlus, X } from "lucide-react";
+import { useRef } from "react";
 
 const DEPARTMENTS = [
   { value: "ADMINISTRACION", label: "Administración" },
@@ -55,6 +56,8 @@ export function CourseForm({ initial }: CourseFormProps) {
   const [order, setOrder]           = useState(String(initial?.order ?? 0));
   const [loading, setLoading]             = useState(false);
   const [aiLoading, setAiLoading]         = useState(false);
+  const [imgLoading, setImgLoading]       = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [departments, setDepts]           = useState<string[]>(initial?.departments ?? []);
   const [certEnabled, setCertEnabled]     = useState(initial?.certificateEnabled ?? false);
   const [certType, setCertType]           = useState(initial?.certificateType ?? "COMPLETION");
@@ -77,6 +80,25 @@ export function CourseForm({ initial }: CourseFormProps) {
       toast.error("Error al generar descripción");
     } finally {
       setAiLoading(false);
+    }
+  }
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setImgLoading(true);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res  = await fetch("/api/admin/upload", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) { toast.error(data.error ?? "Error al subir imagen"); return; }
+      setThumb(data.url);
+      toast.success("Imagen subida correctamente");
+    } catch {
+      toast.error("Error al subir imagen");
+    } finally {
+      setImgLoading(false);
     }
   }
 
@@ -158,16 +180,57 @@ export function CourseForm({ initial }: CourseFormProps) {
             />
           </div>
 
-          {/* Thumbnail URL */}
+          {/* Imagen de portada */}
           <div className="space-y-1.5">
-            <Label htmlFor="thumbnail">URL de imagen de portada</Label>
-            <Input
-              id="thumbnail"
-              value={thumbnailUrl}
-              onChange={e => setThumb(e.target.value)}
-              placeholder="https://..."
-              type="url"
+            <Label>Imagen de portada</Label>
+            <p className="text-[11px] text-muted-foreground">
+              Recomendado: 1280×720 px (16:9) · JPG, PNG o WEBP · Máx. 3 MB
+            </p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="hidden"
+              onChange={handleImageUpload}
             />
+            {thumbnailUrl ? (
+              <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-border group">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={thumbnailUrl} alt="Portada" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-medium px-3 py-1.5 rounded-md transition-colors"
+                  >
+                    <ImagePlus className="w-3.5 h-3.5" /> Cambiar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setThumb("")}
+                    className="flex items-center gap-1.5 bg-red-500/70 hover:bg-red-500 text-white text-xs font-medium px-3 py-1.5 rounded-md transition-colors"
+                  >
+                    <X className="w-3.5 h-3.5" /> Eliminar
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={imgLoading}
+                className="w-full aspect-video rounded-lg border-2 border-dashed border-border hover:border-yelau-yellow/50 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-foreground"
+              >
+                {imgLoading
+                  ? <Loader2 className="w-8 h-8 animate-spin text-yelau-yellow" />
+                  : <>
+                      <ImagePlus className="w-8 h-8" />
+                      <span className="text-sm font-medium">Haz clic para subir imagen</span>
+                      <span className="text-xs">1280×720 recomendado</span>
+                    </>
+                }
+              </button>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
