@@ -11,6 +11,7 @@ interface CourseCardProps {
     id: string;
     title: string;
     description?: string | null;
+    thumbnailUrl?: string | null;
     isRequired: boolean;
     modules: { lessons: { id: string }[] }[];
     _count: { enrollments: number };
@@ -26,9 +27,20 @@ export function CourseCard({ course, enrolled, progress }: CourseCardProps) {
     <div className="@container">
       <TiltCard>
       <Card className="flex flex-col h-full hover:border-yelau-yellow/50 transition-colors group">
-        {/* Thumbnail placeholder */}
-        <div className="h-36 bg-gradient-to-br from-muted to-muted/50 rounded-t-xl flex items-center justify-center relative overflow-hidden">
-          <BookOpen className="w-10 h-10 text-muted-foreground/30 group-hover:text-yelau-yellow/50 transition-colors" />
+        {/* Thumbnail */}
+        <div className="h-36 rounded-t-xl relative overflow-hidden bg-gradient-to-br from-muted to-muted/50">
+          {course.thumbnailUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={course.thumbnailUrl}
+              alt={course.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <BookOpen className="w-10 h-10 text-muted-foreground/30 group-hover:text-yelau-yellow/50 transition-colors" />
+            </div>
+          )}
           {course.isRequired && (
             <Badge className="absolute top-3 left-3 bg-yelau-yellow text-yelau-black text-[10px] font-bold">
               Obligatorio

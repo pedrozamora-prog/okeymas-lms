@@ -26,7 +26,9 @@ export default async function CoursesPage() {
           ],
         } : {}),
       },
-      include: {
+      select: {
+        id: true, title: true, description: true, thumbnailUrl: true,
+        isRequired: true, departments: true,
         modules: { include: { lessons: { select: { id: true } } } },
         _count: { select: { enrollments: true } },
       },
