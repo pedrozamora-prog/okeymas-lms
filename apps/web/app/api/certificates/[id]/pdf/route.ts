@@ -4,9 +4,10 @@ export const dynamic = "force-dynamic";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import { renderToBuffer } from "@react-pdf/renderer";
+import { renderToBuffer, Document } from "@react-pdf/renderer";
 import { CertificateDocument } from "@/components/certificates/certificate-template";
-import { createElement } from "react";
+import { createElement, type ReactElement } from "react";
+import type { DocumentProps } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -43,19 +44,19 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 
   const org = cert.course?.organization;
 
-  const pdfBuffer = await renderToBuffer(
-    createElement(CertificateDocument, {
-      studentName:  cert.user.name ?? "Alumno",
-      courseName:   cert.courseTitle,
-      certType:     cert.type as "COMPLETION" | "PROFESSIONAL",
-      issuedAt:     format(cert.issuedAt, "d 'de' MMMM 'de' yyyy", { locale: es }),
-      certId:       cert.id.slice(0, 12).toUpperCase(),
-      signerName:   cert.course?.certSignerName  ?? "Director de Formación",
-      signerTitle:  cert.course?.certSignerTitle ?? "Okeymas LMS",
-      logoUrl:      org?.logoUrl ?? undefined,
-      orgName:      org?.name ?? "Okeymas LMS",
-    })
-  );
+  const element = createElement(CertificateDocument, {
+    studentName:  cert.user.name ?? "Alumno",
+    courseName:   cert.courseTitle,
+    certType:     cert.type as "COMPLETION" | "PROFESSIONAL",
+    issuedAt:     format(cert.issuedAt, "d 'de' MMMM 'de' yyyy", { locale: es }),
+    certId:       cert.id.slice(0, 12).toUpperCase(),
+    signerName:   cert.course?.certSignerName  ?? "Director de Formación",
+    signerTitle:  cert.course?.certSignerTitle ?? "Okeymas LMS",
+    logoUrl:      org?.logoUrl ?? undefined,
+    orgName:      org?.name ?? "Okeymas LMS",
+  }) as unknown as ReactElement<DocumentProps>;
+
+  const pdfBuffer = await renderToBuffer(element);
 
   return new Response(pdfBuffer, {
     headers: {
