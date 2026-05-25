@@ -58,7 +58,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 
   const pdfBuffer = await renderToBuffer(element);
 
-  return new Response(pdfBuffer, {
+  return new Response(new Uint8Array(pdfBuffer), {
     headers: {
       "Content-Type":        "application/pdf",
       "Content-Disposition": `attachment; filename="certificado-${cert.id.slice(0, 8)}.pdf"`,
