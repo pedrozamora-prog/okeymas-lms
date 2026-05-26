@@ -83,6 +83,28 @@ export function CourseForm({ initial }: CourseFormProps) {
     }
   }
 
+  function cropTo16x9(file: File): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
+      img.onload = () => {
+        const W = 1280, H = 720;
+        const canvas = document.createElement("canvas");
+        canvas.width = W; canvas.height = H;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) { reject(new Error("Canvas no disponible")); return; }
+        // object-cover: escalar para cubrir, luego centrar
+        const scale = Math.max(W / img.width, H / img.height);
+        const sw = img.width * scale, sh = img.height * scale;
+        ctx.drawImage(img, (W - sw) / 2, (H - sh) / 2, sw, sh);
+        URL.revokeObjectURL(objectUrl);
+        canvas.toBlob(b => b ? resolve(b) : reject(new Error("Error al procesar imagen")), "image/jpeg", 0.92);
+      };
+      img.onerror = () => reject(new Error("No se pudo leer la imagen"));
+      img.src = objectUrl;
+    });
+  }
+
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -90,8 +112,9 @@ export function CourseForm({ initial }: CourseFormProps) {
     e.target.value = "";
     setImgLoading(true);
     try {
+      const blob = await cropTo16x9(file);
       const form = new FormData();
-      form.append("file", file);
+      form.append("file", blob, "thumbnail.jpg");
       const res  = await fetch("/api/admin/upload", { method: "POST", body: form });
       let data: { url?: string; error?: string } = {};
       try { data = await res.json(); } catch { /* response not JSON */ }
@@ -207,7 +230,7 @@ export function CourseForm({ initial }: CourseFormProps) {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={imgLoading}
-                  className="relative w-full aspect-video rounded-lg overflow-hidden border border-border block cursor-pointer"
+                  className="relative w-full h-44 rounded-lg overflow-hidden border border-border block cursor-pointer"
                   title="Clic para cambiar imagen"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -249,7 +272,7 @@ export function CourseForm({ initial }: CourseFormProps) {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={imgLoading}
-                className="w-full aspect-video rounded-lg border-2 border-dashed border-border hover:border-yelau-yellow/50 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-foreground"
+                className="w-full h-44 rounded-lg border-2 border-dashed border-border hover:border-yelau-yellow/50 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 {imgLoading
                   ? <Loader2 className="w-8 h-8 animate-spin text-yelau-yellow" />
