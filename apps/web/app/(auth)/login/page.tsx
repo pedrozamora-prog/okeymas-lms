@@ -64,8 +64,12 @@ export default function LoginPage() {
         <div className="relative z-10 flex flex-col justify-between h-full px-10 py-8">
 
           {/* Logo */}
-          <div className="flex-shrink-0">
-            <Image src="/logo.png" alt="Okeymas LMS" width={220} height={66} className="h-14 w-auto object-contain" priority />
+          <div className="flex-shrink-0 flex items-center gap-4">
+            <Image src="/logo.png" alt="Okeymas LMS" width={56} height={56} className="h-14 w-14 object-contain flex-shrink-0" priority />
+            <div className="leading-tight">
+              <p className="text-2xl font-black tracking-widest uppercase text-white">OKEYMAS</p>
+              <p className="text-lg font-bold tracking-widest uppercase text-yelau-yellow">LMS</p>
+            </div>
           </div>
 
           {/* Centro */}
@@ -126,9 +130,13 @@ export default function LoginPage() {
       {/* ── PANEL DERECHO ───────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col items-center justify-center bg-background px-6 py-8 relative">
 
-        {/* Logo mobile — fondo oscuro para que el logo blanco sea visible */}
-        <div className="lg:hidden mb-8 bg-[#0C0C0C] rounded-xl px-6 py-3">
-          <Image src="/logo.png" alt="Okeymas LMS" width={160} height={48} className="h-12 w-auto object-contain" priority />
+        {/* Logo mobile */}
+        <div className="lg:hidden mb-8 flex items-center gap-3">
+          <Image src="/logo.png" alt="Okeymas LMS" width={44} height={44} className="h-11 w-11 object-contain flex-shrink-0" priority />
+          <div className="leading-tight">
+            <p className="text-xl font-black tracking-widest uppercase text-foreground">OKEYMAS</p>
+            <p className="text-sm font-bold tracking-widest uppercase text-yelau-yellow">LMS</p>
+          </div>
         </div>
 
         <div className="w-full max-w-sm">

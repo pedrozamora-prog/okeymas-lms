@@ -7,34 +7,34 @@
   --yelau-yellow: #FCE900;
   --yelau-black:  #0C0C0C;
 
-  /* shadcn tokens — dark por defecto (dark-first design) */
-  --background:         12 12 12;      /* #0C0C0C */
-  --foreground:         255 255 255;   /* #FFFFFF  */
+  /* shadcn tokens — light theme */
+  --background:         255 255 255;   /* blanco */
+  --foreground:         15 15 15;      /* casi negro */
 
-  --card:               26 26 26;      /* #1A1A1A  */
-  --card-foreground:    255 255 255;
+  --card:               249 250 251;   /* gris muy claro */
+  --card-foreground:    15 15 15;
 
-  --popover:            26 26 26;
-  --popover-foreground: 255 255 255;
+  --popover:            255 255 255;
+  --popover-foreground: 15 15 15;
 
-  --primary:            252 233 0;     /* #FCE900  yelau-yellow */
-  --primary-foreground: 12 12 12;      /* #0C0C0C  */
+  --primary:            252 233 0;     /* #FCE900 yelau-yellow */
+  --primary-foreground: 12 12 12;      /* #0C0C0C */
 
-  --secondary:          42 42 42;      /* #2A2A2A  */
-  --secondary-foreground: 255 255 255;
+  --secondary:          243 244 246;   /* gris claro */
+  --secondary-foreground: 15 15 15;
 
-  --muted:              42 42 42;
-  --muted-foreground:   160 160 160;   /* #A0A0A0  */
+  --muted:              243 244 246;
+  --muted-foreground:   107 114 128;   /* gris medio */
 
-  --accent:             252 233 0;     /* #FCE900  */
+  --accent:             252 233 0;     /* #FCE900 */
   --accent-foreground:  12 12 12;
 
   --destructive:        220 38 38;
   --destructive-foreground: 255 255 255;
 
-  --border:             42 42 42;      /* #2A2A2A  */
-  --input:              26 26 26;
-  --ring:               252 233 0;     /* #FCE900  focus ring */
+  --border:             229 231 235;   /* gris claro */
+  --input:              255 255 255;
+  --ring:               252 233 0;     /* #FCE900 focus ring */
 
   --radius: 0.5rem;
 
@@ -45,14 +45,14 @@
   --chart-4: 168 85 247;
   --chart-5: 249 115 22;
 
-  /* Sidebar */
-  --sidebar:              26 26 26;
+  /* Sidebar — mantiene identidad de marca oscura */
+  --sidebar:              15 15 15;
   --sidebar-foreground:   255 255 255;
   --sidebar-primary:      252 233 0;
   --sidebar-primary-foreground: 12 12 12;
-  --sidebar-accent:       42 42 42;
+  --sidebar-accent:       30 30 30;
   --sidebar-accent-foreground: 255 255 255;
-  --sidebar-border:       42 42 42;
+  --sidebar-border:       30 30 30;
   --sidebar-ring:         252 233 0;
 }
 
@@ -134,6 +134,6 @@ body {
 
 /* Scrollbar personalizado */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: rgb(var(--background)); }
+::-webkit-scrollbar-track { background: rgb(var(--muted)); }
 ::-webkit-scrollbar-thumb { background: rgb(var(--border)); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgb(var(--muted-foreground)); }

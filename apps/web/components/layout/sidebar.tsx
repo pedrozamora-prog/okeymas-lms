@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
@@ -73,11 +72,10 @@ export function Sidebar({ userRole, userName, userEmail }: SidebarProps) {
     <>
       {/* Logo */}
       <div className="p-4 border-b border-border flex-shrink-0">
-        <Link href="/dashboard" className="flex items-center gap-3">
-          <Image src="/logo.png" alt="Okeymas LMS" width={44} height={44} className="h-11 w-11 object-contain flex-shrink-0" priority />
+        <Link href="/dashboard" className="flex items-center">
           <div className="leading-tight">
-            <p className="text-sm font-black tracking-widest uppercase text-foreground">OKEYMAS</p>
-            <p className="text-xs font-bold tracking-widest uppercase text-yelau-yellow">LMS</p>
+            <p className="text-base font-black tracking-widest uppercase text-foreground">OKEYMAS</p>
+            <p className="text-sm font-bold tracking-widest uppercase text-yelau-yellow">LMS</p>
           </div>
         </Link>
       </div>
@@ -131,7 +129,10 @@ export function Sidebar({ userRole, userName, userEmail }: SidebarProps) {
       {/* ── MOBILE TOP BAR ──────────────────────────────────────────── */}
       <header className="lg:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-card border-b border-border flex items-center justify-between px-4">
         <Link href="/dashboard" className="flex items-center">
-          <Image src="/logo.png" alt="Okeymas LMS" width={100} height={32} className="h-7 w-auto object-contain" priority />
+          <div className="leading-tight">
+            <p className="text-base font-black tracking-widest uppercase text-foreground">OKEYMAS</p>
+            <p className="text-xs font-bold tracking-widest uppercase text-yelau-yellow">LMS</p>
+          </div>
         </Link>
         <button
           onClick={() => setMobileOpen(true)}
