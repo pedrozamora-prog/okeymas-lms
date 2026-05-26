@@ -74,10 +74,13 @@ export function CourseForm({ initial }: CourseFormProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type: "description", courseTitle: title }),
       });
-      const data = await res.json();
+      let data: { text?: string; error?: string } = {};
+      try { data = await res.json(); } catch { /* HTML response */ }
+      if (!res.ok) { toast.error(data.error ?? `Error ${res.status}`); return; }
       if (data.text) { setDesc(data.text); toast.success("Descripción generada"); }
-    } catch {
-      toast.error("Error al generar descripción");
+      else toast.error(data.error ?? "No se generó texto");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Error de red");
     } finally {
       setAiLoading(false);
     }
