@@ -25,9 +25,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Solo se permiten imágenes JPG, PNG, WEBP o GIF" }, { status: 400 });
   }
 
-  const supabase = getSupabaseAdmin();
+  let supabase;
+  try {
+    supabase = getSupabaseAdmin();
+  } catch (e) {
+    return NextResponse.json({ error: "Supabase no configurado: " + (e instanceof Error ? e.message : String(e)) }, { status: 500 });
+  }
 
-  // Crear bucket si no existe
+  // Crear bucket si no existe (ignorar error si ya existe)
   await supabase.storage.createBucket(BUCKET, { public: true }).catch(() => null);
 
   const ext      = file.name.split(".").pop() ?? "jpg";
@@ -38,7 +43,10 @@ export async function POST(req: Request) {
     .from(BUCKET)
     .upload(filename, buffer, { contentType: file.type, upsert: false });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[upload] Supabase error:", error);
+    return NextResponse.json({ error: `Supabase: ${error.message}` }, { status: 500 });
+  }
 
   const { data } = supabase.storage.from(BUCKET).getPublicUrl(filename);
 

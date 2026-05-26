@@ -86,17 +86,24 @@ export function CourseForm({ initial }: CourseFormProps) {
   async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    // Reset input so the same file can be re-selected if upload fails
+    e.target.value = "";
     setImgLoading(true);
     try {
       const form = new FormData();
       form.append("file", file);
       const res  = await fetch("/api/admin/upload", { method: "POST", body: form });
-      const data = await res.json();
-      if (!res.ok) { toast.error(data.error ?? "Error al subir imagen"); return; }
+      let data: { url?: string; error?: string } = {};
+      try { data = await res.json(); } catch { /* response not JSON */ }
+      if (!res.ok) {
+        toast.error(data.error ?? `Error ${res.status} al subir imagen`);
+        return;
+      }
+      if (!data.url) { toast.error("El servidor no devolvió la URL"); return; }
       setThumb(data.url);
       toast.success("Imagen subida correctamente");
-    } catch {
-      toast.error("Error al subir imagen");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Error de red al subir imagen");
     } finally {
       setImgLoading(false);
     }
@@ -194,21 +201,44 @@ export function CourseForm({ initial }: CourseFormProps) {
               onChange={handleImageUpload}
             />
             {thumbnailUrl ? (
-              <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-border group">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={thumbnailUrl} alt="Portada" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+              <div className="space-y-2">
+                {/* Image preview — click anywhere on it to change */}
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={imgLoading}
+                  className="relative w-full aspect-video rounded-lg overflow-hidden border border-border block cursor-pointer"
+                  title="Clic para cambiar imagen"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={thumbnailUrl} alt="Portada del curso" className="w-full h-full object-cover" />
+                  {imgLoading && (
+                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                      <Loader2 className="w-8 h-8 animate-spin text-yelau-yellow" />
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/0 hover:bg-black/30 transition-colors flex items-end justify-start p-2">
+                    <span className="text-[10px] text-white/0 hover:text-white/80 bg-black/40 rounded px-1.5 py-0.5 transition-colors">
+                      Clic para cambiar
+                    </span>
+                  </div>
+                </button>
+                {/* Action buttons always visible below */}
+                <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white text-xs font-medium px-3 py-1.5 rounded-md transition-colors"
+                    disabled={imgLoading}
+                    className="flex items-center gap-1.5 border border-border hover:border-yelau-yellow/50 text-muted-foreground hover:text-foreground text-xs font-medium px-3 py-1.5 rounded-md transition-colors"
                   >
-                    <ImagePlus className="w-3.5 h-3.5" /> Cambiar
+                    <ImagePlus className="w-3.5 h-3.5" />
+                    Cambiar imagen
                   </button>
                   <button
                     type="button"
                     onClick={() => setThumb("")}
-                    className="flex items-center gap-1.5 bg-red-500/70 hover:bg-red-500 text-white text-xs font-medium px-3 py-1.5 rounded-md transition-colors"
+                    disabled={imgLoading}
+                    className="flex items-center gap-1.5 border border-red-500/40 hover:border-red-500 text-red-400 hover:text-red-300 text-xs font-medium px-3 py-1.5 rounded-md transition-colors"
                   >
                     <X className="w-3.5 h-3.5" /> Eliminar
                   </button>
