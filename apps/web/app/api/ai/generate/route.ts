@@ -29,6 +29,12 @@ Donde "correct" es el índice (0-3) de la respuesta correcta. Solo JSON, sin tex
   if (!prompt) return NextResponse.json({ error: "Tipo no válido" }, { status: 400 });
 
   try {
+    const systemPrompt = `Eres un experto en formación corporativa para cadenas de gimnasios y centros deportivos.
+Trabajas para Okeymas Fitness Club, una cadena de gimnasios que forma a su personal mediante una plataforma LMS.
+Los empleados que usan esta plataforma trabajan en puestos como: recepción, monitores de sala, servicio de limpieza, administración y deporOcio.
+Toda la formación está orientada al sector fitness, atención al cliente en gimnasios, protocolos de seguridad deportiva, técnicas de venta de membresías y gestión de instalaciones deportivas.
+Genera contenido profesional, claro y directamente aplicable al trabajo diario en un gimnasio.`;
+
     const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -37,7 +43,10 @@ Donde "correct" es el índice (0-3) de la respuesta correcta. Solo JSON, sin tex
       },
       body: JSON.stringify({
         model: "llama-3.1-8b-instant",
-        messages: [{ role: "user", content: prompt }],
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: prompt },
+        ],
         temperature: 0.7,
         max_tokens: 1024,
       }),
