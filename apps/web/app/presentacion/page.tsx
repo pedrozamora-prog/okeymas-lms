@@ -262,48 +262,48 @@ export default function PresentacionPage() {
       {/* ── SECCIÓN 6: MANTENIMIENTO ── */}
       <section className="seccion page-break">
         <div className="seccion-num">06</div>
-        <h2 className="seccion-titulo">Propuesta de mantenimiento y evolución</h2>
+        <h2 className="seccion-titulo">Mantenimiento y evolución continua</h2>
         <p className="seccion-intro">
-          La plataforma está en producción y operativa, pero como todo SaaS profesional requiere mantenimiento continuo, actualizaciones de seguridad y evolución de funcionalidades según las necesidades del negocio.
+          La plataforma está en producción y operativa. Como todo sistema SaaS profesional, requiere mantenimiento continuo para garantizar su estabilidad, seguridad y evolución según las necesidades del negocio.
         </p>
 
         <div className="planes">
           <div className="plan">
-            <div className="plan-nombre">Plan Básico</div>
-            <div className="plan-precio">390 €<span>/mes</span></div>
+            <div className="plan-nombre">Infraestructura</div>
             <ul>
               <li>✓ Hosting y base de datos en la nube</li>
-              <li>✓ Actualizaciones de seguridad</li>
-              <li>✓ Soporte técnico por email (48h)</li>
-              <li>✓ Copias de seguridad diarias</li>
-              <li>✓ Monitorización 24/7</li>
+              <li>✓ Actualizaciones de seguridad periódicas</li>
+              <li>✓ Copias de seguridad diarias automáticas</li>
+              <li>✓ Monitorización 24/7 del sistema</li>
+              <li>✓ Gestión de dominios y certificados SSL</li>
             </ul>
           </div>
           <div className="plan plan-destacado">
-            <div className="plan-badge">RECOMENDADO</div>
-            <div className="plan-nombre">Plan Profesional</div>
-            <div className="plan-precio">690 €<span>/mes</span></div>
+            <div className="plan-nombre">Soporte y mejoras</div>
             <ul>
-              <li>✓ Todo lo del Plan Básico</li>
-              <li>✓ Soporte prioritario (4h laborables)</li>
-              <li>✓ 2 nuevas funcionalidades/mes</li>
+              <li>✓ Soporte técnico ante incidencias</li>
+              <li>✓ Resolución de errores y bugs</li>
+              <li>✓ Desarrollo de nuevas funcionalidades</li>
               <li>✓ Formación al equipo administrador</li>
               <li>✓ Informe mensual de uso y KPIs</li>
-              <li>✓ Personalización de marca (logo, colores)</li>
+              <li>✓ Personalización de marca y contenido</li>
             </ul>
           </div>
           <div className="plan">
-            <div className="plan-nombre">Plan Enterprise</div>
-            <div className="plan-precio">990 €<span>/mes</span></div>
+            <div className="plan-nombre">Evolución del producto</div>
             <ul>
-              <li>✓ Todo lo del Plan Profesional</li>
-              <li>✓ Soporte telefónico inmediato</li>
-              <li>✓ Desarrollo a medida ilimitado</li>
-              <li>✓ Integración con RRHH/nóminas</li>
-              <li>✓ Gestor de cuenta dedicado</li>
-              <li>✓ SLA 99.9% disponibilidad garantizada</li>
+              <li>✓ Integración con herramientas de RRHH</li>
+              <li>✓ Nuevos módulos según crecimiento</li>
+              <li>✓ Escalabilidad para más sedes</li>
+              <li>✓ Adaptación a cambios normativos</li>
+              <li>✓ Actualizaciones de la IA integrada</li>
+              <li>✓ Roadmap priorizado con dirección</li>
             </ul>
           </div>
+        </div>
+
+        <div className="highlight" style={{marginTop: "28px"}}>
+          El coste de mantenimiento se acordará con la dirección según el nivel de servicio requerido. La propuesta económica se presentará de forma separada y adaptada a las necesidades específicas de Yelau Group.
         </div>
       </section>
 
@@ -440,9 +440,7 @@ export default function PresentacionPage() {
           font-size: 10px; font-weight: 700; letter-spacing: 1px;
           padding: 3px 12px; border-radius: 20px;
         }
-        .plan-nombre { font-size: 14px; font-weight: 700; color: #666; margin-bottom: 12px; }
-        .plan-precio { font-size: 32px; font-weight: 900; color: #0C0C0C; margin-bottom: 20px; }
-        .plan-precio span { font-size: 14px; font-weight: 400; color: #888; }
+        .plan-nombre { font-size: 16px; font-weight: 700; color: #0C0C0C; margin-bottom: 16px; }
         .plan ul { list-style: none; padding: 0; }
         .plan li { font-size: 13px; color: #444; line-height: 1.9; }
 
