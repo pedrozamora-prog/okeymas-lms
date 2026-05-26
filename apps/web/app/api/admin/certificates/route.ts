@@ -28,17 +28,22 @@ export async function POST(req: NextRequest) {
     ? new Date(Date.now() + Number(validityDays) * 86400000)
     : null;
 
-  const cert = await prisma.certificate.create({
-    data: {
-      userId,
-      courseId,
-      courseTitle: course.title,
-      type,
-      expiresAt,
-    },
-  });
-
-  return NextResponse.json(cert);
+  try {
+    const cert = await prisma.certificate.create({
+      data: {
+        userId,
+        courseId,
+        courseTitle: course.title,
+        type,
+        expiresAt,
+      },
+    });
+    return NextResponse.json(cert);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[certificates] create error:", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 }
 
 export async function DELETE(req: NextRequest) {
@@ -48,7 +53,13 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const { id } = await req.json();
-  await prisma.certificate.delete({ where: { id } });
-  return NextResponse.json({ ok: true });
+  try {
+    const { id } = await req.json();
+    await prisma.certificate.delete({ where: { id } });
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[certificates] delete error:", msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 }

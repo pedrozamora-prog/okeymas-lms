@@ -10,6 +10,8 @@ import { createElement, type ReactElement } from "react";
 import type { DocumentProps } from "@react-pdf/renderer";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import fs from "fs";
+import path from "path";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -44,6 +46,16 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 
   const org = cert.course?.organization;
 
+  // Fallback: logo.png from public folder as base64
+  let fallbackLogo: string | undefined;
+  try {
+    const logoPath = path.join(process.cwd(), "public", "logo.png");
+    const logoBuffer = fs.readFileSync(logoPath);
+    fallbackLogo = `data:image/png;base64,${logoBuffer.toString("base64")}`;
+  } catch {
+    fallbackLogo = undefined;
+  }
+
   const element = createElement(CertificateDocument, {
     studentName:  cert.user.name ?? "Alumno",
     courseName:   cert.courseTitle,
@@ -52,7 +64,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     certId:       cert.id.slice(0, 12).toUpperCase(),
     signerName:   cert.course?.certSignerName  ?? "Director de Formación",
     signerTitle:  cert.course?.certSignerTitle ?? "Okeymas LMS",
-    logoUrl:      org?.logoUrl ?? undefined,
+    logoUrl:      org?.logoUrl ?? fallbackLogo,
     orgName:      org?.name ?? "Okeymas LMS",
   }) as unknown as ReactElement<DocumentProps>;
 
