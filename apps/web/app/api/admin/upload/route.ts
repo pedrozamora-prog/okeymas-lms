@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { supabaseAdmin } from "@/lib/supabase";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 
 const BUCKET = "thumbnails";
@@ -25,20 +25,22 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Solo se permiten imágenes JPG, PNG, WEBP o GIF" }, { status: 400 });
   }
 
+  const supabase = getSupabaseAdmin();
+
   // Crear bucket si no existe
-  await supabaseAdmin.storage.createBucket(BUCKET, { public: true }).catch(() => null);
+  await supabase.storage.createBucket(BUCKET, { public: true }).catch(() => null);
 
   const ext      = file.name.split(".").pop() ?? "jpg";
   const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
   const buffer   = Buffer.from(await file.arrayBuffer());
 
-  const { error } = await supabaseAdmin.storage
+  const { error } = await supabase.storage
     .from(BUCKET)
     .upload(filename, buffer, { contentType: file.type, upsert: false });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const { data } = supabaseAdmin.storage.from(BUCKET).getPublicUrl(filename);
+  const { data } = supabase.storage.from(BUCKET).getPublicUrl(filename);
 
   return NextResponse.json({ url: data.publicUrl });
 }
