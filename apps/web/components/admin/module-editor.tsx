@@ -26,6 +26,7 @@ type LessonType = "VIDEO" | "PDF" | "QUIZ" | "LIVE_CLASS" | "SCORM";
 interface Lesson {
   id: string;
   title: string;
+  description: string | null;
   type: LessonType;
   videoUrl: string | null;
   fileUrl: string | null;
@@ -97,7 +98,7 @@ export function ModuleEditor({ courseId, initialModules }: { courseId: string; i
   }
 
   // ── Add lesson ────────────────────────────────────────────────────────────
-  async function handleAddLesson(modId: string, data: { title: string; type: LessonType; videoUrl?: string; fileUrl?: string; duration?: string }) {
+  async function handleAddLesson(modId: string, data: { title: string; description?: string; type: LessonType; videoUrl?: string; fileUrl?: string; duration?: string }) {
     const res = await fetch(`/api/admin/modules/${modId}/lessons`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -224,12 +225,13 @@ function ModuleCard({ mod, idx, expanded, onToggle, onDelete, onAddLesson, onDel
   expanded: boolean;
   onToggle: () => void;
   onDelete: () => void;
-  onAddLesson: (data: { title: string; type: LessonType; videoUrl?: string; fileUrl?: string; duration?: string }) => Promise<void>;
+  onAddLesson: (data: { title: string; description?: string; type: LessonType; videoUrl?: string; fileUrl?: string; duration?: string }) => Promise<void>;
   onDeleteLesson: (id: string) => void;
   onUpdateLesson: (lessonId: string, data: Partial<Lesson>) => void;
 }) {
   const [addingLesson, setAddingLesson] = useState(false);
   const [lessonTitle, setLessonTitle]   = useState("");
+  const [lessonDesc, setLessonDesc]     = useState("");
   const [lessonType, setLessonType]     = useState<LessonType>("VIDEO");
   const [lessonUrl, setLessonUrl]       = useState("");
   const [lessonDuration, setDuration]   = useState("");
@@ -238,6 +240,7 @@ function ModuleCard({ mod, idx, expanded, onToggle, onDelete, onAddLesson, onDel
   const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
   const [aiObjectives, setAiObjectives] = useState<string | null>(null);
   const [aiLoading, setAiLoading]       = useState(false);
+  const [aiDescLoading, setAiDescLoading] = useState(false);
 
   async function generateObjectives() {
     setAiLoading(true);
@@ -257,18 +260,38 @@ function ModuleCard({ mod, idx, expanded, onToggle, onDelete, onAddLesson, onDel
     }
   }
 
+  async function generateLessonDesc() {
+    if (!lessonTitle.trim()) { toast.error("Escribe primero el título de la lección"); return; }
+    setAiDescLoading(true);
+    try {
+      const res = await fetch("/api/ai/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "lessonDescription", lessonTitle, moduleTitle: mod.title, courseTitle: "" }),
+      });
+      const data = await res.json();
+      if (data.text) setLessonDesc(data.text);
+      else toast.error(data.error ?? "Error al generar descripción");
+    } catch {
+      toast.error("Error de conexión");
+    } finally {
+      setAiDescLoading(false);
+    }
+  }
+
   async function submitLesson() {
     if (!lessonTitle.trim()) { toast.error("El título es obligatorio"); return; }
     setSaving(true);
     try {
       await onAddLesson({
         title: lessonTitle,
+        description: lessonDesc || undefined,
         type: lessonType,
         videoUrl:  lessonType === "VIDEO" ? lessonUrl : undefined,
         fileUrl:   lessonType === "PDF"   ? lessonUrl : undefined,
         duration:  lessonDuration || undefined,
       });
-      setLessonTitle(""); setLessonUrl(""); setDuration(""); setLessonType("VIDEO");
+      setLessonTitle(""); setLessonDesc(""); setLessonUrl(""); setDuration(""); setLessonType("VIDEO");
       setAddingLesson(false);
     } finally {
       setSaving(false);
@@ -352,6 +375,7 @@ function ModuleCard({ mod, idx, expanded, onToggle, onDelete, onAddLesson, onDel
               {editingLessonId === lesson.id ? (
                 <LessonEditForm
                   lesson={lesson}
+                  moduleTitle={mod.title}
                   onSave={(data) => {
                     onUpdateLesson(lesson.id, data);
                     setEditingLessonId(null);
@@ -425,6 +449,29 @@ function ModuleCard({ mod, idx, expanded, onToggle, onDelete, onAddLesson, onDel
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+
+              {/* Descripción de la lección */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs">Descripción de la lección</Label>
+                  <button
+                    type="button"
+                    onClick={generateLessonDesc}
+                    disabled={aiDescLoading}
+                    className="flex items-center gap-1 text-[10px] text-yelau-yellow hover:text-yelau-yellow/80 transition-colors disabled:opacity-50"
+                  >
+                    {aiDescLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+                    Generar con IA
+                  </button>
+                </div>
+                <textarea
+                  value={lessonDesc}
+                  onChange={e => setLessonDesc(e.target.value)}
+                  placeholder="Explica brevemente de qué trata esta lección y qué aprenderá el alumno..."
+                  rows={3}
+                  className="w-full text-xs rounded-md border border-input bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-yelau-yellow/50 resize-none"
+                />
               </div>
 
               {lessonType === "VIDEO" && (
@@ -533,20 +580,61 @@ function ModuleCard({ mod, idx, expanded, onToggle, onDelete, onAddLesson, onDel
 
 // ── LessonEditForm ────────────────────────────────────────────────────────────
 
-function LessonEditForm({ lesson, onSave, onCancel }: {
+function LessonEditForm({ lesson, moduleTitle, onSave, onCancel }: {
   lesson: Lesson;
+  moduleTitle: string;
   onSave: (data: Partial<Lesson>) => void;
   onCancel: () => void;
 }) {
-  const [title, setTitle]       = useState(lesson.title);
-  const [type, setType]         = useState<LessonType>(lesson.type);
-  const [videoUrl, setVideoUrl] = useState(lesson.videoUrl ?? "");
-  const [fileUrl, setFileUrl]   = useState(lesson.fileUrl ?? "");
-  const [duration, setDuration] = useState(String(lesson.duration ?? ""));
-  const [videoMode, setMode]    = useState<"upload" | "url">(
+  const [title, setTitle]         = useState(lesson.title);
+  const [description, setDesc]    = useState(lesson.description ?? "");
+  const [type, setType]           = useState<LessonType>(lesson.type);
+  const [videoUrl, setVideoUrl]   = useState(lesson.videoUrl ?? "");
+  const [fileUrl, setFileUrl]     = useState(lesson.fileUrl ?? "");
+  const [duration, setDuration]   = useState(String(lesson.duration ?? ""));
+  const [videoMode, setMode]      = useState<"upload" | "url">(
     lesson.videoUrl && lesson.videoUrl.startsWith("http") ? "url" : "upload"
   );
-  const [saving, setSaving]     = useState(false);
+  const [saving, setSaving]       = useState(false);
+  const [aiDescLoading, setAiDesc] = useState(false);
+  const [aiQuizLoading, setAiQuiz] = useState(false);
+  const [quizQuestions, setQuiz]  = useState<Array<{question:string;options:string[];correct:number}> | null>(null);
+
+  async function generateDesc() {
+    if (!title.trim()) { toast.error("Escribe primero el título de la lección"); return; }
+    setAiDesc(true);
+    try {
+      const res = await fetch("/api/ai/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "lessonDescription", lessonTitle: title, moduleTitle, courseTitle: "" }),
+      });
+      const data = await res.json();
+      if (data.text) setDesc(data.text);
+      else toast.error(data.error ?? "Error al generar");
+    } catch { toast.error("Error de conexión"); }
+    finally { setAiDesc(false); }
+  }
+
+  async function generateQuiz() {
+    if (!title.trim()) { toast.error("Escribe primero el título de la lección"); return; }
+    setAiQuiz(true);
+    try {
+      const res = await fetch("/api/ai/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "quiz", lessonTitle: title, moduleTitle, courseTitle: "" }),
+      });
+      const data = await res.json();
+      if (data.text) {
+        const clean = data.text.replace(/```json|```/g, "").trim();
+        const parsed = JSON.parse(clean);
+        setQuiz(parsed);
+        toast.success("Preguntas generadas — revísalas y guarda la lección");
+      } else toast.error(data.error ?? "Error al generar quiz");
+    } catch { toast.error("Error al generar preguntas"); }
+    finally { setAiQuiz(false); }
+  }
 
   async function handleSave() {
     if (!title.trim()) { toast.error("El título es obligatorio"); return; }
@@ -557,6 +645,7 @@ function LessonEditForm({ lesson, onSave, onCancel }: {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title,
+          description: description || null,
           type,
           videoUrl: type === "VIDEO" ? (videoUrl || null) : null,
           fileUrl:  type === "PDF"   ? (fileUrl  || null) : null,
@@ -598,6 +687,29 @@ function LessonEditForm({ lesson, onSave, onCancel }: {
         </div>
       </div>
 
+      {/* Descripción */}
+      <div className="space-y-1">
+        <div className="flex items-center justify-between">
+          <Label className="text-xs">Descripción de la lección</Label>
+          <button
+            type="button"
+            onClick={generateDesc}
+            disabled={aiDescLoading}
+            className="flex items-center gap-1 text-[10px] text-yelau-yellow hover:text-yelau-yellow/80 transition-colors disabled:opacity-50"
+          >
+            {aiDescLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+            Generar con IA
+          </button>
+        </div>
+        <textarea
+          value={description}
+          onChange={e => setDesc(e.target.value)}
+          placeholder="Explica brevemente de qué trata esta lección y qué aprenderá el alumno..."
+          rows={3}
+          className="w-full text-xs rounded-md border border-input bg-background px-3 py-2 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-yelau-yellow/50 resize-none"
+        />
+      </div>
+
       {type === "VIDEO" && (
         <div className="space-y-2">
           <Label className="text-xs">Vídeo</Label>
@@ -626,6 +738,41 @@ function LessonEditForm({ lesson, onSave, onCancel }: {
         <div className="space-y-1">
           <Label className="text-xs">URL del PDF</Label>
           <Input value={fileUrl} onChange={e => setFileUrl(e.target.value)} placeholder="https://..." type="url" />
+        </div>
+      )}
+
+      {/* Quiz: generador IA de preguntas */}
+      {type === "QUIZ" && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label className="text-xs">Preguntas del quiz</Label>
+            <button
+              type="button"
+              onClick={generateQuiz}
+              disabled={aiQuizLoading}
+              className="flex items-center gap-1 text-[10px] text-yelau-yellow hover:text-yelau-yellow/80 transition-colors disabled:opacity-50"
+            >
+              {aiQuizLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+              Generar preguntas con IA
+            </button>
+          </div>
+          {quizQuestions && (
+            <div className="space-y-2 rounded-lg border border-yelau-yellow/20 bg-background p-3">
+              {quizQuestions.map((q, i) => (
+                <div key={i} className="space-y-1">
+                  <p className="text-xs font-medium text-foreground">{i + 1}. {q.question}</p>
+                  <ul className="space-y-0.5 pl-3">
+                    {q.options.map((opt, oi) => (
+                      <li key={oi} className={cn("text-[11px]", oi === q.correct ? "text-green-400 font-semibold" : "text-muted-foreground")}>
+                        {oi === q.correct ? "✓" : "○"} {opt}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+              <p className="text-[10px] text-muted-foreground pt-1 border-t border-border">Verde = respuesta correcta. Las preguntas se guardarán al hacer clic en Guardar.</p>
+            </div>
+          )}
         </div>
       )}
 
