@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { auth } from "@/auth";
 
 export async function POST(req: NextRequest) {
@@ -9,9 +8,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    return NextResponse.json({ error: "GEMINI_API_KEY no configurada en el servidor" }, { status: 500 });
+    return NextResponse.json({ error: "GROQ_API_KEY no configurada en el servidor" }, { status: 500 });
   }
 
   const { type, courseTitle, moduleTitle, lessonTitle } = await req.json();
@@ -30,14 +29,32 @@ Donde "correct" es el índice (0-3) de la respuesta correcta. Solo JSON, sin tex
   if (!prompt) return NextResponse.json({ error: "Tipo no válido" }, { status: 400 });
 
   try {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "llama-3.1-8b-instant",
+        messages: [{ role: "user", content: prompt }],
+        temperature: 0.7,
+        max_tokens: 1024,
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error("[ai/generate] Groq error:", err);
+      return NextResponse.json({ error: `Error de Groq (${res.status})` }, { status: 500 });
+    }
+
+    const data = await res.json();
+    const text = data.choices?.[0]?.message?.content ?? "";
     return NextResponse.json({ text });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    console.error("[ai/generate] Gemini error:", msg);
-    return NextResponse.json({ error: `Error de Gemini: ${msg}` }, { status: 500 });
+    console.error("[ai/generate] error:", msg);
+    return NextResponse.json({ error: `Error: ${msg}` }, { status: 500 });
   }
 }
