@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { BarChart3, Users, BookOpen, Trophy, TrendingUp, CheckCircle2 } from "lucide-react";
+import { BarChart3, Users, BookOpen, Trophy, TrendingUp, CheckCircle2, Download } from "lucide-react";
+import { ReportExport } from "@/components/admin/report-export";
 
 export const metadata = { title: "Reportes" };
 
@@ -67,6 +68,15 @@ export default async function ReportsPage() {
           Métricas de formación de tu organización
         </p>
       </div>
+
+      {/* Exportar informes */}
+      <section className="space-y-3">
+        <div className="flex items-center gap-2">
+          <Download className="w-4 h-4 text-yelau-yellow" />
+          <h2 className="text-base font-semibold text-foreground">Exportar informe</h2>
+        </div>
+        <ReportExport />
+      </section>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
