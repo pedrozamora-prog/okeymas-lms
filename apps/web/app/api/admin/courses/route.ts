@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json();
-  const { title, description, thumbnailUrl, isRequired, order, departments } = body;
+  const { title, description, thumbnailUrl, isRequired, daysToComplete, order, departments } = body;
 
   if (!title?.trim()) {
     return NextResponse.json({ error: "El título es obligatorio" }, { status: 400 });
@@ -23,6 +23,7 @@ export async function POST(req: Request) {
       description: description?.trim() || null,
       thumbnailUrl: thumbnailUrl?.trim() || null,
       isRequired: isRequired ?? false,
+      daysToComplete: daysToComplete ?? null,
       order: order ?? 0,
       departments: departments ?? [],
       status: "DRAFT",

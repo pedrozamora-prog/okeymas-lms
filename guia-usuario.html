@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Guía de Usuario — Okeymas LMS</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      color: #1a1a1a;
+      background: #fff;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .page {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0;
+    }
+
+    /* PORTADA */
+    .portada {
+      background: #0C0C0C;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px;
+      page-break-after: always;
+    }
+    .logo-row { display: flex; align-items: center; gap: 16px; margin-bottom: 80px; }
+    .logo-box {
+      width: 52px; height: 52px; background: #FCE900;
+      border-radius: 12px; display: flex; align-items: center;
+      justify-content: center; font-size: 24px; font-weight: 900; color: #0C0C0C;
+    }
+    .logo-text-name { font-size: 18px; font-weight: 900; color: #fff; line-height: 1; }
+    .logo-text-sub  { font-size: 10px; font-weight: 700; color: #FCE900; letter-spacing: 4px; margin-top: 2px; }
+    .portada h1 { font-size: 44px; font-weight: 900; color: #fff; line-height: 1.15; margin-bottom: 16px; letter-spacing: -1px; }
+    .portada h1 span { color: #FCE900; }
+    .portada-sub { font-size: 16px; color: #666; margin-bottom: 80px; }
+    .portada-footer { border-top: 1px solid #222; padding-top: 20px; display: flex; justify-content: space-between; }
+    .portada-footer span { font-size: 12px; color: #444; }
+
+    /* ÍNDICE */
+    .indice { padding: 60px 80px; page-break-after: always; border-bottom: 1px solid #eee; }
+    .indice h2 { font-size: 24px; font-weight: 900; margin-bottom: 28px; color: #0C0C0C; }
+    .indice-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0; border-bottom: 1px dotted #ddd;
+    }
+    .indice-item-left { display: flex; align-items: center; gap: 12px; }
+    .indice-num { font-size: 11px; font-weight: 700; color: #FCE900; background: #0C0C0C; padding: 2px 7px; border-radius: 4px; }
+    .indice-titulo { font-size: 13px; font-weight: 600; color: #333; }
+    .indice-pag { font-size: 12px; color: #aaa; }
+
+    /* SECCIONES */
+    .seccion { padding: 60px 80px; page-break-before: always; }
+    .seccion-header { margin-bottom: 32px; }
+    .seccion-num { font-size: 64px; font-weight: 900; color: #FCE900; line-height: 1; opacity: 0.3; margin-bottom: -10px; }
+    .seccion-titulo { font-size: 26px; font-weight: 900; color: #0C0C0C; }
+    .seccion-desc { font-size: 14px; color: #555; margin-top: 8px; line-height: 1.7; }
+
+    /* PASOS */
+    .pasos { margin-top: 24px; }
+    .paso {
+      display: flex; gap: 16px; margin-bottom: 20px;
+      padding: 16px; border-radius: 10px; background: #f9f9f9;
+      border: 1px solid #eee;
+    }
+    .paso-num {
+      width: 32px; height: 32px; flex-shrink: 0;
+      background: #FCE900; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 14px; color: #0C0C0C;
+    }
+    .paso-contenido h4 { font-size: 13px; font-weight: 700; color: #0C0C0C; margin-bottom: 4px; }
+    .paso-contenido p { font-size: 12px; color: #555; line-height: 1.6; }
+
+    /* CARDS */
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+    .card {
+      padding: 20px; border-radius: 10px;
+      border: 1px solid #eee; background: #fafafa;
+    }
+    .card-icon { font-size: 22px; margin-bottom: 8px; }
+    .card h4 { font-size: 13px; font-weight: 700; color: #0C0C0C; margin-bottom: 6px; }
+    .card p { font-size: 12px; color: #555; line-height: 1.6; }
+    .card.yellow { border-top: 3px solid #FCE900; }
+
+    /* ROLES */
+    .roles { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .rol {
+      padding: 16px; border-radius: 8px; border: 1px solid #eee;
+    }
+    .rol-badge {
+      display: inline-block; font-size: 10px; font-weight: 700;
+      letter-spacing: 1px; padding: 2px 8px; border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .rol-badge.admin { background: #FCE900; color: #0C0C0C; }
+    .rol-badge.branch { background: #0C0C0C; color: #FCE900; }
+    .rol-badge.instructor { background: #e0e0e0; color: #333; }
+    .rol-badge.employee { background: #f0f0f0; color: #555; }
+    .rol h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .rol p  { font-size: 11px; color: #666; line-height: 1.6; }
+
+    /* NOTA */
+    .nota {
+      margin-top: 20px; padding: 14px 18px;
+      background: #FFF9E0; border-left: 4px solid #FCE900;
+      border-radius: 0 8px 8px 0; font-size: 12px; color: #444;
+    }
+    .nota strong { color: #0C0C0C; }
+
+    /* TABLA */
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th { background: #0C0C0C; color: #FCE900; font-size: 11px; font-weight: 700;
+         text-align: left; padding: 10px 14px; }
+    td { padding: 10px 14px; font-size: 12px; border-bottom: 1px solid #eee; color: #444; }
+    tr:nth-child(even) td { background: #fafafa; }
+
+    /* CIERRE */
+    .cierre {
+      background: #0C0C0C; padding: 80px;
+      text-align: center; page-break-before: always;
+    }
+    .cierre h2 { font-size: 30px; font-weight: 900; color: #fff; line-height: 1.3; margin-bottom: 16px; }
+    .cierre h2 span { color: #FCE900; }
+    .cierre p { font-size: 14px; color: #666; margin-bottom: 32px; max-width: 400px; margin-left: auto; margin-right: auto; }
+    .cierre-url {
+      display: inline-block; background: #FCE900; color: #0C0C0C;
+      font-weight: 700; font-size: 13px; padding: 10px 24px; border-radius: 8px;
+    }
+    .cierre-footer { margin-top: 48px; border-top: 1px solid #222; padding-top: 20px; font-size: 12px; color: #444; }
+
+    /* PRINT */
+    @media print {
+      body { font-size: 12px; }
+      .portada { min-height: auto; }
+      .seccion, .indice { page-break-before: always; }
+      @page { margin: 0; size: A4; }
+    }
+
+    .btn-print {
+      position: fixed; bottom: 32px; right: 32px;
+      background: #FCE900; color: #0C0C0C; font-weight: 700;
+      padding: 12px 24px; border: none; border-radius: 10px;
+      cursor: pointer; font-size: 14px; font-family: inherit;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+    .btn-print:hover { background: #e6d200; }
+    @media print { .btn-print { display: none; } }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- PORTADA -->
+  <div class="portada">
+    <div class="logo-row">
+      <div class="logo-box">O</div>
+      <div>
+        <div class="logo-text-name">OKEYMAS</div>
+        <div class="logo-text-sub">LMS</div>
+      </div>
+    </div>
+    <h1>Guía de Usuario<br><span>Plataforma de Formación</span></h1>
+    <p class="portada-sub">Manual completo para administradores, instructores y empleados</p>
+    <div class="portada-footer">
+      <span>Okeymas Fitness Club · Yelau Group</span>
+      <span>Versión 1.0 · 2025</span>
+    </div>
+  </div>
+
+  <!-- ÍNDICE -->
+  <div class="indice">
+    <h2>Índice de contenidos</h2>
+    <div class="indice-item">
+      <div class="indice-item-left">
+        <span class="indice-num">01</span>
+        <span class="indice-titulo">Acceso a la plataforma</span>
+      </div>
+      <span class="indice-pag">Pág. 3</span>
+    </div>
+    <div class="indice-item">
+      <div class="indice-item-left">
+        <span class="indice-num">02</span>
+        <span class="indice-titulo">Roles y permisos</span>
+      </div>
+      <span class="indice-pag">Pág. 4</span>
+    </div>
+    <div class="indice-item">
+      <div class="indice-item-left">
+        <span class="indice-num">03</span>
+        <span class="indice-titulo">Panel de administración</span>
+      </div>
+      <span class="indice-pag">Pág. 5</span>
+    </div>
+    <div class="indice-item">
+      <div class="indice-item-left">
+        <span class="indice-num">04</span>
+        <span class="indice-titulo">Crear y gestionar cursos</span>
+      </div>
+      <span class="indice-pag">Pág. 6</span>
+    </div>
+    <div class="indice-item">
+      <div class="indice-item-left">
+        <span class="indice-num">05</span>
+        <span class="indice-titulo">Módulos y lecciones</span>
+      </div>
+      <span class="indice-pag">Pág. 7</span>
+    </div>
+    <div class="indice-item">
+      <div class="indice-item-left">
+        <span class="indice-num">06</span>
+        <span class="indice-titulo">Inteligencia Artificial integrada</span>
+      </div>
+      <span class="indice-pag">Pág. 8</span>
+    </div>
+    <div class="indice-item">
+      <div class="indice-item-left">
+        <span class="indice-num">07</span>
+        <span class="indice-titulo">Vista del empleado</span>
+      </div>
+      <span class="indice-pag">Pág. 9</span>
+    </div>
+    <div class="indice-item">
+      <div class="indice-item-left">
+        <span class="indice-num">08</span>
+        <span class="indice-titulo">Certificados</span>
+      </div>
+      <span class="indice-pag">Pág. 10</span>
+    </div>
+    <div class="indice-item">
+      <div class="indice-item-left">
+        <span class="indice-num">09</span>
+        <span class="indice-titulo">Preguntas frecuentes</span>
+      </div>
+      <span class="indice-pag">Pág. 11</span>
+    </div>
+  </div>
+
+  <!-- 01: ACCESO -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <div class="seccion-num">01</div>
+      <div class="seccion-titulo">Acceso a la plataforma</div>
+      <div class="seccion-desc">Okeymas LMS es accesible desde cualquier navegador web, sin necesidad de instalar ninguna aplicación.</div>
+    </div>
+
+    <div class="cards">
+      <div class="card yellow">
+        <div class="card-icon">🌐</div>
+        <h4>URL de acceso</h4>
+        <p>La plataforma está disponible en:<br><strong>okeymas-lms-web.vercel.app</strong><br>Funciona en ordenador, tablet y móvil.</p>
+      </div>
+      <div class="card yellow">
+        <div class="card-icon">🔒</div>
+        <h4>Credenciales</h4>
+        <p>Cada empleado tiene su propio usuario y contraseña. Las credenciales las crea el administrador o el propio empleado en el registro.</p>
+      </div>
+    </div>
+
+    <div class="pasos" style="margin-top:28px;">
+      <p style="font-weight:700; font-size:13px; margin-bottom:16px; color:#0C0C0C;">Cómo iniciar sesión:</p>
+      <div class="paso">
+        <div class="paso-num">1</div>
+        <div class="paso-contenido">
+          <h4>Abre el navegador</h4>
+          <p>Accede a la URL de la plataforma desde cualquier navegador (Chrome, Safari, Firefox, Edge).</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">2</div>
+        <div class="paso-contenido">
+          <h4>Introduce tus credenciales</h4>
+          <p>Escribe tu dirección de email y contraseña en el formulario de inicio de sesión.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">3</div>
+        <div class="paso-contenido">
+          <h4>Accede a tu panel</h4>
+          <p>Según tu rol, verás el panel de administrador o el panel de empleado con tus cursos asignados.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="pasos" style="margin-top:8px;">
+      <p style="font-weight:700; font-size:13px; margin-bottom:16px; color:#0C0C0C;">Cómo registrarse (primer acceso):</p>
+      <div class="paso">
+        <div class="paso-num">1</div>
+        <div class="paso-contenido">
+          <h4>Haz clic en "¿No tienes cuenta? Regístrate"</h4>
+          <p>En la pantalla de login encontrarás el enlace de registro en la parte inferior.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">2</div>
+        <div class="paso-contenido">
+          <h4>Rellena el formulario</h4>
+          <p>Introduce tu nombre, teléfono, email, selecciona tu departamento y crea una contraseña segura.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">3</div>
+        <div class="paso-contenido">
+          <h4>Accede con tus nuevas credenciales</h4>
+          <p>Una vez registrado, inicia sesión con el email y contraseña que acabas de crear.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02: ROLES -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <div class="seccion-num">02</div>
+      <div class="seccion-titulo">Roles y permisos</div>
+      <div class="seccion-desc">La plataforma tiene cuatro niveles de acceso. Cada usuario solo ve y puede hacer lo que le corresponde a su rol.</div>
+    </div>
+
+    <div class="roles">
+      <div class="rol">
+        <div class="rol-badge admin">SUPER ADMIN</div>
+        <h4>Administrador General</h4>
+        <p>Acceso total a la plataforma. Gestiona usuarios, cursos, módulos, lecciones, certificados e informes de todas las sedes.</p>
+      </div>
+      <div class="rol">
+        <div class="rol-badge branch">ADMIN DE SEDE</div>
+        <h4>Administrador de Sede</h4>
+        <p>Gestiona su sucursal: usuarios de su sede, asignación de cursos y seguimiento del progreso de su equipo.</p>
+      </div>
+      <div class="rol">
+        <div class="rol-badge instructor">INSTRUCTOR</div>
+        <h4>Instructor / Formador</h4>
+        <p>Crea y edita cursos, añade módulos y lecciones, programa clases en directo y consulta el progreso de sus alumnos.</p>
+      </div>
+      <div class="rol">
+        <div class="rol-badge employee">EMPLEADO</div>
+        <h4>Empleado</h4>
+        <p>Accede a los cursos asignados a su departamento, realiza las lecciones y evaluaciones, y descarga sus certificados.</p>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Función</th>
+          <th>Super Admin</th>
+          <th>Admin Sede</th>
+          <th>Instructor</th>
+          <th>Empleado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Ver sus cursos</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+        <tr><td>Crear / editar cursos</td><td>✓</td><td>✓</td><td>✓</td><td>—</td></tr>
+        <tr><td>Gestionar usuarios</td><td>✓</td><td>✓</td><td>—</td><td>—</td></tr>
+        <tr><td>Ver informes globales</td><td>✓</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td>Emitir certificados</td><td>✓</td><td>✓</td><td>—</td><td>—</td></tr>
+        <tr><td>Descargar certificados propios</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 03: PANEL ADMIN -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <div class="seccion-num">03</div>
+      <div class="seccion-titulo">Panel de administración</div>
+      <div class="seccion-desc">El panel de administrador ofrece una visión completa del estado de la formación en tiempo real.</div>
+    </div>
+
+    <div class="cards">
+      <div class="card yellow">
+        <div class="card-icon">📊</div>
+        <h4>Dashboard principal</h4>
+        <p>Muestra el total de usuarios, cursos activos, tasa de finalización global, inscripciones recientes y certificados emitidos.</p>
+      </div>
+      <div class="card yellow">
+        <div class="card-icon">👥</div>
+        <h4>Gestión de usuarios</h4>
+        <p>Lista de todos los empleados registrados con su departamento, rol, progreso y fecha de último acceso.</p>
+      </div>
+      <div class="card yellow">
+        <div class="card-icon">📚</div>
+        <h4>Gestión de cursos</h4>
+        <p>Acceso a todos los cursos: crear nuevos, editar existentes, cambiar estado (borrador / publicado / archivado).</p>
+      </div>
+      <div class="card yellow">
+        <div class="card-icon">🏆</div>
+        <h4>Certificados</h4>
+        <p>Historial de todos los certificados emitidos, con opción de revocar o emitir manualmente para cualquier empleado.</p>
+      </div>
+    </div>
+
+    <div class="nota">
+      <strong>Acceso al panel:</strong> El menú lateral izquierdo muestra la sección "ADMINISTRACIÓN" solo para usuarios con rol Admin o Instructor. Los empleados no ven estas opciones.
+    </div>
+  </div>
+
+  <!-- 04: CURSOS -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <div class="seccion-num">04</div>
+      <div class="seccion-titulo">Crear y gestionar cursos</div>
+      <div class="seccion-desc">Los administradores e instructores pueden crear cursos completos con imagen de portada, descripción generada por IA y asignación por departamentos.</div>
+    </div>
+
+    <div class="pasos">
+      <div class="paso">
+        <div class="paso-num">1</div>
+        <div class="paso-contenido">
+          <h4>Ir a Gestión de cursos</h4>
+          <p>En el menú lateral, haz clic en "Gestión cursos" (visible solo para admins e instructores).</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">2</div>
+        <div class="paso-contenido">
+          <h4>Crear nuevo curso</h4>
+          <p>Haz clic en el botón "Nuevo curso". Se abrirá el formulario de creación.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">3</div>
+        <div class="paso-contenido">
+          <h4>Rellenar los datos del curso</h4>
+          <p><strong>Título:</strong> nombre del curso (obligatorio).<br>
+          <strong>Descripción:</strong> puedes escribirla o generarla automáticamente con el botón "Generar con IA".<br>
+          <strong>Imagen de portada:</strong> sube cualquier imagen — se recortará automáticamente a formato 16:9.<br>
+          <strong>Estado:</strong> Borrador (solo admins lo ven) o Publicado (visible para empleados).<br>
+          <strong>Obligatorio:</strong> marca si el curso es de realización obligatoria.<br>
+          <strong>Orden:</strong> posición en el listado de cursos.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">4</div>
+        <div class="paso-contenido">
+          <h4>Asignar departamentos</h4>
+          <p>Marca los departamentos a los que va dirigido el curso. Si no marcas ninguno, el curso será visible para todos los empleados.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">5</div>
+        <div class="paso-contenido">
+          <h4>Configurar certificado (opcional)</h4>
+          <p>Activa la opción de certificado si quieres que los empleados reciban un PDF oficial al completar el 100% del curso.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">6</div>
+        <div class="paso-contenido">
+          <h4>Guardar y añadir contenido</h4>
+          <p>Haz clic en "Crear curso". A continuación podrás añadir módulos y lecciones.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05: MÓDULOS Y LECCIONES -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <div class="seccion-num">05</div>
+      <div class="seccion-titulo">Módulos y lecciones</div>
+      <div class="seccion-desc">El contenido de cada curso se organiza en módulos (agrupaciones temáticas) que contienen lecciones individuales.</div>
+    </div>
+
+    <p style="font-weight:700; font-size:13px; margin-bottom:12px; color:#0C0C0C;">Tipos de lección disponibles:</p>
+    <table>
+      <thead><tr><th>Tipo</th><th>Descripción</th><th>Formatos</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Vídeo</strong></td><td>Lección en formato vídeo</td><td>Subir MP4/MOV/AVI o enlace YouTube/Vimeo</td></tr>
+        <tr><td><strong>PDF</strong></td><td>Documento descargable</td><td>URL del archivo PDF</td></tr>
+        <tr><td><strong>Quiz</strong></td><td>Evaluación de opción múltiple</td><td>Preguntas manuales o generadas con IA</td></tr>
+        <tr><td><strong>Directo</strong></td><td>Clase en vivo programada</td><td>Sesión con instructor en tiempo real</td></tr>
+      </tbody>
+    </table>
+
+    <div class="pasos" style="margin-top:24px;">
+      <p style="font-weight:700; font-size:13px; margin-bottom:12px; color:#0C0C0C;">Añadir un módulo y sus lecciones:</p>
+      <div class="paso">
+        <div class="paso-num">1</div>
+        <div class="paso-contenido">
+          <h4>Añadir módulo</h4>
+          <p>En la página de edición del curso, haz clic en "Añadir módulo". Escribe el título del módulo y confirma.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">2</div>
+        <div class="paso-contenido">
+          <h4>Añadir lección dentro del módulo</h4>
+          <p>Haz clic en "+ Añadir lección". Pon el título, selecciona el tipo y sube el contenido correspondiente.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">3</div>
+        <div class="paso-contenido">
+          <h4>Añadir descripción a la lección</h4>
+          <p>El campo "Descripción de la lección" permite explicar qué aprenderá el alumno. Usa el botón "Generar con IA" para rellenarlo automáticamente.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">4</div>
+        <div class="paso-contenido">
+          <h4>Guardar la lección</h4>
+          <p>Haz clic en "Guardar". La lección aparecerá en la lista del módulo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06: IA -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <div class="seccion-num">06</div>
+      <div class="seccion-titulo">Inteligencia Artificial integrada</div>
+      <div class="seccion-desc">Okeymas LMS incorpora IA en varios puntos del panel de administración para ahorrar tiempo en la creación de contenido.</div>
+    </div>
+
+    <div class="cards">
+      <div class="card yellow">
+        <div class="card-icon">✍️</div>
+        <h4>Descripción de curso con IA</h4>
+        <p>En el formulario de creación de curso, haz clic en "Generar con IA" junto al campo descripción. La IA generará un texto profesional basado en el título del curso.</p>
+      </div>
+      <div class="card yellow">
+        <div class="card-icon">📝</div>
+        <h4>Descripción de lección con IA</h4>
+        <p>Al editar una lección, haz clic en "Generar con IA" en el campo de descripción. Genera automáticamente un texto introductorio para esa lección.</p>
+      </div>
+      <div class="card yellow">
+        <div class="card-icon">🎯</div>
+        <h4>Objetivos del módulo con IA</h4>
+        <p>En cada módulo del editor, el botón "Objetivos con IA" genera una lista de 5-7 objetivos de aprendizaje concretos para ese módulo.</p>
+      </div>
+      <div class="card yellow">
+        <div class="card-icon">❓</div>
+        <h4>Preguntas de quiz con IA</h4>
+        <p>En lecciones de tipo Quiz, el botón "Generar preguntas con IA" crea 5 preguntas de opción múltiple con respuestas correctas marcadas.</p>
+      </div>
+    </div>
+
+    <div class="nota" style="margin-top:20px;">
+      <strong>Asistente de aprendizaje:</strong> El botón amarillo flotante (🤖) disponible en todo el dashboard permite a cualquier usuario hacer preguntas al asistente de IA especializado en formación para gimnasios y obtener respuestas inmediatas.
+    </div>
+  </div>
+
+  <!-- 07: VISTA EMPLEADO -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <div class="seccion-num">07</div>
+      <div class="seccion-titulo">Vista del empleado</div>
+      <div class="seccion-desc">Los empleados tienen una experiencia simplificada centrada en su formación personal.</div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">🏠</div>
+        <h4>Inicio</h4>
+        <p>Resumen de su actividad: cursos en progreso, próximas clases en directo y logros recientes.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📚</div>
+        <h4>Mis cursos</h4>
+        <p>Lista de todos los cursos disponibles para su departamento. Puede ver los que ya completó y los pendientes.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎖️</div>
+        <h4>Logros</h4>
+        <p>Sus badges y puntos acumulados por completar lecciones y cursos. Sistema de gamificación para motivar el aprendizaje.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📄</div>
+        <h4>Certificados</h4>
+        <p>Historial de todos sus certificados obtenidos. Puede descargarlos en PDF en cualquier momento.</p>
+      </div>
+    </div>
+
+    <div class="nota">
+      <strong>Filtro por departamento:</strong> Cada empleado solo ve los cursos asignados a su departamento. Un monitor no verá los cursos de recepción, y viceversa. Si el administrador no asigna departamento a un curso, lo verán todos.
+    </div>
+  </div>
+
+  <!-- 08: CERTIFICADOS -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <div class="seccion-num">08</div>
+      <div class="seccion-titulo">Certificados</div>
+      <div class="seccion-desc">La plataforma emite certificados PDF automáticos al completar el 100% de un curso que tenga habilitada la opción de certificación.</div>
+    </div>
+
+    <div class="pasos">
+      <div class="paso">
+        <div class="paso-num">1</div>
+        <div class="paso-contenido">
+          <h4>Completar el curso</h4>
+          <p>El empleado debe completar todas las lecciones del curso (vídeos, PDFs, quizzes) hasta llegar al 100%.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">2</div>
+        <div class="paso-contenido">
+          <h4>Emisión automática</h4>
+          <p>La plataforma genera el certificado PDF automáticamente con el nombre del empleado, nombre del curso, fecha y firma del responsable.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">3</div>
+        <div class="paso-contenido">
+          <h4>Descarga del certificado</h4>
+          <p>El empleado puede acceder a "Certificados" en el menú lateral y descargar cualquier certificado obtenido en formato PDF.</p>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <thead><tr><th>Campo del certificado</th><th>Descripción</th></tr></thead>
+      <tbody>
+        <tr><td>Nombre del empleado</td><td>Nombre completo registrado en la plataforma</td></tr>
+        <tr><td>Nombre del curso</td><td>Título exacto del curso completado</td></tr>
+        <tr><td>Tipo</td><td>Finalización (realizó el curso) o Profesional (acredita competencias)</td></tr>
+        <tr><td>Fecha de emisión</td><td>Fecha en que se completó el curso</td></tr>
+        <tr><td>Validez</td><td>Configurable por el admin: sin caducidad o con fecha límite</td></tr>
+        <tr><td>Firmante</td><td>Nombre y cargo del responsable configurado en el curso</td></tr>
+        <tr><td>Código único</td><td>Identificador para verificación de autenticidad</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 09: FAQ -->
+  <div class="seccion">
+    <div class="seccion-header">
+      <div class="seccion-num">09</div>
+      <div class="seccion-titulo">Preguntas frecuentes</div>
+      <div class="seccion-desc">Respuestas a las dudas más comunes durante el uso de la plataforma.</div>
+    </div>
+
+    <div class="pasos">
+      <div class="paso">
+        <div class="paso-num">?</div>
+        <div class="paso-contenido">
+          <h4>¿Un empleado puede ver cursos de otro departamento?</h4>
+          <p>No. Los cursos asignados a departamentos específicos solo son visibles para los empleados de ese departamento. Los cursos sin departamento asignado son visibles para todos.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">?</div>
+        <div class="paso-contenido">
+          <h4>¿Qué pasa si un empleado no supera el quiz?</h4>
+          <p>Puede volver a intentarlo. El número de intentos es ilimitado. El progreso se guarda y puede retomar el quiz cuando quiera.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">?</div>
+        <div class="paso-contenido">
+          <h4>¿Se puede cambiar el rol de un usuario?</h4>
+          <p>Sí. El Super Admin puede cambiar el rol de cualquier usuario desde el panel de gestión de usuarios.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">?</div>
+        <div class="paso-contenido">
+          <h4>¿Los certificados tienen validez oficial?</h4>
+          <p>Los certificados son documentos PDF con código único de verificación y firma del responsable designado. Su validez como documento interno es total; para validez externa depende del reconocimiento del sector.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">?</div>
+        <div class="paso-contenido">
+          <h4>¿Qué navegadores son compatibles?</h4>
+          <p>La plataforma funciona en todos los navegadores modernos: Google Chrome, Safari, Firefox y Microsoft Edge. Se recomienda mantener el navegador actualizado.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">?</div>
+        <div class="paso-contenido">
+          <h4>¿Se puede usar desde el móvil?</h4>
+          <p>Sí. La plataforma está diseñada para funcionar en cualquier dispositivo: ordenador, tablet y smartphone, sin necesidad de instalar ninguna aplicación.</p>
+        </div>
+      </div>
+      <div class="paso">
+        <div class="paso-num">?</div>
+        <div class="paso-contenido">
+          <h4>¿Qué pasa si olvidé mi contraseña?</h4>
+          <p>Contacta con el administrador de tu sede para que restablezca tu contraseña desde el panel de gestión de usuarios.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CIERRE -->
+  <div class="cierre">
+    <h2>¿Tienes alguna duda?<br><span>Estamos para ayudarte.</span></h2>
+    <p>Para soporte técnico o consultas sobre la plataforma, contacta con el equipo de Okeymas.</p>
+    <div class="cierre-url">pedro.zamora@yelaugroup.com</div>
+    <div class="cierre-footer">
+      Okeymas LMS · Yelau Group · okeymas-lms-web.vercel.app
+    </div>
+  </div>
+
+</div>
+
+<button class="btn-print" onclick="window.print()">⬇ Guardar como PDF</button>
+
+</body>
+</html>

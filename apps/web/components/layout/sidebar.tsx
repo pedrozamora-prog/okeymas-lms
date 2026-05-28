@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
+import { NotificationBell } from "@/components/layout/notification-bell";
 import {
   LayoutDashboard,
   BookOpen,
@@ -19,6 +20,8 @@ import {
   Menu,
   X,
   LibraryBig,
+  ShieldCheck,
+  Zap,
 } from "lucide-react";
 
 interface NavItem {
@@ -39,9 +42,11 @@ const navItems: NavItem[] = [
 
 const adminItems: NavItem[] = [
   { href: "/admin/courses",       label: "Gestión cursos", icon: LibraryBig, roles: ["SUPER_ADMIN", "BRANCH_ADMIN", "INSTRUCTOR"] },
-  { href: "/admin/certificates",  label: "Certificados",   icon: Award,      roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
-  { href: "/admin/users",         label: "Usuarios",       icon: Users,      roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
-  { href: "/admin/reports",       label: "Reportes",       icon: BarChart3,  roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/certificates",  label: "Certificados",   icon: Award,        roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/compliance",       label: "Cumplimiento",   icon: ShieldCheck,  roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/enrollment-rules", label: "Auto-inscripción",icon: Zap,         roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/users",         label: "Usuarios",       icon: Users,        roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/reports",       label: "Reportes",       icon: BarChart3,    roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/settings",      label: "Configuración",  icon: Settings,   roles: ["SUPER_ADMIN"] },
 ];
 
@@ -102,6 +107,9 @@ export function Sidebar({ userRole, userName, userEmail }: SidebarProps) {
 
       {/* User */}
       <div className="p-3 border-t border-border flex-shrink-0">
+        <div className="flex items-center justify-between px-2 mb-2">
+          <NotificationBell />
+        </div>
         <div className="flex items-center gap-3 px-2 mb-1">
           <div className="w-8 h-8 rounded-full bg-yelau-yellow flex items-center justify-center flex-shrink-0">
             <span className="text-yelau-black font-bold text-sm">

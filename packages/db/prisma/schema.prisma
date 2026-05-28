@@ -42,6 +42,14 @@ enum CertificateType {
   PROFESSIONAL
 }
 
+enum NotificationType {
+  NEW_ENROLLMENT
+  DEADLINE_REMINDER
+  CERTIFICATE_EXPIRY
+  MANDATORY_OVERDUE
+  COURSE_COMPLETED
+}
+
 enum Department {
   ADMINISTRACION
   RECEPCION
@@ -61,9 +69,10 @@ model Organization {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  users       User[]
-  courses     Course[]
-  liveClasses LiveClass[]
+  users           User[]
+  courses         Course[]
+  liveClasses     LiveClass[]
+  enrollmentRules EnrollmentRule[]
 
   @@map("organizations")
 }
@@ -96,6 +105,7 @@ model User {
   points        UserPoints?
   badges        UserBadge[]
   certificates  Certificate[]
+  notifications Notification[]
 
   @@map("users")
 }
@@ -145,16 +155,17 @@ model VerificationToken {
 // ─── COURSE ──────────────────────────────────────────────────────────────────
 
 model Course {
-  id           String       @id @default(cuid())
-  title        String
-  description  String?
-  thumbnailUrl String?
-  status       CourseStatus @default(DRAFT)
-  departments  Department[]
-  isRequired   Boolean      @default(false)
-  order        Int          @default(0)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  id              String       @id @default(cuid())
+  title           String
+  description     String?
+  thumbnailUrl    String?
+  status          CourseStatus @default(DRAFT)
+  departments     Department[]
+  isRequired      Boolean      @default(false)
+  daysToComplete  Int?
+  order           Int          @default(0)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
@@ -165,10 +176,11 @@ model Course {
   certSignerName          String?
   certSignerTitle         String?
 
-  modules      Module[]
-  enrollments  Enrollment[]
-  paths        LearningPathCourse[]
-  certificates Certificate[]
+  modules          Module[]
+  enrollments      Enrollment[]
+  paths            LearningPathCourse[]
+  certificates     Certificate[]
+  enrollmentRules  EnrollmentRule[]
 
   @@map("courses")
 }
@@ -264,7 +276,9 @@ model Enrollment {
   enrolledAt  DateTime         @default(now())
   completedAt DateTime?
   expiresAt   DateTime?
+  deadline    DateTime?
   score       Int?
+  autoEnrolled Boolean         @default(false)
 
   userId   String
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -396,6 +410,43 @@ model UserBadge {
 
   @@id([userId, badgeId])
   @@map("user_badges")
+}
+
+// ─── CERTIFICATES ────────────────────────────────────────────────────────────
+
+// ─── ENROLLMENT RULES ────────────────────────────────────────────────────────
+
+model EnrollmentRule {
+  id             String      @id @default(cuid())
+  triggerRole    Role?
+  triggerDept    Department?
+  daysToComplete Int?
+  isActive       Boolean     @default(true)
+  createdAt      DateTime    @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  courseId       String
+  course         Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@map("enrollment_rules")
+}
+
+// ─── NOTIFICATIONS ────────────────────────────────────────────────────────────
+
+model Notification {
+  id        String           @id @default(cuid())
+  type      NotificationType
+  title     String
+  message   String
+  read      Boolean          @default(false)
+  sentEmail Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
 }
 
 // ─── CERTIFICATES ────────────────────────────────────────────────────────────

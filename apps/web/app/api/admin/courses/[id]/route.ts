@@ -20,7 +20,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (check.error) return NextResponse.json({ error: check.error }, { status: check.status });
 
   const body = await req.json();
-  const { title, description, thumbnailUrl, status, isRequired, order,
+  const { title, description, thumbnailUrl, status, isRequired, daysToComplete, order,
           departments,
           certificateEnabled, certificateType, certificateValidityDays,
           certSignerName, certSignerTitle } = body;
@@ -33,6 +33,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       ...(thumbnailUrl !== undefined && { thumbnailUrl: thumbnailUrl?.trim() || null }),
       ...(status !== undefined && { status }),
       ...(isRequired !== undefined && { isRequired }),
+      ...(daysToComplete !== undefined && { daysToComplete: daysToComplete ?? null }),
       ...(order !== undefined && { order }),
       ...(departments !== undefined && { departments }),
       ...(certificateEnabled !== undefined && { certificateEnabled }),

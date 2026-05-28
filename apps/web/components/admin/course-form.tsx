@@ -53,6 +53,7 @@ export function CourseForm({ initial }: CourseFormProps) {
   const [thumbnailUrl, setThumb]    = useState(initial?.thumbnailUrl ?? "");
   const [status, setStatus]         = useState(initial?.status ?? "DRAFT");
   const [isRequired, setRequired]   = useState(initial?.isRequired ?? false);
+  const [daysToComplete, setDays]   = useState(String(initial?.daysToComplete ?? ""));
   const [order, setOrder]           = useState(String(initial?.order ?? 0));
   const [loading, setLoading]             = useState(false);
   const [aiLoading, setAiLoading]         = useState(false);
@@ -149,6 +150,7 @@ export function CourseForm({ initial }: CourseFormProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title, description, thumbnailUrl, status, isRequired, order: Number(order),
+          daysToComplete: daysToComplete ? Number(daysToComplete) : null,
           departments,
           certificateEnabled: certEnabled,
           certificateType: certType,
@@ -314,10 +316,28 @@ export function CourseForm({ initial }: CourseFormProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="false">No</SelectItem>
-                  <SelectItem value="true">Sí</SelectItem>
+                  <SelectItem value="true">Sí — formación obligatoria</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+
+            {/* Días para completar */}
+            {isRequired && (
+              <div className="space-y-1.5">
+                <Label htmlFor="daysToComplete">Días para completar</Label>
+                <Input
+                  id="daysToComplete"
+                  type="number"
+                  min={1}
+                  placeholder="Sin límite"
+                  value={daysToComplete}
+                  onChange={e => setDays(e.target.value)}
+                />
+                <p className="text-[11px] text-muted-foreground">
+                  Días desde la inscripción para completarlo. Vacío = sin límite.
+                </p>
+              </div>
+            )}
 
             {/* Orden */}
             <div className="space-y-1.5">

@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { Department } from "@prisma/client";
+import { applyEnrollmentRules } from "@/lib/auto-enroll";
 
 export async function POST(req: Request) {
   const { name, email, phone, password, department } = await req.json();
@@ -32,6 +33,9 @@ export async function POST(req: Request) {
       organizationId: org.id,
     },
   });
+
+  // Auto-inscribir según reglas activas
+  await applyEnrollmentRules(user.id, org.id, user.role, user.department);
 
   return NextResponse.json({ ok: true, userId: user.id }, { status: 201 });
 }
