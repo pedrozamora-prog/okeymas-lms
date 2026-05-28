@@ -15,15 +15,26 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     return NextResponse.json({ error: "No autorizado" }, { status: 403 });
   }
 
-  const { name, logoUrl } = await req.json();
-  if (!name?.trim()) return NextResponse.json({ error: "El nombre es obligatorio" }, { status: 400 });
+  const body = await req.json();
+  const { name, logoUrl, notifyNewEnrollment, notifyDeadline7d, notifyDeadline3d, notifyDeadline1d, notifyOverdue } = body;
+
+  const data: Record<string, unknown> = {};
+
+  if (name !== undefined) {
+    if (!name?.trim()) return NextResponse.json({ error: "El nombre es obligatorio" }, { status: 400 });
+    data.name = name.trim();
+    data.logoUrl = logoUrl?.trim() || null;
+  }
+
+  if (notifyNewEnrollment !== undefined) data.notifyNewEnrollment = notifyNewEnrollment;
+  if (notifyDeadline7d    !== undefined) data.notifyDeadline7d    = notifyDeadline7d;
+  if (notifyDeadline3d    !== undefined) data.notifyDeadline3d    = notifyDeadline3d;
+  if (notifyDeadline1d    !== undefined) data.notifyDeadline1d    = notifyDeadline1d;
+  if (notifyOverdue       !== undefined) data.notifyOverdue       = notifyOverdue;
 
   const org = await prisma.organization.update({
     where: { id },
-    data: {
-      name: name.trim(),
-      logoUrl: logoUrl?.trim() || null,
-    },
+    data,
   });
 
   return NextResponse.json(org);

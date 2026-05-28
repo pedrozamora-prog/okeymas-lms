@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { OrgSettingsForm } from "@/components/admin/org-settings-form";
+import { NotificationSettingsForm } from "@/components/admin/notification-settings-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -119,16 +120,21 @@ export default async function SettingsPage() {
       <section className="space-y-4">
         <div className="flex items-center gap-2">
           <Bell className="w-4 h-4 text-yelau-yellow" />
-          <h2 className="text-base font-semibold text-foreground">Notificaciones</h2>
+          <h2 className="text-base font-semibold text-foreground">Notificaciones por email</h2>
         </div>
-        <Card>
-          <CardContent className="pt-5 pb-5">
-            <p className="text-sm text-muted-foreground">
-              Las notificaciones por email se configurarán en una próxima actualización.
-              Actualmente los avisos se muestran en tiempo real dentro de la plataforma.
-            </p>
-          </CardContent>
-        </Card>
+        <p className="text-sm text-muted-foreground -mt-2">
+          Activa o desactiva los emails automáticos que reciben los empleados.
+        </p>
+        <NotificationSettingsForm
+          orgId={org.id}
+          initial={{
+            notifyNewEnrollment: org.notifyNewEnrollment,
+            notifyDeadline7d:    org.notifyDeadline7d,
+            notifyDeadline3d:    org.notifyDeadline3d,
+            notifyDeadline1d:    org.notifyDeadline1d,
+            notifyOverdue:       org.notifyOverdue,
+          }}
+        />
       </section>
     </div>
   );

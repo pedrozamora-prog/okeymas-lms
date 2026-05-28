@@ -13,35 +13,42 @@ export async function GET(req: NextRequest) {
 
   const now = new Date();
 
-  // Inscripciones activas con deadline
+  // Inscripciones activas con deadline, incluyendo config de notificaciones de la organización
   const enrollments = await prisma.enrollment.findMany({
     where: {
       status: { in: ["ENROLLED", "IN_PROGRESS"] },
       deadline: { not: null },
     },
     include: {
-      user:   { select: { email: true, name: true } },
+      user:   { select: { email: true, name: true, organizationId: true } },
       course: { select: { title: true } },
     },
   });
+
+  // Cargar configuraciones de organizaciones involucradas
+  const orgIds = [...new Set(enrollments.map(e => e.user.organizationId))];
+  const orgs = await prisma.organization.findMany({
+    where: { id: { in: orgIds } },
+    select: { id: true, notifyDeadline7d: true, notifyDeadline3d: true, notifyDeadline1d: true, notifyOverdue: true },
+  });
+  const orgMap = new Map(orgs.map(o => [o.id, o]));
 
   let reminded = 0;
   let overdue = 0;
 
   for (const enrollment of enrollments) {
     if (!enrollment.deadline) continue;
+    const orgConfig = orgMap.get(enrollment.user.organizationId);
     const deadline = new Date(enrollment.deadline);
     const msLeft = deadline.getTime() - now.getTime();
     const daysLeft = Math.ceil(msLeft / 86400000);
 
     if (daysLeft < 0) {
-      // Vencido — cambiar estado y notificar
       await prisma.enrollment.update({
         where: { id: enrollment.id },
         data: { status: "EXPIRED" },
       });
 
-      // Crear notificación in-app
       await prisma.notification.create({
         data: {
           userId:  enrollment.userId,
@@ -51,10 +58,16 @@ export async function GET(req: NextRequest) {
         },
       });
 
-      await sendOverdueEmail(enrollment.user.email, enrollment.user.name, enrollment.course.title);
+      if (orgConfig?.notifyOverdue) {
+        await sendOverdueEmail(enrollment.user.email, enrollment.user.name, enrollment.course.title);
+      }
       overdue++;
     } else if (daysLeft === 7 || daysLeft === 3 || daysLeft === 1) {
-      // Recordatorio en días clave
+      const shouldEmail =
+        (daysLeft === 7 && orgConfig?.notifyDeadline7d) ||
+        (daysLeft === 3 && orgConfig?.notifyDeadline3d) ||
+        (daysLeft === 1 && orgConfig?.notifyDeadline1d);
+
       await prisma.notification.upsert({
         where: { id: `reminder-${enrollment.id}-${daysLeft}d` },
         update: {},
@@ -67,12 +80,14 @@ export async function GET(req: NextRequest) {
         },
       });
 
-      await sendDeadlineReminderEmail(
-        enrollment.user.email,
-        enrollment.user.name,
-        enrollment.course.title,
-        daysLeft,
-      );
+      if (shouldEmail) {
+        await sendDeadlineReminderEmail(
+          enrollment.user.email,
+          enrollment.user.name,
+          enrollment.course.title,
+          daysLeft,
+        );
+      }
       reminded++;
     }
   }

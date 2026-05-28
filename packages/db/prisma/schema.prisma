@@ -69,6 +69,13 @@ model Organization {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Configuración de notificaciones por email
+  notifyNewEnrollment Boolean @default(true)
+  notifyDeadline7d    Boolean @default(true)
+  notifyDeadline3d    Boolean @default(true)
+  notifyDeadline1d    Boolean @default(true)
+  notifyOverdue       Boolean @default(true)
+
   users           User[]
   courses         Course[]
   liveClasses     LiveClass[]
