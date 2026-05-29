@@ -13,12 +13,14 @@ export const metadata = { title: "Usuarios" };
 const roleLabel: Record<string, string> = {
   SUPER_ADMIN:  "Super Admin",
   BRANCH_ADMIN: "Admin",
+  MANAGER:      "Mánager",
   INSTRUCTOR:   "Instructor",
   EMPLOYEE:     "Empleado",
 };
 const roleColor: Record<string, string> = {
   SUPER_ADMIN:  "bg-yelau-yellow/20 text-yelau-yellow border-yelau-yellow/30",
   BRANCH_ADMIN: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+  MANAGER:      "bg-green-500/20 text-green-600 border-green-500/30",
   INSTRUCTOR:   "bg-purple-500/20 text-purple-400 border-purple-500/30",
   EMPLOYEE:     "bg-muted text-muted-foreground",
 };

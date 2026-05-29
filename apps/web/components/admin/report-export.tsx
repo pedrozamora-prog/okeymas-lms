@@ -10,7 +10,7 @@ import { FileSpreadsheet, FileText, Download, Filter } from "lucide-react";
 import { toast } from "sonner";
 
 const DEPTS = [
-  { value: "",              label: "Todos los departamentos" },
+  { value: "all",           label: "Todos los departamentos" },
   { value: "ADMINISTRACION",label: "Administración" },
   { value: "RECEPCION",     label: "Recepción" },
   { value: "LIMPIEZA",      label: "Limpieza" },
@@ -18,15 +18,17 @@ const DEPTS = [
   { value: "DEPORTIVO",     label: "Deportivo" },
 ];
 
-export function ReportExport() {
-  const [dept, setDept]   = useState("");
+interface Props { fixedDept?: string }
+
+export function ReportExport({ fixedDept }: Props = {}) {
+  const [dept, setDept]   = useState(fixedDept ?? "all");
   const [from, setFrom]   = useState("");
   const [to, setTo]       = useState("");
   const [loading, setLoading] = useState<"excel" | "pdf" | null>(null);
 
   function buildUrl(format: "excel" | "pdf") {
     const params = new URLSearchParams({ format });
-    if (dept) params.set("dept", dept);
+    if (dept && dept !== "all") params.set("dept", dept);
     if (from) params.set("from", from);
     if (to)   params.set("to", to);
     return `/api/admin/reports/export?${params.toString()}`;
@@ -65,16 +67,22 @@ export function ReportExport() {
           {/* Departamento */}
           <div className="space-y-1.5">
             <Label className="text-xs">Departamento</Label>
-            <Select value={dept} onValueChange={setDept}>
-              <SelectTrigger>
-                <SelectValue placeholder="Todos" />
-              </SelectTrigger>
-              <SelectContent>
-                {DEPTS.map(d => (
-                  <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {fixedDept ? (
+              <div className="h-10 px-3 flex items-center rounded-md border border-border bg-muted text-sm text-foreground">
+                {DEPTS.find(d => d.value === fixedDept)?.label ?? fixedDept}
+              </div>
+            ) : (
+              <Select value={dept} onValueChange={setDept}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Todos" />
+                </SelectTrigger>
+                <SelectContent>
+                  {DEPTS.map(d => (
+                    <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
 
           {/* Desde */}

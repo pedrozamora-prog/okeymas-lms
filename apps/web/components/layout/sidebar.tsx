@@ -41,13 +41,17 @@ const navItems: NavItem[] = [
 ];
 
 const adminItems: NavItem[] = [
-  { href: "/admin/courses",       label: "Gestión cursos", icon: LibraryBig, roles: ["SUPER_ADMIN", "BRANCH_ADMIN", "INSTRUCTOR"] },
-  { href: "/admin/certificates",  label: "Certificados",   icon: Award,        roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
-  { href: "/admin/compliance",       label: "Cumplimiento",   icon: ShieldCheck,  roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
-  { href: "/admin/enrollment-rules", label: "Auto-inscripción",icon: Zap,         roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
-  { href: "/admin/users",         label: "Usuarios",       icon: Users,        roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
-  { href: "/admin/reports",       label: "Reportes",       icon: BarChart3,    roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
-  { href: "/admin/settings",      label: "Configuración",  icon: Settings,   roles: ["SUPER_ADMIN"] },
+  { href: "/admin/courses",          label: "Gestión cursos",    icon: LibraryBig,  roles: ["SUPER_ADMIN", "BRANCH_ADMIN", "INSTRUCTOR"] },
+  { href: "/admin/certificates",     label: "Certificados",      icon: Award,       roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/compliance",       label: "Cumplimiento",      icon: ShieldCheck, roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/enrollment-rules", label: "Auto-inscripción",  icon: Zap,         roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/users",            label: "Usuarios",          icon: Users,       roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/reports",          label: "Reportes",          icon: BarChart3,   roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/settings",         label: "Configuración",     icon: Settings,    roles: ["SUPER_ADMIN"] },
+  // Mánager
+  { href: "/manager/team",           label: "Mi equipo",         icon: Users,       roles: ["MANAGER"] },
+  { href: "/manager/compliance",     label: "Cumplimiento",      icon: ShieldCheck, roles: ["MANAGER"] },
+  { href: "/manager/reports",        label: "Informes",          icon: BarChart3,   roles: ["MANAGER"] },
 ];
 
 interface SidebarProps {

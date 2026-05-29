@@ -12,6 +12,7 @@
     "@auth/prisma-adapter": "^2.11.2",
     "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^6.19.3",
+    "@radix-ui/react-switch": "^1.2.6",
     "@react-pdf/renderer": "^4.5.1",
     "@supabase/supabase-js": "^2.106.1",
     "bcryptjs": "^3.0.3",
