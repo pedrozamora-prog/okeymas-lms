@@ -34,6 +34,7 @@ interface CourseFormProps {
     thumbnailUrl: string | null;
     status: string;
     isRequired: boolean;
+    daysToComplete?: number | null;
     order: number;
     departments: string[];
     certificateEnabled: boolean;

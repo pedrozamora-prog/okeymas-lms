@@ -4,7 +4,15 @@ export const dynamic = "force-dynamic";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import * as XLSX from "xlsx";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const XLSX = require("xlsx") as {
+  utils: {
+    book_new(): Record<string, unknown>;
+    aoa_to_sheet(data: unknown[][]): Record<string, unknown>;
+    book_append_sheet(wb: Record<string, unknown>, ws: Record<string, unknown>, name: string): void;
+  };
+  write(wb: Record<string, unknown>, opts: { type: string; bookType: string }): Uint8Array;
+};
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -85,7 +93,7 @@ function generateExcel({ employees, courses, enrollments, now, dateLabel, user }
   const wb = XLSX.utils.book_new();
 
   // ── Hoja 1: Cumplimiento por empleado ──
-  const enrollMap = new Map(enrollments.map((e: any) => [`${e.userId}:${e.courseId}`, e]));
+  const enrollMap = new Map<string, any>(enrollments.map((e: any) => [`${e.userId}:${e.courseId}`, e]));
 
   const complianceRows = [
     ["INFORME DE CUMPLIMIENTO — OKEYMAS LMS"],
@@ -109,7 +117,7 @@ function generateExcel({ employees, courses, enrollments, now, dateLabel, user }
   const ws1 = XLSX.utils.aoa_to_sheet(complianceRows);
 
   // Ancho de columnas
-  ws1["!cols"] = [
+  (ws1 as Record<string, unknown>)["!cols"] = [
     { wch: 25 }, { wch: 30 }, { wch: 18 },
     ...courses.map(() => ({ wch: 20 })),
     { wch: 14 },
@@ -138,7 +146,7 @@ function generateExcel({ employees, courses, enrollments, now, dateLabel, user }
   }
 
   const ws2 = XLSX.utils.aoa_to_sheet(detailRows);
-  ws2["!cols"] = [
+  (ws2 as Record<string, unknown>)["!cols"] = [
     { wch: 25 }, { wch: 30 }, { wch: 18 }, { wch: 35 },
     { wch: 12 }, { wch: 14 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 12 },
   ];
@@ -166,12 +174,12 @@ function generateExcel({ employees, courses, enrollments, now, dateLabel, user }
   ];
 
   const ws3 = XLSX.utils.aoa_to_sheet(deptRows);
-  ws3["!cols"] = [{ wch: 20 }, { wch: 22 }, { wch: 14 }, { wch: 12 }, { wch: 20 }];
+  (ws3 as Record<string, unknown>)["!cols"] = [{ wch: 20 }, { wch: 22 }, { wch: 14 }, { wch: 12 }, { wch: 20 }];
   XLSX.utils.book_append_sheet(wb, ws3, "Por departamento");
 
   const buf = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
 
-  return new Response(buf, {
+  return new Response(buf.buffer as ArrayBuffer, {
     headers: {
       "Content-Type":        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "Content-Disposition": `attachment; filename="informe-cumplimiento-${dateLabel}.xlsx"`,
@@ -203,7 +211,7 @@ async function generatePDF({ employees, courses, enrollments, now, dateLabel, us
     statusPending: { color: "#d97706" },
   });
 
-  const enrollMap = new Map(enrollments.map((e: any) => [`${e.userId}:${e.courseId}`, e]));
+  const enrollMap = new Map<string, any>(enrollments.map((e: any) => [`${e.userId}:${e.courseId}`, e]));
 
   // Resumen por departamento
   const deptStats: Record<string, { total: number; completed: number }> = {};
