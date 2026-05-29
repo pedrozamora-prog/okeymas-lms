@@ -1,7 +1,12 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM = "Okeymas LMS <noreply@okeymas.com>";
+
+function getResend() {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return null;
+  return new Resend(key);
+}
 
 function baseTemplate(content: string) {
   return `<!DOCTYPE html>
@@ -40,7 +45,7 @@ export async function sendNewEnrollmentEmail(to: string, userName: string, cours
     ? `<p style="margin:16px 0 0;font-size:14px;color:#6b7280">⏰ Fecha límite: <strong>${deadline.toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}</strong></p>`
     : "";
 
-  await resend.emails.send({
+  await getResend()?.emails.send({
     from: FROM,
     to,
     subject: `Nueva formación asignada: ${courseTitle}`,
@@ -60,7 +65,7 @@ export async function sendDeadlineReminderEmail(to: string, userName: string, co
   if (!process.env.RESEND_API_KEY) return;
   const urgent = daysLeft <= 3;
 
-  await resend.emails.send({
+  await getResend()?.emails.send({
     from: FROM,
     to,
     subject: `⚠ Recuerda completar: ${courseTitle} (${daysLeft}d restantes)`,
@@ -81,7 +86,7 @@ export async function sendDeadlineReminderEmail(to: string, userName: string, co
 export async function sendOverdueEmail(to: string, userName: string, courseTitle: string) {
   if (!process.env.RESEND_API_KEY) return;
 
-  await resend.emails.send({
+  await getResend()?.emails.send({
     from: FROM,
     to,
     subject: `Formación vencida: ${courseTitle}`,
