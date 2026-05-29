@@ -49,6 +49,14 @@ enum NotificationType {
   CERTIFICATE_EXPIRY
   MANDATORY_OVERDUE
   COURSE_COMPLETED
+  NEW_COMMENT
+}
+
+enum SurveyQuestionType {
+  NPS
+  RATING
+  TEXT
+  CHOICE
 }
 
 enum Department {
@@ -104,16 +112,18 @@ model User {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  accounts      Account[]
-  sessions      Session[]
-  enrollments   Enrollment[]
-  progress      LessonProgress[]
-  instructing   LiveClass[]      @relation("LiveClassInstructor")
-  attendance    LiveAttendance[]
-  points        UserPoints?
-  badges        UserBadge[]
-  certificates  Certificate[]
-  notifications Notification[]
+  accounts        Account[]
+  sessions        Session[]
+  enrollments     Enrollment[]
+  progress        LessonProgress[]
+  instructing     LiveClass[]      @relation("LiveClassInstructor")
+  attendance      LiveAttendance[]
+  points          UserPoints?
+  badges          UserBadge[]
+  certificates    Certificate[]
+  notifications   Notification[]
+  lessonComments  LessonComment[]
+  surveyResponses SurveyResponse[]
 
   @@map("users")
 }
@@ -189,6 +199,7 @@ model Course {
   paths            LearningPathCourse[]
   certificates     Certificate[]
   enrollmentRules  EnrollmentRule[]
+  survey           CourseSurvey?
 
   @@map("courses")
 }
@@ -228,6 +239,7 @@ model Lesson {
   quiz       Quiz?
   liveClass  LiveClass?
   progress   LessonProgress[]
+  comments   LessonComment[]
 
   @@map("lessons")
 }
@@ -473,4 +485,67 @@ model Certificate {
   course   Course? @relation(fields: [courseId], references: [id], onDelete: SetNull)
 
   @@map("certificates")
+}
+
+// ─── FOROS (LESSON COMMENTS) ─────────────────────────────────────────────────
+
+model LessonComment {
+  id        String   @id @default(cuid())
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  parentId String?
+  parent   LessonComment?  @relation("replies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies  LessonComment[] @relation("replies")
+
+  @@map("lesson_comments")
+}
+
+// ─── ENCUESTAS POST-CURSO ─────────────────────────────────────────────────────
+
+model CourseSurvey {
+  id        String   @id @default(cuid())
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  courseId  String @unique
+  course    Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  questions SurveyQuestion[]
+  responses SurveyResponse[]
+
+  @@map("course_surveys")
+}
+
+model SurveyQuestion {
+  id      String             @id @default(cuid())
+  text    String
+  type    SurveyQuestionType @default(TEXT)
+  options String[]
+  order   Int                @default(0)
+
+  surveyId String
+  survey   CourseSurvey @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+
+  @@map("survey_questions")
+}
+
+model SurveyResponse {
+  id        String   @id @default(cuid())
+  answers   Json
+  createdAt DateTime @default(now())
+
+  surveyId String
+  survey   CourseSurvey @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([surveyId, userId])
+  @@map("survey_responses")
 }

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock, FileText, HelpCircle, Radio } from "lucide-react";
 import { LessonCompleteButton } from "@/components/lesson/lesson-complete-button";
+import { LessonComments } from "@/components/lessons/lesson-comments";
 
 export default async function LessonPage({
   params,
@@ -14,7 +15,7 @@ export default async function LessonPage({
   params: Promise<{ id: string; lessonId: string }>;
 }) {
   const session = await auth();
-  const user = session?.user as { id: string };
+  const user = session?.user as { id: string; role?: string };
   const { id: courseId, lessonId } = await params;
 
   // Verificar inscripción
@@ -130,6 +131,15 @@ export default async function LessonPage({
           <p className="text-sm text-muted-foreground leading-relaxed">{lesson.description}</p>
         </div>
       )}
+
+      {/* Foro de la lección */}
+      <div className="pt-6 border-t border-border">
+        <LessonComments
+          lessonId={lessonId}
+          currentUserId={user.id}
+          currentUserRole={user.role ?? "EMPLOYEE"}
+        />
+      </div>
 
       {/* Actions */}
       <div className="flex items-center justify-between pt-4 border-t border-border">

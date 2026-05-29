@@ -4,6 +4,7 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { CourseForm } from "@/components/admin/course-form";
 import { ModuleEditor } from "@/components/admin/module-editor";
+import { SurveyEditor } from "@/components/admin/survey-editor";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Eye } from "lucide-react";
@@ -35,6 +36,7 @@ export default async function EditCoursePage({ params }: { params: Promise<{ id:
         include: { lessons: { orderBy: { order: "asc" } } },
         orderBy: { order: "asc" },
       },
+      survey: { include: { questions: { orderBy: { order: "asc" } } } },
     },
   });
 
@@ -100,6 +102,27 @@ export default async function EditCoursePage({ params }: { params: Promise<{ id:
             Contenido del curso
           </h2>
           <ModuleEditor courseId={course.id} initialModules={course.modules} />
+        </section>
+
+        {/* Encuesta post-curso */}
+        <section className="space-y-3">
+          <h2 className="text-base font-semibold text-foreground border-b border-border pb-2">
+            Encuesta post-curso
+          </h2>
+          <SurveyEditor
+            courseId={course.id}
+            initialSurvey={course.survey ? {
+              id:       course.survey.id,
+              isActive: course.survey.isActive,
+              questions: course.survey.questions.map(q => ({
+                id:      q.id,
+                text:    q.text,
+                type:    q.type as "NPS" | "RATING" | "TEXT" | "CHOICE",
+                options: q.options,
+                order:   q.order,
+              })),
+            } : null}
+          />
         </section>
       </div>
     </div>

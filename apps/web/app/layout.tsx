@@ -16,13 +16,23 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: { default: "Okeymas LMS", template: "%s | Okeymas LMS" },
   description: "Plataforma de formación profesional Okeymas LMS",
-  icons: { icon: "/favicon.png", apple: "/favicon.png" },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Okeymas LMS",
+  },
+  icons: {
+    icon:  "/favicon.png",
+    apple: "/favicon.png",
+  },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
+  themeColor: "#0C0C0C",
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
