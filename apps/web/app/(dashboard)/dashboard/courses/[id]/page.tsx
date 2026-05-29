@@ -116,6 +116,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
         <LessonList
           modules={course.modules}
           userId={user.id}
+          courseId={id}
           enrolled={!!enrollment}
         />
       </div>

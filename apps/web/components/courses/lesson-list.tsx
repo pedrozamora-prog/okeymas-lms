@@ -29,11 +29,12 @@ interface Module  { id: string; title: string; lessons: Lesson[] }
 interface LessonListProps {
   modules: Module[];
   userId: string;
+  courseId: string;
   enrolled: boolean;
   completedIds?: Set<string>;
 }
 
-export function LessonList({ modules, enrolled, completedIds = new Set() }: LessonListProps) {
+export function LessonList({ modules, courseId, enrolled, completedIds = new Set() }: LessonListProps) {
   const [openModules, setOpenModules] = useState<Set<string>>(new Set([modules[0]?.id]));
 
   const toggleModule = (id: string) =>
@@ -119,7 +120,7 @@ export function LessonList({ modules, enrolled, completedIds = new Set() }: Less
                   return isLocked ? (
                     <div key={lesson.id}>{content}</div>
                   ) : (
-                    <Link key={lesson.id} href={`/dashboard/courses/lesson/${lesson.id}`}>
+                    <Link key={lesson.id} href={`/dashboard/courses/${courseId}/lessons/${lesson.id}`}>
                       {content}
                     </Link>
                   );
