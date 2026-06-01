@@ -16,9 +16,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Este email ya está registrado" }, { status: 409 });
   }
 
-  const org = await prisma.organization.findFirst();
+  const org = await prisma.organization.findFirst({
+    include: { _count: { select: { users: true } } },
+  });
   if (!org) {
     return NextResponse.json({ error: "No hay ninguna organización configurada" }, { status: 500 });
+  }
+
+  // Verificar límite del plan
+  if (org._count.users >= org.maxUsers) {
+    return NextResponse.json({
+      error: `Límite de usuarios alcanzado (${org.maxUsers} en plan ${org.plan}). Contacta con soporte para ampliar tu plan.`
+    }, { status: 403 });
   }
 
   const hashedPassword = await bcrypt.hash(password, 12);

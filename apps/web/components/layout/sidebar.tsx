@@ -22,6 +22,7 @@ import {
   LibraryBig,
   ShieldCheck,
   Zap,
+  Building2,
 } from "lucide-react";
 
 interface NavItem {
@@ -48,6 +49,7 @@ const adminItems: NavItem[] = [
   { href: "/admin/users",            label: "Usuarios",          icon: Users,       roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/reports",          label: "Reportes",          icon: BarChart3,   roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/settings",         label: "Configuración",     icon: Settings,    roles: ["SUPER_ADMIN"] },
+  { href: "/superadmin",             label: "Super Admin",       icon: Building2,   roles: ["SUPER_ADMIN"] },
   // Mánager
   { href: "/manager/team",           label: "Mi equipo",         icon: Users,       roles: ["MANAGER"] },
   { href: "/manager/compliance",     label: "Cumplimiento",      icon: ShieldCheck, roles: ["MANAGER"] },
@@ -55,12 +57,14 @@ const adminItems: NavItem[] = [
 ];
 
 interface SidebarProps {
-  userRole: string;
-  userName: string;
-  userEmail: string;
+  userRole:    string;
+  userName:    string;
+  userEmail:   string;
+  orgLogoUrl?: string | null;
+  orgName?:    string | null;
 }
 
-export function Sidebar({ userRole, userName, userEmail }: SidebarProps) {
+export function Sidebar({ userRole, userName, userEmail, orgLogoUrl, orgName }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -81,9 +85,14 @@ export function Sidebar({ userRole, userName, userEmail }: SidebarProps) {
     <>
       {/* Logo */}
       <div className="p-4 border-b border-border flex-shrink-0">
-        <Link href="/dashboard" className="flex items-center">
+        <Link href="/dashboard" className="flex items-center gap-3">
+          {orgLogoUrl && (
+            <img src={orgLogoUrl} alt={orgName ?? "Logo"} className="h-8 w-auto object-contain flex-shrink-0" />
+          )}
           <div className="leading-tight">
-            <p className="text-base font-black tracking-widest uppercase text-foreground">OKEYMAS</p>
+            <p className="text-base font-black tracking-widest uppercase text-foreground">
+              {orgName ?? "OKEYMAS"}
+            </p>
             <p className="text-sm font-bold tracking-widest uppercase text-yelau-yellow">LMS</p>
           </div>
         </Link>

@@ -59,6 +59,20 @@ enum SurveyQuestionType {
   CHOICE
 }
 
+enum OrgPlan {
+  STARTER
+  PROFESSIONAL
+  CHAIN
+  ENTERPRISE
+}
+
+enum WebhookEvent {
+  COURSE_COMPLETED
+  CERTIFICATE_ISSUED
+  USER_CREATED
+  ENROLLMENT_CREATED
+}
+
 enum Department {
   ADMINISTRACION
   RECEPCION
@@ -78,6 +92,19 @@ model Organization {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Plan SaaS
+  plan           OrgPlan  @default(STARTER)
+  maxUsers       Int      @default(50)
+  planExpiresAt  DateTime?
+  trialEndsAt    DateTime?
+
+  // White label
+  primaryColor   String?
+  customLogoUrl  String?
+
+  // API pública
+  apiKey         String?  @unique
+
   // Configuración de notificaciones por email
   notifyNewEnrollment Boolean @default(true)
   notifyDeadline7d    Boolean @default(true)
@@ -89,6 +116,7 @@ model Organization {
   courses         Course[]
   liveClasses     LiveClass[]
   enrollmentRules EnrollmentRule[]
+  webhooks        Webhook[]
 
   @@map("organizations")
 }
@@ -485,6 +513,22 @@ model Certificate {
   course   Course? @relation(fields: [courseId], references: [id], onDelete: SetNull)
 
   @@map("certificates")
+}
+
+// ─── WEBHOOKS ────────────────────────────────────────────────────────────────
+
+model Webhook {
+  id        String         @id @default(cuid())
+  url       String
+  events    WebhookEvent[]
+  isActive  Boolean        @default(true)
+  secret    String?
+  createdAt DateTime       @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("webhooks")
 }
 
 // ─── FOROS (LESSON COMMENTS) ─────────────────────────────────────────────────

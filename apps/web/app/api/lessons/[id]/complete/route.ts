@@ -1,10 +1,11 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { dispatchWebhook } from "@/lib/webhooks";
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
-  const user = session?.user as { id: string } | undefined;
+  const user = session?.user as { id: string; organizationId?: string } | undefined;
   if (!user) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
   const { id: lessonId } = await params;
@@ -72,8 +73,22 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
           },
         });
 
+        // Webhook: certificado emitido
+        if (user.organizationId) {
+          await dispatchWebhook(user.organizationId, "CERTIFICATE_ISSUED", {
+            userId: user.id, courseId: course.id, courseTitle: course.title,
+          });
+        }
+
         return NextResponse.json({ ok: true, certificateIssued: true });
       }
+    }
+
+    // Webhook: curso completado
+    if (user.organizationId) {
+      await dispatchWebhook(user.organizationId, "COURSE_COMPLETED", {
+        userId: user.id, courseId: course.id, courseTitle: course.title,
+      });
     }
   }
 
