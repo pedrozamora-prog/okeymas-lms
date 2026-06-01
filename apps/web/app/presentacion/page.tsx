@@ -307,6 +307,60 @@ export default function PresentacionPage() {
         </div>
       </section>
 
+      {/* ── SECCIÓN 07: PRECIOS ── */}
+      <section className="seccion page-break">
+        <div className="seccion-num">07</div>
+        <h2 className="seccion-titulo">Propuesta económica</h2>
+        <p className="seccion-intro">
+          Precio fijo mensual por sede, sin sorpresas. Cuanto más crece tu equipo, el coste por empleado baja.
+          Todos los planes incluyen actualizaciones, soporte y la IA integrada.
+        </p>
+
+        {/* Planes */}
+        <div style={{display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"16px", marginBottom:"32px"}}>
+          {[
+            { nombre:"Starter", precio:"149", desc:"1 sede · hasta 50 empleados", color:"#f9fafb", border:"#e5e7eb", features:["Cursos y lecciones","Certificados oficiales","App móvil (PWA)","Reportes básicos","Soporte por email"] },
+            { nombre:"Professional", precio:"299", desc:"Hasta 3 sedes · hasta 150 empleados", color:"#f9fafb", border:"#e5e7eb", features:["Todo lo del Starter","IA generadora de contenido","Cumplimiento y alertas","Rol de mánager","Informes Excel/PDF","Auto-inscripción por puesto"] },
+            { nombre:"Chain", precio:"499", desc:"Hasta 8 sedes · hasta 400 empleados", color:"#0C0C0C", border:"#FCE900", features:["Todo lo del Professional","Encuestas post-curso","Foros por lección","SCORM import","Soporte prioritario","Reunión mensual de KPIs"] },
+            { nombre:"Enterprise", precio:"A medida", desc:"Sedes ilimitadas · empleados ilimitados", color:"#f9fafb", border:"#e5e7eb", features:["Todo lo del Chain","White label / marca propia","Integraciones con RRHH","SLA garantizado","Formación al equipo admin","Roadmap priorizado"] },
+          ].map((plan) => (
+            <div key={plan.nombre} style={{background:plan.color, border:`2px solid ${plan.border}`, borderRadius:"16px", padding:"24px", display:"flex", flexDirection:"column", gap:"12px"}}>
+              <div style={{fontWeight:900, fontSize:"15px", color: plan.color === "#0C0C0C" ? "#FCE900" : "#0C0C0C", letterSpacing:"1px"}}>{plan.nombre}</div>
+              <div style={{fontSize: plan.precio === "A medida" ? "22px" : "36px", fontWeight:900, color: plan.color === "#0C0C0C" ? "#fff" : "#0C0C0C", lineHeight:1}}>
+                {plan.precio !== "A medida" && <span style={{fontSize:"16px", fontWeight:600}}>€</span>}
+                {plan.precio}
+                {plan.precio !== "A medida" && <span style={{fontSize:"14px", fontWeight:500, color:"#888"}}>/mes</span>}
+              </div>
+              <div style={{fontSize:"11px", color: plan.color === "#0C0C0C" ? "#888" : "#6b7280", borderBottom:`1px solid ${plan.color === "#0C0C0C" ? "#222" : "#e5e7eb"}`, paddingBottom:"12px"}}>{plan.desc}</div>
+              <ul style={{listStyle:"none", padding:0, margin:0, display:"flex", flexDirection:"column", gap:"6px"}}>
+                {plan.features.map(f => (
+                  <li key={f} style={{fontSize:"11px", color: plan.color === "#0C0C0C" ? "#ccc" : "#374151", display:"flex", gap:"6px", alignItems:"flex-start"}}>
+                    <span style={{color:"#FCE900", fontWeight:700, flexShrink:0}}>✓</span>{f}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* Descuento anual */}
+        <div style={{background:"#fefce8", border:"1px solid #fde047", borderRadius:"12px", padding:"20px 24px", display:"flex", alignItems:"center", gap:"20px", marginBottom:"24px"}}>
+          <div style={{fontSize:"32px"}}>🎁</div>
+          <div>
+            <p style={{fontWeight:700, fontSize:"15px", color:"#0C0C0C", margin:0}}>Descuento por pago anual — 20% menos</p>
+            <p style={{fontSize:"13px", color:"#6b7280", margin:"4px 0 0"}}>
+              Plan Chain anual: <strong style={{color:"#0C0C0C"}}>€4.790/año</strong> (vs. €5.988 mensual). Ahorro de <strong>€1.198</strong>.
+            </p>
+          </div>
+        </div>
+
+        {/* Comparativa */}
+        <div className="highlight">
+          <strong>Comparativa de mercado:</strong> iSpring Learn cobra ~2,50€/usuario/mes con mínimo 100 usuarios (mínimo €250/mes) sin especialización en fitness.
+          Okeymas LMS ofrece el mismo precio con IA, cumplimiento y soporte específico para gimnasios — sin coste extra por crecer.
+        </div>
+      </section>
+
       {/* ── CIERRE ── */}
       <section className="cierre">
         <h2>La formación de tu equipo,<br /><span className="yellow">bajo control total.</span></h2>
