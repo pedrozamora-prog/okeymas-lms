@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
-function getAdmin(s: Awaited<ReturnType<typeof auth>>) {
-  const u = s?.user as { role?: string } | undefined;
+function getAdmin(s: unknown): { role?: string } | null {
+  const u = (s as { user?: { role?: string } } | null)?.user;
   return ["SUPER_ADMIN", "BRANCH_ADMIN"].includes(u?.role ?? "") ? u! : null;
 }
 

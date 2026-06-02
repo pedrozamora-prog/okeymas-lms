@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
-function getAdmin(session: Awaited<ReturnType<typeof auth>>) {
-  const u = session?.user as { id?: string; role?: string; organizationId?: string } | undefined;
+type AdminUser = { id?: string; role?: string; organizationId?: string };
+
+function getAdmin(session: unknown): AdminUser | null {
+  const u = (session as { user?: AdminUser } | null)?.user;
   return ["SUPER_ADMIN", "BRANCH_ADMIN"].includes(u?.role ?? "") ? u! : null;
 }
 

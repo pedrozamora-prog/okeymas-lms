@@ -361,7 +361,7 @@ export default function OnboardingPage() {
                   {saving
                     ? <><Loader2 className="w-4 h-4 animate-spin" />Guardando…</>
                     : (fromName || fromAddress)
-                      ? <>"Guardar y finalizar <ChevronRight className="w-5 h-5" /></>"
+                      ? <>Guardar y finalizar <ChevronRight className="w-5 h-5" /></>
                       : <>Saltar y finalizar <ChevronRight className="w-5 h-5" /></>
                   }
                 </Button>

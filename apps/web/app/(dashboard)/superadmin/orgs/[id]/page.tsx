@@ -14,7 +14,7 @@ export default async function OrgDetailPage({ params }: { params: Promise<{ id: 
   const org = await prisma.organization.findUnique({
     where: { id },
     include: {
-      _count: { select: { users: true, courses: true, enrollments: true } },
+      _count: { select: { users: true, courses: true } },
       webhooks: true,
     },
   });

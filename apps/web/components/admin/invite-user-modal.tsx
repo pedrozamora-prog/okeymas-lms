@@ -2,7 +2,8 @@
 
 import { useState, useRef, useCallback } from "react";
 import { toast } from "sonner";
-import * as XLSX from "xlsx";
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any
+const XLSX = require("xlsx") as any;
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
