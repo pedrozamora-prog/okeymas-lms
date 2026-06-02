@@ -7,7 +7,7 @@ import { Building2, Users, BookOpen, Award, TrendingUp, Plus, Settings } from "l
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
-export const metadata = { title: "Super Admin — Okeymas LMS" };
+export const metadata = { title: "Super Admin — FitAcademy" };
 
 const PLAN_COLOR: Record<string, string> = {
   STARTER:      "bg-muted text-muted-foreground border-border",

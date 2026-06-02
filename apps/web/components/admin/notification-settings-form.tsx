@@ -120,7 +120,7 @@ export function NotificationSettingsForm({ orgId, initial }: Props) {
         })}
 
         <p className="text-[11px] text-muted-foreground pt-4">
-          Los emails se envían automáticamente desde <strong>noreply@okeymas.com</strong>. Los empleados no pueden desactivarlos individualmente.
+          Los emails se envían automáticamente. Configura el remitente en la sección <strong>Integraciones → Email</strong>.
         </p>
       </CardContent>
     </Card>

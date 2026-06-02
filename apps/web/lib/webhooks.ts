@@ -28,12 +28,12 @@ export async function dispatchWebhook(
     webhooks.map(async wh => {
       const headers: Record<string, string> = {
         "Content-Type":    "application/json",
-        "X-Okeymas-Event": event,
+        "X-FitAcademy-Event": event,
       };
 
       if (wh.secret) {
         const sig = createHmac("sha256", wh.secret).update(body).digest("hex");
-        headers["X-Okeymas-Signature"] = `sha256=${sig}`;
+        headers["X-FitAcademy-Signature"] = `sha256=${sig}`;
       }
 
       await fetch(wh.url, { method: "POST", headers, body });

@@ -23,6 +23,12 @@ enum CourseStatus {
   ARCHIVED
 }
 
+enum ReportFrequency {
+  DISABLED
+  WEEKLY
+  MONTHLY
+}
+
 enum LessonType {
   VIDEO
   PDF
@@ -112,11 +118,37 @@ model Organization {
   notifyDeadline1d    Boolean @default(true)
   notifyOverdue       Boolean @default(true)
 
+  // Integración de email (por organización)
+  emailFromName    String?
+  emailFromAddress String?
+  emailReplyTo     String?
+  resendApiKey     String?
+
+  // Onboarding
+  onboardedAt      DateTime?
+
+  // Informes programados
+  reportFrequency  ReportFrequency @default(DISABLED)
+  reportDayOfWeek  Int             @default(1)  // 1=lunes … 7=domingo
+  reportDayOfMonth Int             @default(1)  // 1-31
+  reportLastSentAt DateTime?
+
+  // WhatsApp (Tier 2 — preparado en schema)
+  whatsappEnabled        Boolean @default(false)
+  twilioAccountSid       String?
+  twilioAuthToken        String?
+  twilioWhatsappFrom     String?
+  notifyWhatsappDeadline Boolean @default(true)
+  notifyWhatsappEnroll   Boolean @default(true)
+
   users           User[]
   courses         Course[]
   liveClasses     LiveClass[]
   enrollmentRules EnrollmentRule[]
   webhooks        Webhook[]
+  invitations     Invitation[]
+  competencies    Competency[]
+  jobRoles        JobRole[]
 
   @@map("organizations")
 }
@@ -132,7 +164,10 @@ model User {
   image          String?
   role           Role       @default(EMPLOYEE)
   department     Department?
-  phone          String?
+  phone           String?
+  locale          String     @default("es")
+  whatsappPhone   String?
+  whatsappEnabled Boolean    @default(false)
   isActive       Boolean    @default(true)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
@@ -152,8 +187,33 @@ model User {
   notifications   Notification[]
   lessonComments  LessonComment[]
   surveyResponses SurveyResponse[]
+  sentInvitations    Invitation[]          @relation("InvitedBy")
+  quizAttempts       QuizAttempt[]
+  watchSessions      VideoWatchSession[]
+  interactiveAnswers InteractiveAnswer[]
+  jobRoles           UserJobRole[]
 
   @@map("users")
+}
+
+// ─── INVITATIONS ─────────────────────────────────────────────────────────────
+
+model Invitation {
+  id             String      @id @default(cuid())
+  email          String
+  token          String      @unique @default(cuid())
+  role           Role        @default(EMPLOYEE)
+  department     Department?
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  invitedById    String
+  invitedBy      User         @relation("InvitedBy", fields: [invitedById], references: [id])
+  expiresAt      DateTime
+  acceptedAt     DateTime?
+  createdAt      DateTime    @default(now())
+
+  @@unique([email, organizationId])
+  @@map("invitations")
 }
 
 // ─── AUTH (NextAuth) ─────────────────────────────────────────────────────────
@@ -228,6 +288,7 @@ model Course {
   certificates     Certificate[]
   enrollmentRules  EnrollmentRule[]
   survey           CourseSurvey?
+  competencies     CourseCompetency[]
 
   @@map("courses")
 }
@@ -264,10 +325,12 @@ model Lesson {
   moduleId String
   module   Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
-  quiz       Quiz?
-  liveClass  LiveClass?
-  progress   LessonProgress[]
-  comments   LessonComment[]
+  quiz              Quiz?
+  liveClass         LiveClass?
+  progress          LessonProgress[]
+  comments          LessonComment[]
+  watchSessions     VideoWatchSession[]
+  interactivePoints InteractivePoint[]
 
   @@map("lessons")
 }
@@ -286,8 +349,24 @@ model Quiz {
   lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   questions QuizQuestion[]
+  attempts  QuizAttempt[]
 
   @@map("quizzes")
+}
+
+model QuizAttempt {
+  id        String   @id @default(cuid())
+  score     Int                          // 0-100 porcentaje
+  passed    Boolean
+  answers   Json                         // [{questionId, selectedOptionId}]
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId String
+  quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@map("quiz_attempts")
 }
 
 model QuizQuestion {
@@ -592,4 +671,127 @@ model SurveyResponse {
 
   @@unique([surveyId, userId])
   @@map("survey_responses")
+}
+
+// ─── VIDEO ANALYTICS (TIER 1) ────────────────────────────────────────────────
+
+model VideoWatchSession {
+  id              String   @id @default(cuid())
+  watchedSegments Json     @default("[]") // [[start,end], ...] en segundos
+  totalWatchTime  Int      @default(0)    // segundos totales únicos vistos
+  maxProgress     Float    @default(0)    // 0-100 punto más lejano alcanzado
+  rewatchCount    Int      @default(0)    // nº de veces que retrocedió
+  playbackSpeeds  Json     @default("[]") // [1, 1.5, 2] velocidades usadas
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  lessonId String
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([lessonId, userId])
+  @@index([lessonId])
+  @@map("video_watch_sessions")
+}
+
+// ─── VIDEO INTERACTIVO (TIER 1) ───────────────────────────────────────────────
+
+model InteractivePoint {
+  id        String   @id @default(cuid())
+  timestamp Int      // segundos desde el inicio del vídeo
+  question  String
+  options   Json     // [{id, text, isCorrect: boolean}]
+  canSkip   Boolean  @default(false)
+  skipAfter Int?     // segundos para auto-skip (null = obligatorio responder)
+  createdAt DateTime @default(now())
+
+  lessonId String
+  lesson   Lesson              @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  answers  InteractiveAnswer[]
+
+  @@unique([lessonId, timestamp])
+  @@index([lessonId])
+  @@map("interactive_points")
+}
+
+model InteractiveAnswer {
+  id               String   @id @default(cuid())
+  selectedOptionId String
+  correct          Boolean
+  answeredAt       DateTime @default(now())
+
+  interactivePointId String
+  interactivePoint   InteractivePoint @relation(fields: [interactivePointId], references: [id], onDelete: Cascade)
+  userId             String
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([interactivePointId, userId])
+  @@map("interactive_answers")
+}
+
+// ─── COMPETENCIAS Y PUESTOS (TIER 1) ─────────────────────────────────────────
+
+model Competency {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  organizationId String
+  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  jobRoles       RoleCompetency[]
+  courses        CourseCompetency[]
+
+  @@unique([organizationId, name])
+  @@map("competencies")
+}
+
+model JobRole {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+
+  organizationId String
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  competencies   RoleCompetency[]
+  users          UserJobRole[]
+
+  @@unique([organizationId, name])
+  @@map("job_roles")
+}
+
+model RoleCompetency {
+  required Boolean @default(true)
+
+  jobRoleId    String
+  jobRole      JobRole    @relation(fields: [jobRoleId], references: [id], onDelete: Cascade)
+  competencyId String
+  competency   Competency @relation(fields: [competencyId], references: [id], onDelete: Cascade)
+
+  @@id([jobRoleId, competencyId])
+  @@map("role_competencies")
+}
+
+model CourseCompetency {
+  courseId     String
+  course       Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  competencyId String
+  competency   Competency @relation(fields: [competencyId], references: [id], onDelete: Cascade)
+
+  @@id([courseId, competencyId])
+  @@map("course_competencies")
+}
+
+model UserJobRole {
+  assignedAt DateTime @default(now())
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobRoleId String
+  jobRole   JobRole @relation(fields: [jobRoleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, jobRoleId])
+  @@map("user_job_roles")
 }

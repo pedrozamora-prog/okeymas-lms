@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,12 +55,8 @@ export default function RegisterPage() {
 
         <div className="relative z-10 flex flex-col justify-between h-full px-10 py-8">
           {/* Logo */}
-          <div className="flex-shrink-0 flex items-center gap-4">
-            <Image src="/logo.png" alt="Okeymas LMS" width={56} height={56} className="h-14 w-14 object-contain flex-shrink-0" priority />
-            <div className="leading-tight">
-              <p className="text-2xl font-black tracking-widest uppercase text-white">OKEYMAS</p>
-              <p className="text-lg font-bold tracking-widest uppercase text-yelau-yellow">LMS</p>
-            </div>
+          <div className="flex-shrink-0">
+            <img src="/fitacademy-logo.svg" alt="FitAcademy" className="h-12 w-auto object-contain" />
           </div>
 
           {/* Centro */}
@@ -125,12 +120,8 @@ export default function RegisterPage() {
       <div className="flex-1 flex flex-col items-center justify-center bg-background px-6 py-8 relative">
 
         {/* Logo mobile */}
-        <div className="lg:hidden mb-8 flex items-center gap-3">
-          <Image src="/logo.png" alt="Okeymas LMS" width={44} height={44} className="h-11 w-11 object-contain flex-shrink-0" priority />
-          <div className="leading-tight">
-            <p className="text-xl font-black tracking-widest uppercase text-foreground">OKEYMAS</p>
-            <p className="text-sm font-bold tracking-widest uppercase text-yelau-yellow">LMS</p>
-          </div>
+        <div className="lg:hidden mb-8">
+          <img src="/fitacademy-logo-dark.svg" alt="FitAcademy" className="h-10 w-auto object-contain" />
         </div>
 
         <div className="w-full max-w-sm">
@@ -253,7 +244,7 @@ export default function RegisterPage() {
           </p>
 
           <p className="text-center text-xs text-muted-foreground mt-6">
-            © {new Date().getFullYear()} Okeymas LMS · Todos los derechos reservados
+            © {new Date().getFullYear()} FitAcademy · Todos los derechos reservados
           </p>
         </div>
       </div>

@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
   const orgIds = [...new Set(enrollments.map(e => e.user.organizationId))];
   const orgs = await prisma.organization.findMany({
     where: { id: { in: orgIds } },
-    select: { id: true, notifyDeadline7d: true, notifyDeadline3d: true, notifyDeadline1d: true, notifyOverdue: true },
+    select: { id: true, notifyDeadline7d: true, notifyDeadline3d: true, notifyDeadline1d: true, notifyOverdue: true, emailFromName: true, emailFromAddress: true, emailReplyTo: true, resendApiKey: true },
   });
   const orgMap = new Map(orgs.map(o => [o.id, o]));
 
@@ -59,7 +59,12 @@ export async function GET(req: NextRequest) {
       });
 
       if (orgConfig?.notifyOverdue) {
-        await sendOverdueEmail(enrollment.user.email, enrollment.user.name, enrollment.course.title);
+        await sendOverdueEmail(enrollment.user.email, enrollment.user.name, enrollment.course.title, {
+          fromName:    orgConfig.emailFromName,
+          fromAddress: orgConfig.emailFromAddress,
+          replyTo:     orgConfig.emailReplyTo,
+          resendApiKey: orgConfig.resendApiKey,
+        });
       }
       overdue++;
     } else if (daysLeft === 7 || daysLeft === 3 || daysLeft === 1) {
@@ -86,6 +91,12 @@ export async function GET(req: NextRequest) {
           enrollment.user.name,
           enrollment.course.title,
           daysLeft,
+          {
+            fromName:    orgConfig?.emailFromName,
+            fromAddress: orgConfig?.emailFromAddress,
+            replyTo:     orgConfig?.emailReplyTo,
+            resendApiKey: orgConfig?.resendApiKey,
+          },
         );
       }
       reminded++;

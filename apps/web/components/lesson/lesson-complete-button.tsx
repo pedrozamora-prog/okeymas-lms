@@ -21,6 +21,15 @@ export function LessonCompleteButton({ lessonId, courseId, isCompleted, nextLess
   async function markComplete() {
     setLoading(true);
     try {
+      if (!navigator.onLine) {
+        // Sin conexión: encolar para sync posterior
+        const { queueProgress } = await import("@/lib/offline-db");
+        await queueProgress({ lessonId, courseId, type: "complete" });
+        setCompleted(true);
+        toast.info("Sin conexión — progreso guardado, se sincronizará al reconectar");
+        return;
+      }
+
       const res = await fetch(`/api/lessons/${lessonId}/complete`, { method: "POST" });
       if (!res.ok) throw new Error();
       setCompleted(true);

@@ -13,7 +13,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { VideoUploader } from "@/components/admin/video-uploader";
+import { VideoUploader }            from "@/components/admin/video-uploader";
+import { FileUploader }             from "@/components/admin/file-uploader";
+import { InteractivePointEditor }   from "@/components/admin/interactive-point-editor";
 import { Badge } from "@/components/ui/badge";
 import {
   Plus, Trash2, ChevronDown, ChevronRight, Loader2,
@@ -237,6 +239,7 @@ function ModuleCard({ mod, idx, expanded, onToggle, onDelete, onAddLesson, onDel
   const [lessonDuration, setDuration]   = useState("");
   const [saving, setSaving]             = useState(false);
   const [videoMode, setVideoMode]       = useState<"upload" | "url">("upload");
+  const [pdfMode,  setPdfMode]          = useState<"upload" | "url">("upload");
   const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
   const [aiObjectives, setAiObjectives] = useState<string | null>(null);
   const [aiLoading, setAiLoading]       = useState(false);
@@ -307,9 +310,12 @@ function ModuleCard({ mod, idx, expanded, onToggle, onDelete, onAddLesson, onDel
     <Card className="overflow-hidden">
       {/* Module header */}
       <CardHeader className="py-0 px-0">
-        <button
+        <div
+          role="button"
+          tabIndex={0}
           onClick={onToggle}
-          className="flex items-center gap-3 w-full px-4 py-3 hover:bg-muted/50 transition-colors text-left"
+          onKeyDown={e => { if (e.key === "Enter" || e.key === " ") onToggle(); }}
+          className="flex items-center gap-3 w-full px-4 py-3 hover:bg-muted/50 transition-colors text-left cursor-pointer"
         >
           {expanded
             ? <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
@@ -323,12 +329,13 @@ function ModuleCard({ mod, idx, expanded, onToggle, onDelete, onAddLesson, onDel
             {mod.lessons.length} lecciones
           </span>
           <button
+            type="button"
             onClick={e => { e.stopPropagation(); onDelete(); }}
             className="p-1.5 rounded hover:bg-red-500/10 hover:text-red-400 text-muted-foreground transition-colors flex-shrink-0"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
-        </button>
+        </div>
       </CardHeader>
 
       {expanded && (
@@ -341,7 +348,7 @@ function ModuleCard({ mod, idx, expanded, onToggle, onDelete, onAddLesson, onDel
               type="button"
               onClick={generateObjectives}
               disabled={aiLoading}
-              className="flex items-center gap-1 text-[10px] text-yelau-yellow hover:text-yelau-yellow/80 transition-colors disabled:opacity-50"
+              className="flex items-center gap-1 text-[10px] text-brand hover:text-amber-600 transition-colors disabled:opacity-50"
             >
               {aiLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
               Objetivos con IA
@@ -351,7 +358,7 @@ function ModuleCard({ mod, idx, expanded, onToggle, onDelete, onAddLesson, onDel
           {aiObjectives && (
             <div className="rounded-lg border border-yelau-yellow/20 bg-yelau-yellow/5 p-3 space-y-1.5">
               <div className="flex items-center justify-between">
-                <p className="text-[10px] font-semibold text-yelau-yellow uppercase tracking-wider flex items-center gap-1">
+                <p className="text-[10px] font-semibold text-brand uppercase tracking-wider flex items-center gap-1">
                   <Sparkles className="w-3 h-3" /> Objetivos generados
                 </p>
                 <button onClick={() => setAiObjectives(null)} className="text-muted-foreground hover:text-foreground">
@@ -361,7 +368,7 @@ function ModuleCard({ mod, idx, expanded, onToggle, onDelete, onAddLesson, onDel
               <ul className="space-y-1">
                 {aiObjectives.split("\n").filter(Boolean).map((obj, i) => (
                   <li key={i} className="text-xs text-foreground flex gap-2">
-                    <span className="text-yelau-yellow mt-0.5 flex-shrink-0">•</span>
+                    <span className="text-brand mt-0.5 flex-shrink-0">•</span>
                     <span>{obj.replace(/^[-•]\s*/, "")}</span>
                   </li>
                 ))}
@@ -459,7 +466,7 @@ function ModuleCard({ mod, idx, expanded, onToggle, onDelete, onAddLesson, onDel
                     type="button"
                     onClick={generateLessonDesc}
                     disabled={aiDescLoading}
-                    className="flex items-center gap-1 text-[10px] text-yelau-yellow hover:text-yelau-yellow/80 transition-colors disabled:opacity-50"
+                    className="flex items-center gap-1 text-[10px] text-brand hover:text-amber-600 transition-colors disabled:opacity-50"
                   >
                     {aiDescLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
                     Generar con IA
@@ -526,15 +533,39 @@ function ModuleCard({ mod, idx, expanded, onToggle, onDelete, onAddLesson, onDel
                 </div>
               )}
 
-              {["PDF", "SCORM"].includes(lessonType) && (
+              {lessonType === "PDF" && (
+                <div className="space-y-2">
+                  <Label className="text-xs">Documento PDF</Label>
+                  <div className="flex gap-1 p-1 bg-muted rounded-lg w-fit">
+                    {(["upload", "url"] as const).map(m => (
+                      <button key={m} type="button"
+                        onClick={() => { setPdfMode(m); setLessonUrl(""); }}
+                        className={cn("px-3 py-1 text-xs rounded-md font-medium transition-colors",
+                          pdfMode === m ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}>
+                        {m === "upload" ? "Subir PDF" : "URL externa"}
+                      </button>
+                    ))}
+                  </div>
+                  {pdfMode === "upload" ? (
+                    <FileUploader
+                      currentUrl={lessonUrl || null}
+                      onUploadComplete={(url) => setLessonUrl(url)}
+                      accept="application/pdf"
+                      type="pdf"
+                      label="PDF"
+                    />
+                  ) : (
+                    <Input value={lessonUrl} onChange={e => setLessonUrl(e.target.value)}
+                      placeholder="https://..." type="url" />
+                  )}
+                </div>
+              )}
+
+              {lessonType === "SCORM" && (
                 <div className="space-y-1">
-                  <Label className="text-xs">{urlLabel[lessonType]}</Label>
-                  <Input
-                    value={lessonUrl}
-                    onChange={e => setLessonUrl(e.target.value)}
-                    placeholder="https://..."
-                    type="url"
-                  />
+                  <Label className="text-xs">{urlLabel["SCORM"]}</Label>
+                  <Input value={lessonUrl} onChange={e => setLessonUrl(e.target.value)}
+                    placeholder="https://..." type="url" />
                 </div>
               )}
 
@@ -595,10 +626,15 @@ function LessonEditForm({ lesson, moduleTitle, onSave, onCancel }: {
   const [videoMode, setMode]      = useState<"upload" | "url">(
     lesson.videoUrl && lesson.videoUrl.startsWith("http") ? "url" : "upload"
   );
+  const [pdfMode,  setPdfMode]    = useState<"upload" | "url">(
+    lesson.fileUrl && lesson.fileUrl.startsWith("http") ? "upload" : "upload"
+  );
   const [saving, setSaving]       = useState(false);
-  const [aiDescLoading, setAiDesc] = useState(false);
-  const [aiQuizLoading, setAiQuiz] = useState(false);
-  const [quizQuestions, setQuiz]  = useState<Array<{question:string;options:string[];correct:number}> | null>(null);
+  const [aiDescLoading, setAiDesc]       = useState(false);
+  const [aiQuizLoading, setAiQuiz]       = useState(false);
+  const [quizQuestions, setQuiz]         = useState<Array<{question:string;options:string[];correct:number}> | null>(null);
+  const [quizPassingScore, setQuizPassingScore] = useState(70);
+  const [quizMaxAttempts,  setQuizMaxAttempts]  = useState(3);
 
   async function generateDesc() {
     if (!title.trim()) { toast.error("Escribe primero el título de la lección"); return; }
@@ -654,6 +690,32 @@ function LessonEditForm({ lesson, moduleTitle, onSave, onCancel }: {
       });
       if (!res.ok) throw new Error((await res.json()).error);
       const updated = await res.json();
+
+      // Guardar preguntas del quiz si es tipo QUIZ
+      if (type === "QUIZ" && quizQuestions && quizQuestions.length > 0) {
+        const quizRes = await fetch(`/api/admin/lessons/${lesson.id}/quiz`, {
+          method:  "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            passingScore: quizPassingScore,
+            maxAttempts:  quizMaxAttempts,
+            questions:    quizQuestions.map(q => ({
+              text:    q.question,
+              options: q.options.map((opt, oi) => ({
+                text:      opt,
+                isCorrect: oi === q.correct,
+              })),
+            })),
+          }),
+        });
+        if (!quizRes.ok) {
+          const err = await quizRes.json();
+          toast.error(err.error ?? "Error al guardar preguntas del quiz");
+        } else {
+          toast.success(`Quiz guardado — ${quizQuestions.length} preguntas`);
+        }
+      }
+
       onSave(updated);
       toast.success("Lección actualizada");
     } catch (e: unknown) {
@@ -695,7 +757,7 @@ function LessonEditForm({ lesson, moduleTitle, onSave, onCancel }: {
             type="button"
             onClick={generateDesc}
             disabled={aiDescLoading}
-            className="flex items-center gap-1 text-[10px] text-yelau-yellow hover:text-yelau-yellow/80 transition-colors disabled:opacity-50"
+            className="flex items-center gap-1 text-[10px] text-brand hover:text-amber-600 transition-colors disabled:opacity-50"
           >
             {aiDescLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
             Generar con IA
@@ -735,44 +797,137 @@ function LessonEditForm({ lesson, moduleTitle, onSave, onCancel }: {
       )}
 
       {type === "PDF" && (
-        <div className="space-y-1">
-          <Label className="text-xs">URL del PDF</Label>
-          <Input value={fileUrl} onChange={e => setFileUrl(e.target.value)} placeholder="https://..." type="url" />
+        <div className="space-y-2">
+          <Label className="text-xs">Documento PDF</Label>
+          <div className="flex gap-1 p-1 bg-muted rounded-lg w-fit">
+            {(["upload", "url"] as const).map(m => (
+              <button key={m} type="button"
+                onClick={() => { setPdfMode(m); if (m === "url") setFileUrl(""); }}
+                className={cn("px-3 py-1 text-xs rounded-md font-medium transition-colors",
+                  pdfMode === m ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}>
+                {m === "upload" ? "Subir PDF" : "URL externa"}
+              </button>
+            ))}
+          </div>
+          {pdfMode === "upload" ? (
+            <FileUploader
+              currentUrl={fileUrl || null}
+              currentName={fileUrl ? fileUrl.split("/").pop() : null}
+              onUploadComplete={(url, name) => setFileUrl(url)}
+              accept="application/pdf"
+              type="pdf"
+              label="PDF"
+            />
+          ) : (
+            <Input value={fileUrl} onChange={e => setFileUrl(e.target.value)}
+              placeholder="https://..." type="url" />
+          )}
         </div>
       )}
 
-      {/* Quiz: generador IA de preguntas */}
+      {/* Preguntas interactivas — solo para lecciones VIDEO ya guardadas */}
+      {type === "VIDEO" && lesson.id && (
+        <div className="pt-2 border-t border-border/50">
+          <InteractivePointEditor lessonId={lesson.id} />
+        </div>
+      )}
+
+      {/* Quiz: editor completo con IA */}
       {type === "QUIZ" && (
-        <div className="space-y-2">
+        <div className="space-y-3">
+          {/* Config del quiz */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs">Nota mínima (%)</Label>
+              <Input
+                type="number" min={1} max={100}
+                value={quizPassingScore}
+                onChange={e => setQuizPassingScore(Number(e.target.value))}
+                className="h-8 text-xs"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Intentos máximos</Label>
+              <Input
+                type="number" min={1} max={10}
+                value={quizMaxAttempts}
+                onChange={e => setQuizMaxAttempts(Number(e.target.value))}
+                className="h-8 text-xs"
+              />
+            </div>
+          </div>
+
+          {/* Header de preguntas */}
           <div className="flex items-center justify-between">
-            <Label className="text-xs">Preguntas del quiz</Label>
+            <Label className="text-xs">Preguntas ({quizQuestions?.length ?? 0})</Label>
             <button
               type="button"
               onClick={generateQuiz}
               disabled={aiQuizLoading}
-              className="flex items-center gap-1 text-[10px] text-yelau-yellow hover:text-yelau-yellow/80 transition-colors disabled:opacity-50"
+              className="flex items-center gap-1 text-[10px] text-brand hover:text-amber-600 transition-colors disabled:opacity-50"
             >
               {aiQuizLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-              Generar preguntas con IA
+              Generar con IA
             </button>
           </div>
-          {quizQuestions && (
-            <div className="space-y-2 rounded-lg border border-yelau-yellow/20 bg-background p-3">
-              {quizQuestions.map((q, i) => (
-                <div key={i} className="space-y-1">
-                  <p className="text-xs font-medium text-foreground">{i + 1}. {q.question}</p>
-                  <ul className="space-y-0.5 pl-3">
+
+          {/* Lista de preguntas editables */}
+          {quizQuestions && quizQuestions.length > 0 && (
+            <div className="space-y-3 rounded-lg border border-border bg-background p-3 max-h-80 overflow-y-auto">
+              {quizQuestions.map((q, qi) => (
+                <div key={qi} className="space-y-2 pb-3 border-b border-border/50 last:border-0 last:pb-0">
+                  <div className="flex gap-2 items-start">
+                    <span className="text-[10px] font-bold text-brand mt-1.5 flex-shrink-0">{qi + 1}.</span>
+                    <input
+                      value={q.question}
+                      onChange={e => {
+                        const updated = [...quizQuestions];
+                        updated[qi] = { ...updated[qi], question: e.target.value };
+                        setQuiz(updated);
+                      }}
+                      className="flex-1 text-xs bg-muted/50 border border-border rounded px-2 py-1 text-foreground focus:outline-none focus:ring-1 focus:ring-yelau-yellow/50"
+                    />
+                    <button onClick={() => setQuiz(quizQuestions.filter((_, i) => i !== qi))}
+                      className="text-muted-foreground hover:text-red-400 transition-colors mt-1 flex-shrink-0">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                  <div className="space-y-1 pl-4">
                     {q.options.map((opt, oi) => (
-                      <li key={oi} className={cn("text-[11px]", oi === q.correct ? "text-green-400 font-semibold" : "text-muted-foreground")}>
-                        {oi === q.correct ? "✓" : "○"} {opt}
-                      </li>
+                      <div key={oi} className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = [...quizQuestions];
+                            updated[qi] = { ...updated[qi], correct: oi };
+                            setQuiz(updated);
+                          }}
+                          className={`w-3.5 h-3.5 rounded-full border flex-shrink-0 transition-colors ${
+                            oi === q.correct ? "border-green-500 bg-green-500" : "border-border"
+                          }`}
+                        />
+                        <input
+                          value={opt}
+                          onChange={e => {
+                            const updated = [...quizQuestions];
+                            const opts = [...updated[qi].options];
+                            opts[oi] = e.target.value;
+                            updated[qi] = { ...updated[qi], options: opts };
+                            setQuiz(updated);
+                          }}
+                          className={cn("flex-1 text-[11px] bg-transparent border-b border-border/30 focus:border-yelau-yellow/50 focus:outline-none py-0.5 text-foreground",
+                            oi === q.correct && "text-green-400 font-medium")}
+                        />
+                      </div>
                     ))}
-                  </ul>
+                  </div>
                 </div>
               ))}
-              <p className="text-[10px] text-muted-foreground pt-1 border-t border-border">Verde = respuesta correcta. Las preguntas se guardarán al hacer clic en Guardar.</p>
             </div>
           )}
+          <p className="text-[10px] text-muted-foreground">
+            Haz clic en el círculo junto a una opción para marcarla como correcta (verde). Las preguntas se guardan al hacer clic en Guardar.
+          </p>
         </div>
       )}
 

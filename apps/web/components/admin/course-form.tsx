@@ -201,7 +201,7 @@ export function CourseForm({ initial }: CourseFormProps) {
                 type="button"
                 onClick={generateDescription}
                 disabled={aiLoading}
-                className="flex items-center gap-1.5 text-xs text-yelau-yellow hover:text-yelau-yellow/80 transition-colors disabled:opacity-50"
+                className="flex items-center gap-1.5 text-xs text-brand hover:text-amber-600 transition-colors disabled:opacity-50"
               >
                 {aiLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
                 Generar con IA
@@ -393,7 +393,7 @@ export function CourseForm({ initial }: CourseFormProps) {
             })}
           </div>
           {departments.length === 0 && (
-            <p className="text-xs text-yelau-yellow/70 bg-yelau-yellow/5 border border-yelau-yellow/20 rounded-md px-3 py-2">
+            <p className="text-xs text-brand bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
               Sin restricción — visible para todos los departamentos
             </p>
           )}

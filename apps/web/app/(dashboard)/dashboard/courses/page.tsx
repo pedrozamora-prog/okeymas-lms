@@ -4,12 +4,14 @@ import { CourseCard } from "@/components/courses/course-card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Search } from "lucide-react";
+import { getServerT } from "@/lib/server-t";
 
 export const metadata = { title: "Mis Cursos" };
 
 export default async function CoursesPage() {
   const session = await auth();
   const user = session?.user as { id: string; organizationId: string; role: string; department?: string };
+  const t = await getServerT();
 
   const isEmployee = user.role === "EMPLOYEE";
 
@@ -54,14 +56,14 @@ export default async function CoursesPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-foreground">Mis Cursos</h1>
+          <h1 className="text-2xl font-black text-foreground">{t("courses.title")}</h1>
           <p className="text-muted-foreground text-sm mt-1">
-            {enrolled.length} inscritos · {available.length} disponibles
+            {enrolled.length} {t("courses.continue").toLowerCase()} · {available.length} {t("courses.start").toLowerCase()}
           </p>
         </div>
         <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Buscar cursos..." className="pl-9" />
+          <Input placeholder={t("common.search")} className="pl-9" />
         </div>
       </div>
 
@@ -69,7 +71,7 @@ export default async function CoursesPage() {
       {enrolled.length > 0 && (
         <section>
           <div className="flex items-center gap-2 mb-4">
-            <h2 className="text-base font-semibold text-foreground">En progreso</h2>
+            <h2 className="text-base font-semibold text-foreground">{t("dashboard.inProgress")}</h2>
             <Badge variant="secondary">{enrolled.length}</Badge>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -89,7 +91,7 @@ export default async function CoursesPage() {
       {available.length > 0 && (
         <section>
           <div className="flex items-center gap-2 mb-4">
-            <h2 className="text-base font-semibold text-foreground">Disponibles</h2>
+            <h2 className="text-base font-semibold text-foreground">{t("courses.start")}</h2>
             <Badge variant="outline">{available.length}</Badge>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -109,8 +111,8 @@ export default async function CoursesPage() {
       {courses.length === 0 && (
         <div className="flex flex-col items-center justify-center py-24 text-center gap-3">
           <BookOpen className="w-12 h-12 text-muted-foreground/30" />
-          <p className="text-foreground font-semibold">No hay cursos disponibles</p>
-          <p className="text-muted-foreground text-sm">El administrador aún no ha publicado cursos.</p>
+          <p className="text-foreground font-semibold">{t("courses.noCourses")}</p>
+          <p className="text-muted-foreground text-sm">{t("courses.noCoursesDesc")}</p>
         </div>
       )}
     </div>

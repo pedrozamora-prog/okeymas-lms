@@ -5,12 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Trophy, Star, Zap, Target } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getServerT } from "@/lib/server-t";
 
 export const metadata = { title: "Logros" };
 
 export default async function AchievementsPage() {
   const session = await auth();
   const user = session?.user as { id: string };
+  const t = await getServerT();
 
   const [userPoints, userBadges, allBadges, completedCourses, totalEnrolled] = await Promise.all([
     prisma.userPoints.findUnique({ where: { userId: user.id } }),
@@ -41,21 +43,21 @@ export default async function AchievementsPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-black text-foreground">Logros y Puntos</h1>
-        <p className="text-muted-foreground text-sm mt-1">Tu progreso y recompensas en Okeymas LMS</p>
+        <h1 className="text-2xl font-black text-foreground">{t("achievements.title")}</h1>
+        <p className="text-muted-foreground text-sm mt-1">{t("achievements.subtitle")}</p>
       </div>
 
       {/* Stats top */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: "Puntos totales",  value: totalPoints,           icon: Star,   color: "text-yelau-yellow" },
-          { label: "Nivel actual",    value: currentLevel.name,      icon: Zap,    color: currentLevel.color  },
-          { label: "Cursos completados", value: completedCourses,   icon: Target, color: "text-green-400"    },
-          { label: "Badges obtenidos",   value: `${earnedIds.size}/${allBadges.length}`, icon: Trophy, color: "text-purple-400" },
+          { id: "points",    label: t("achievements.totalPoints"), value: totalPoints,           icon: Star,   color: "text-yelau-yellow" },
+          { id: "level",     label: t("achievements.currentLevel"), value: currentLevel.name, icon: Zap, color: currentLevel.color },
+          { id: "completed", label: t("dashboard.completed"),      value: completedCourses,       icon: Target, color: "text-green-400"    },
+          { id: "badges",    label: t("achievements.badges"),      value: `${earnedIds.size}/${allBadges.length}`, icon: Trophy, color: "text-purple-400" },
         ].map(stat => {
           const Icon = stat.icon;
           return (
-            <Card key={stat.label}>
+            <Card key={stat.id}>
               <CardContent className="pt-5 pb-5 flex flex-col items-center text-center gap-2">
                 <Icon className={cn("w-6 h-6", stat.color)} />
                 <p className="text-xl font-black text-foreground">{stat.value}</p>
@@ -86,7 +88,7 @@ export default async function AchievementsPage() {
 
       {/* Badges */}
       <section className="space-y-4">
-        <h2 className="text-base font-semibold text-foreground">Insignias</h2>
+        <h2 className="text-base font-semibold text-foreground">{t("achievements.badges")}</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {allBadges.map((badge: { id: string; name: string; imageUrl: string | null; description: string | null; points: number }) => {
             const earned = earnedIds.has(badge.id);

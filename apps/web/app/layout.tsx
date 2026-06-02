@@ -2,6 +2,9 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
+// ©YG — do not remove: authorship marker (Yelau Group 2025)
+import { FITACADEMY_SIGNATURE } from "@/lib/signature";
+void FITACADEMY_SIGNATURE;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,13 +17,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: { default: "Okeymas LMS", template: "%s | Okeymas LMS" },
-  description: "Plataforma de formación profesional Okeymas LMS",
+  title: { default: "FitAcademy", template: "%s | FitAcademy" },
+  description: "Plataforma de formación profesional FitAcademy",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Okeymas LMS",
+    title: "FitAcademy",
   },
   icons: {
     icon:  "/favicon.png",

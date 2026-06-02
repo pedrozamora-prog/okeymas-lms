@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/layout/notification-bell";
+import { useI18n, LOCALES } from "@/lib/i18n-context";
 import {
   LayoutDashboard,
   BookOpen,
@@ -23,37 +24,46 @@ import {
   ShieldCheck,
   Zap,
   Building2,
+  AlertTriangle,
+  Globe,
+  ChevronDown,
+  Target,
+  Briefcase,
 } from "lucide-react";
 
 interface NavItem {
   href: string;
-  label: string;
+  labelKey: string;
+  labelFallback: string;
   icon: React.ComponentType<{ className?: string }>;
   roles?: string[];
 }
 
 const navItems: NavItem[] = [
-  { href: "/dashboard",             label: "Inicio",               icon: LayoutDashboard },
-  { href: "/dashboard/courses",     label: "Mis cursos",           icon: BookOpen },
-  { href: "/dashboard/live",        label: "Clases en directo",    icon: Video },
-  { href: "/dashboard/paths",       label: "Rutas de aprendizaje", icon: GraduationCap },
-  { href: "/dashboard/achievements",label: "Logros",               icon: Trophy },
-  { href: "/dashboard/certificates",label: "Certificados",         icon: Award },
+  { href: "/dashboard",             labelKey: "nav.home",          labelFallback: "Inicio",               icon: LayoutDashboard },
+  { href: "/dashboard/courses",     labelKey: "nav.myCourses",     labelFallback: "Mis cursos",           icon: BookOpen },
+  { href: "/dashboard/live",        labelKey: "nav.liveClasses",   labelFallback: "Clases en directo",    icon: Video },
+  { href: "/dashboard/paths",       labelKey: "nav.learningPaths", labelFallback: "Rutas de aprendizaje", icon: GraduationCap },
+  { href: "/dashboard/achievements",labelKey: "nav.achievements",  labelFallback: "Logros",               icon: Trophy },
+  { href: "/dashboard/certificates",labelKey: "nav.certificates",  labelFallback: "Certificados",         icon: Award  },
+  { href: "/dashboard/skills",      labelKey: "nav.skills",        labelFallback: "Mis competencias",     icon: Target },
 ];
 
 const adminItems: NavItem[] = [
-  { href: "/admin/courses",          label: "Gestión cursos",    icon: LibraryBig,  roles: ["SUPER_ADMIN", "BRANCH_ADMIN", "INSTRUCTOR"] },
-  { href: "/admin/certificates",     label: "Certificados",      icon: Award,       roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
-  { href: "/admin/compliance",       label: "Cumplimiento",      icon: ShieldCheck, roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
-  { href: "/admin/enrollment-rules", label: "Auto-inscripción",  icon: Zap,         roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
-  { href: "/admin/users",            label: "Usuarios",          icon: Users,       roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
-  { href: "/admin/reports",          label: "Reportes",          icon: BarChart3,   roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
-  { href: "/admin/settings",         label: "Configuración",     icon: Settings,    roles: ["SUPER_ADMIN"] },
-  { href: "/superadmin",             label: "Super Admin",       icon: Building2,   roles: ["SUPER_ADMIN"] },
-  // Mánager
-  { href: "/manager/team",           label: "Mi equipo",         icon: Users,       roles: ["MANAGER"] },
-  { href: "/manager/compliance",     label: "Cumplimiento",      icon: ShieldCheck, roles: ["MANAGER"] },
-  { href: "/manager/reports",        label: "Informes",          icon: BarChart3,   roles: ["MANAGER"] },
+  { href: "/admin/courses",          labelKey: "admin.manageCourses", labelFallback: "Gestión cursos",    icon: LibraryBig,      roles: ["SUPER_ADMIN", "BRANCH_ADMIN", "INSTRUCTOR"] },
+  { href: "/admin/certificates",     labelKey: "nav.certificates",    labelFallback: "Certificados",      icon: Award,           roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/compliance",       labelKey: "admin.compliance",    labelFallback: "Cumplimiento",      icon: ShieldCheck,     roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/alerts",           labelKey: "admin.riskAlerts",    labelFallback: "Alertas de riesgo", icon: AlertTriangle,   roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/enrollment-rules", labelKey: "admin.autoEnroll",    labelFallback: "Auto-inscripción",  icon: Zap,             roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/users",            labelKey: "admin.users",         labelFallback: "Usuarios",          icon: Users,           roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/reports",          labelKey: "admin.reports",       labelFallback: "Reportes",          icon: BarChart3,       roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/competencies",     labelKey: "admin.competencies",  labelFallback: "Competencias",      icon: Target,          roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/job-roles",        labelKey: "admin.jobRoles",      labelFallback: "Puestos de trabajo",icon: Briefcase,       roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/settings",         labelKey: "admin.settings",      labelFallback: "Configuración",     icon: Settings,        roles: ["SUPER_ADMIN"] },
+  { href: "/superadmin",             labelKey: "",                    labelFallback: "Super Admin",       icon: Building2,       roles: ["SUPER_ADMIN"] },
+  { href: "/manager/team",           labelKey: "admin.myTeam",        labelFallback: "Mi equipo",         icon: Users,           roles: ["MANAGER"] },
+  { href: "/manager/compliance",     labelKey: "admin.compliance",    labelFallback: "Cumplimiento",      icon: ShieldCheck,     roles: ["MANAGER"] },
+  { href: "/manager/reports",        labelKey: "admin.reports",       labelFallback: "Informes",          icon: BarChart3,       roles: ["MANAGER"] },
 ];
 
 interface SidebarProps {
@@ -67,6 +77,8 @@ interface SidebarProps {
 export function Sidebar({ userRole, userName, userEmail, orgLogoUrl, orgName }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const { t, locale, setLocale } = useI18n();
 
   // Cierra el drawer al navegar
   useEffect(() => { setMobileOpen(false); }, [pathname]);
@@ -84,35 +96,39 @@ export function Sidebar({ userRole, userName, userEmail, orgLogoUrl, orgName }: 
   const NavContent = ({ open }: { open: boolean }) => (
     <>
       {/* Logo */}
-      <div className="p-4 border-b border-border flex-shrink-0">
-        <Link href="/dashboard" className="flex items-center gap-3">
-          {orgLogoUrl && (
-            <img src={orgLogoUrl} alt={orgName ?? "Logo"} className="h-8 w-auto object-contain flex-shrink-0" />
+      <div className="px-4 py-3 border-b border-border flex-shrink-0">
+        <Link href="/dashboard" className="flex items-center gap-2.5 min-w-0">
+          {orgLogoUrl ? (
+            <img src={orgLogoUrl} alt={orgName ?? "Logo"} className="h-9 w-auto object-contain max-w-[160px]" />
+          ) : (
+            <>
+              <img src="/fitacademy-mark.svg" alt="" className="h-9 w-9 flex-shrink-0" />
+              <div className="min-w-0 leading-none">
+                <p className="text-[17px] font-black tracking-tight leading-none">
+                  <span className="text-yelau-yellow">Fit</span><span className="text-foreground">Academy</span>
+                </p>
+                <p className="text-[8px] text-muted-foreground tracking-[2.5px] uppercase mt-1">Learning Platform</p>
+              </div>
+            </>
           )}
-          <div className="leading-tight">
-            <p className="text-base font-black tracking-widest uppercase text-foreground">
-              {orgName ?? "OKEYMAS"}
-            </p>
-            <p className="text-sm font-bold tracking-widest uppercase text-yelau-yellow">LMS</p>
-          </div>
         </Link>
       </div>
 
       {/* Nav */}
       <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
         {navItems.map((item, i) => (
-          <SidebarLink key={item.href} item={item} pathname={pathname} index={i} open={open} />
+          <SidebarLink key={item.href} item={item} pathname={pathname} index={i} open={open} t={t} />
         ))}
 
         {visibleAdminItems.length > 0 && (
           <>
             <div className="pt-5 pb-1.5 px-3">
               <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
-                Administración
+                {t("admin.administration")}
               </p>
             </div>
             {visibleAdminItems.map((item, i) => (
-              <SidebarLink key={item.href} item={item} pathname={pathname} index={navItems.length + i + 1} open={open} />
+              <SidebarLink key={item.href} item={item} pathname={pathname} index={navItems.length + i + 1} open={open} t={t} />
             ))}
           </>
         )}
@@ -134,12 +150,45 @@ export function Sidebar({ userRole, userName, userEmail, orgLogoUrl, orgName }: 
             <p className="text-xs text-muted-foreground truncate">{userEmail}</p>
           </div>
         </div>
+
+        {/* Language selector */}
+        <div className="mb-1">
+          <button
+            onClick={() => setLangOpen((v) => !v)}
+            className="flex items-center gap-2.5 w-full min-h-[44px] px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+          >
+            <Globe className="w-4 h-4 flex-shrink-0" />
+            <span className="flex-1 text-left">{t("common.language")}</span>
+            <span className="text-base leading-none">{LOCALES.find((l) => l.value === locale)?.flag}</span>
+            <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", langOpen && "rotate-180")} />
+          </button>
+          {langOpen && (
+            <div className="mt-0.5 rounded-md overflow-hidden border border-border bg-card">
+              {LOCALES.map((loc) => (
+                <button
+                  key={loc.value}
+                  onClick={() => { setLocale(loc.value); setLangOpen(false); }}
+                  className={cn(
+                    "flex items-center gap-2.5 w-full px-3 py-2 text-sm transition-colors",
+                    locale === loc.value
+                      ? "bg-yelau-yellow text-yelau-black font-medium"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  )}
+                >
+                  <span className="text-base">{loc.flag}</span>
+                  {loc.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
           className="flex items-center gap-2.5 w-full min-h-[44px] px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
         >
           <LogOut className="w-4 h-4 flex-shrink-0" />
-          Cerrar sesión
+          {t("nav.logout")}
         </button>
       </div>
     </>
@@ -149,11 +198,11 @@ export function Sidebar({ userRole, userName, userEmail, orgLogoUrl, orgName }: 
     <>
       {/* ── MOBILE TOP BAR ──────────────────────────────────────────── */}
       <header className="lg:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-card border-b border-border flex items-center justify-between px-4">
-        <Link href="/dashboard" className="flex items-center">
-          <div className="leading-tight">
-            <p className="text-base font-black tracking-widest uppercase text-foreground">OKEYMAS</p>
-            <p className="text-xs font-bold tracking-widest uppercase text-yelau-yellow">LMS</p>
-          </div>
+        <Link href="/dashboard" className="flex items-center gap-2">
+          <img src="/fitacademy-mark.svg" alt="" className="h-8 w-8 flex-shrink-0" />
+          <span className="text-[16px] font-black tracking-tight leading-none">
+            <span className="text-yelau-yellow">Fit</span><span className="text-foreground">Academy</span>
+          </span>
         </Link>
         <button
           onClick={() => setMobileOpen(true)}
@@ -206,16 +255,18 @@ export function Sidebar({ userRole, userName, userEmail, orgLogoUrl, orgName }: 
   );
 }
 
-function SidebarLink({ item, pathname, index = 0, open = true }: {
+function SidebarLink({ item, pathname, index = 0, open = true, t }: {
   item: NavItem;
   pathname: string;
   index?: number;
   open?: boolean;
+  t: (key: string) => string;
 }) {
   const isActive =
     pathname === item.href ||
     (item.href !== "/dashboard" && pathname.startsWith(item.href));
   const Icon = item.icon;
+  const label = item.labelKey ? t(item.labelKey) : item.labelFallback;
 
   return (
     <Link
@@ -236,7 +287,7 @@ function SidebarLink({ item, pathname, index = 0, open = true }: {
       )}
     >
       <Icon className={cn("w-4 h-4 flex-shrink-0 transition-transform duration-200", isActive && "scale-110")} />
-      {item.label}
+      {label}
     </Link>
   );
 }

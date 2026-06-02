@@ -3,6 +3,15 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Sidebar } from "@/components/layout/sidebar";
 import { AiChatButton } from "@/components/ai/ai-chat-button";
+import { I18nProvider, type Locale } from "@/lib/i18n-context";
+import { OfflineIndicator } from "@/components/layout/offline-indicator";
+import messagesEs from "@/messages/es.json";
+import messagesEn from "@/messages/en.json";
+import messagesFr from "@/messages/fr.json";
+import messagesIt from "@/messages/it.json";
+import messagesPt from "@/messages/pt.json";
+
+const ALL_MESSAGES = { es: messagesEs, en: messagesEn, fr: messagesFr, it: messagesIt, pt: messagesPt };
 
 export default async function DashboardLayout({
   children,
@@ -23,15 +32,27 @@ export default async function DashboardLayout({
     organizationId?: string;
   };
 
-  // White label: cargar config de la organización
+  // White label + onboarding check
   const org = user.organizationId ? await prisma.organization.findUnique({
     where:  { id: user.organizationId },
-    select: { primaryColor: true, customLogoUrl: true, name: true },
+    select: { primaryColor: true, customLogoUrl: true, name: true, onboardedAt: true },
   }) : null;
+
+  // Redirigir al wizard si el SUPER_ADMIN no ha completado el onboarding
+  if (user.role === "SUPER_ADMIN" && org && !org.onboardedAt) {
+    redirect("/onboarding");
+  }
 
   const primaryColor = org?.primaryColor ?? null;
 
+  const dbUser = user.id ? await prisma.user.findUnique({
+    where:  { id: user.id },
+    select: { locale: true },
+  }) : null;
+  const locale = (dbUser?.locale ?? "es") as Locale;
+
   return (
+    <I18nProvider initialLocale={locale} initialMessages={ALL_MESSAGES}>
     <div
       className="flex min-h-dvh bg-background"
       style={primaryColor ? { "--color-yelau-yellow": primaryColor } as React.CSSProperties : undefined}
@@ -41,7 +62,7 @@ export default async function DashboardLayout({
         userName={user.name ?? "Usuario"}
         userEmail={user.email ?? ""}
         orgLogoUrl={org?.customLogoUrl ?? null}
-        orgName={org?.name ?? "Okeymas"}
+        orgName={org?.name ?? "FitAcademy"}
       />
 
       {/* Main content — offset on mobile para el top bar fijo */}
@@ -52,6 +73,8 @@ export default async function DashboardLayout({
       </main>
 
       <AiChatButton />
+      <OfflineIndicator />
     </div>
+    </I18nProvider>
   );
 }

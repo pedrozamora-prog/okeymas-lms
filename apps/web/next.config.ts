@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+const baseConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "drive.google.com" },
@@ -12,4 +12,6 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// En desarrollo exportamos la config base directamente (sin webpack config de PWA)
+// para que Turbopack funcione. En producción se usa next-pwa via next.config.prod.mjs
+export default baseConfig;

@@ -1,7 +1,7 @@
 {
-  "name": "Okeymas LMS",
-  "short_name": "Okeymas",
-  "description": "Plataforma de formación profesional para Okeymas Fitness Club",
+  "name": "FitAcademy",
+  "short_name": "FitAcademy",
+  "description": "Plataforma de formación profesional para gimnasios y centros deportivos",
   "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#ffffff",

@@ -2,7 +2,8 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
-import { StreamPlayer } from "@/components/lesson/stream-player";
+import { VideoLessonClient } from "@/components/lesson/video-lesson-client";
+import { QuizPlayer } from "@/components/lesson/quiz-player";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock, FileText, HelpCircle, Radio } from "lucide-react";
@@ -94,7 +95,14 @@ export default async function LessonPage({
 
       {/* Content */}
       {lesson.type === "VIDEO" && lesson.videoUrl && (
-        <StreamPlayer uid={lesson.videoUrl} title={lesson.title} />
+        <VideoLessonClient
+          videoUrl={lesson.videoUrl}
+          title={lesson.title}
+          lessonId={lessonId}
+          courseId={courseId}
+          isCompleted={progress?.completed ?? false}
+          nextLessonId={nextLesson?.id}
+        />
       )}
 
       {lesson.type === "PDF" && lesson.fileUrl && (
@@ -108,11 +116,11 @@ export default async function LessonPage({
       )}
 
       {lesson.type === "QUIZ" && (
-        <div className="flex flex-col items-center justify-center py-16 gap-4 border border-dashed border-border rounded-lg">
-          <HelpCircle className="w-10 h-10 text-yelau-yellow/60" />
-          <p className="text-foreground font-semibold">Quiz interactivo</p>
-          <p className="text-sm text-muted-foreground">Próximamente disponible</p>
-        </div>
+        <QuizPlayer
+          lessonId={lessonId}
+          courseId={courseId}
+          nextLessonId={nextLesson?.id}
+        />
       )}
 
       {lesson.type === "LIVE_CLASS" && (

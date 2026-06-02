@@ -1,4 +1,4 @@
-export const metadata = { title: "Argumentario — Okeymas LMS" };
+export const metadata = { title: "Argumentario — FitAcademy" };
 
 export default function PresentacionPage() {
   return (
@@ -8,11 +8,7 @@ export default function PresentacionPage() {
       <section className="portada">
         <div className="portada-inner">
           <div className="logo-block">
-            <div className="logo-icon">O</div>
-            <div>
-              <p className="logo-name">OKEYMAS</p>
-              <p className="logo-sub">LMS</p>
-            </div>
+            <img src="/fitacademy-logo.svg" alt="FitAcademy" style={{ height: "72px", width: "auto" }} />
           </div>
           <h1 className="portada-title">
             Plataforma de Formación<br />
@@ -31,9 +27,9 @@ export default function PresentacionPage() {
       {/* ── SECCIÓN 1: QUÉ ES ── */}
       <section className="seccion page-break">
         <div className="seccion-num">01</div>
-        <h2 className="seccion-titulo">¿Qué es Okeymas LMS?</h2>
+        <h2 className="seccion-titulo">¿Qué es FitAcademy?</h2>
         <p className="seccion-intro">
-          Okeymas LMS es una <strong>plataforma SaaS de gestión del aprendizaje</strong> desarrollada a medida para cadenas de gimnasios.
+          FitAcademy es una <strong>plataforma SaaS de gestión del aprendizaje</strong> desarrollada a medida para cadenas de gimnasios.
           Permite formar, evaluar y certificar a los empleados de forma 100% digital, centralizada y trazable.
         </p>
         <div className="cards-3">
@@ -140,15 +136,19 @@ export default function PresentacionPage() {
             <span className="modulo-tag">ROLES Y PERMISOS</span>
             <h3>Sistema de Roles Multinivel</h3>
           </div>
-          <p>La plataforma gestiona <strong>cuatro niveles de acceso</strong> con permisos diferenciados:</p>
+          <p>La plataforma gestiona <strong>cinco niveles de acceso</strong> con permisos diferenciados:</p>
           <div className="roles-grid">
             <div className="rol">
               <strong>Super Admin</strong>
-              <span>Acceso total. Gestiona organización, usuarios, cursos, certificados e informes.</span>
+              <span>Acceso total. Gestiona organización, usuarios, cursos, certificados, informes y configuración técnica.</span>
             </div>
             <div className="rol">
               <strong>Admin de Sede</strong>
-              <span>Gestión de su sucursal: usuarios, cursos y seguimiento de su equipo.</span>
+              <span>Gestión de su sucursal: invita empleados, gestiona cursos y hace seguimiento de cumplimiento.</span>
+            </div>
+            <div className="rol">
+              <strong>Mánager</strong>
+              <span>Ve el progreso de su equipo en tiempo real, identifica empleados en riesgo y consulta informes de su área.</span>
             </div>
             <div className="rol">
               <strong>Instructor</strong>
@@ -156,7 +156,7 @@ export default function PresentacionPage() {
             </div>
             <div className="rol">
               <strong>Empleado</strong>
-              <span>Accede a sus cursos asignados, realiza evaluaciones y descarga sus certificados.</span>
+              <span>Accede a sus cursos asignados, realiza evaluaciones, descarga certificados y acumula puntos.</span>
             </div>
           </div>
         </div>
@@ -179,12 +179,36 @@ export default function PresentacionPage() {
 
         <div className="modulo">
           <div className="modulo-header">
-            <span className="modulo-tag">REGISTRO</span>
-            <h3>Alta de Empleados con Departamento</h3>
+            <span className="modulo-tag">ONBOARDING</span>
+            <h3>Sistema de Invitaciones y Alta Masiva</h3>
           </div>
-          <p>Los nuevos empleados pueden registrarse de forma autónoma indicando su departamento. El sistema les asigna automáticamente los cursos correspondientes a su área. También es posible que el administrador cree las cuentas manualmente y las configure con anterioridad al inicio del contrato.</p>
+          <p>El administrador controla quién entra a la plataforma. Hay tres formas de incorporar empleados:</p>
+          <ul>
+            <li><strong>Invitación individual</strong> — el admin introduce el email, asigna rol y departamento. El empleado recibe un email con enlace de activación válido 7 días.</li>
+            <li><strong>Importación masiva por Excel / CSV</strong> — sube una lista con columnas email, rol y departamento. La plataforma detecta la cabecera automáticamente, muestra una tabla editable para corregir errores antes de enviar y lanza todas las invitaciones con un solo clic. Incluye plantilla descargable.</li>
+            <li><strong>Auto-registro</strong> — el empleado se registra con su email corporativo; el sistema le asigna cursos automáticamente según su departamento.</li>
+          </ul>
+          <p>En los tres casos, en el momento en que la cuenta se activa, la plataforma aplica las <strong>reglas de auto-inscripción</strong> configuradas y el empleado tiene sus cursos listos de inmediato.</p>
           <div className="highlight">
-            Argumento clave: el onboarding digital empieza antes del primer día de trabajo. El empleado llega formado.
+            Argumento clave: para una cadena con 3 sedes y 120 empleados, el alta completa se realiza en menos de 5 minutos subiendo un Excel. Cero emails manuales, cero errores de acceso.
+          </div>
+        </div>
+
+        <div className="modulo">
+          <div className="modulo-header">
+            <span className="modulo-tag">NOTIFICACIONES</span>
+            <h3>Comunicación Automática por Email</h3>
+          </div>
+          <p>La plataforma envía <strong>emails automáticos</strong> en los momentos clave del ciclo formativo, sin intervención del administrador:</p>
+          <ul>
+            <li><strong>Invitación de bienvenida</strong> — al crear la cuenta, con enlace de activación personalizado</li>
+            <li><strong>Nueva inscripción en curso</strong> — cuando se asigna una formación obligatoria</li>
+            <li><strong>Recordatorio a 7, 3 y 1 día</strong> — antes de que venza el plazo de un curso obligatorio</li>
+            <li><strong>Formación vencida</strong> — alerta automática al superar la fecha límite</li>
+          </ul>
+          <p>Cada organización puede <strong>configurar su propio remitente</strong> (nombre + email) y conectar su cuenta Resend para que los emails salgan desde su dominio corporativo, no desde FitAcademy.</p>
+          <div className="highlight">
+            Argumento clave: el responsable no necesita perseguir a los empleados. La plataforma lo hace por él con el nombre de la empresa, no de un proveedor externo.
           </div>
         </div>
       </section>
@@ -196,19 +220,27 @@ export default function PresentacionPage() {
         <div className="cards-2">
           <div className="card">
             <h3>☁️ 100% en la nube</h3>
-            <p>Desplegado en <strong>Vercel</strong> (la infraestructura que usa empresas como TikTok, Airbnb y Nike), con base de datos <strong>Supabase PostgreSQL</strong> en servidores europeos (Frankfurt, Alemania), cumpliendo con el <strong>RGPD</strong>.</p>
+            <p>Desplegado en <strong>Vercel</strong> (la infraestructura que usa empresas como TikTok, Airbnb y Nike), con base de datos <strong>PostgreSQL</strong> en servidores europeos cumpliendo con el <strong>RGPD</strong>.</p>
           </div>
           <div className="card">
             <h3>🔒 Seguridad</h3>
             <p>Autenticación segura con <strong>NextAuth v5</strong> y tokens JWT cifrados. Contraseñas hasheadas con bcrypt. Acceso por roles — cada usuario solo ve lo que le corresponde. HTTPS en todas las comunicaciones.</p>
           </div>
           <div className="card">
-            <h3>📱 Multiplataforma</h3>
-            <p>Funciona en cualquier dispositivo sin necesidad de instalar nada: <strong>ordenador, tablet y móvil</strong>. Diseño adaptativo que se ajusta a cualquier pantalla.</p>
+            <h3>📱 Multiplataforma + PWA</h3>
+            <p>Funciona en cualquier dispositivo sin instalar nada: <strong>ordenador, tablet y móvil</strong>. La app puede instalarse como PWA en el móvil del empleado para acceso con un toque, con soporte offline.</p>
           </div>
           <div className="card">
             <h3>⚡ Tecnología moderna</h3>
             <p>Construido con <strong>Next.js 16, TypeScript, Prisma y Tailwind CSS</strong> — las mismas tecnologías que usan las principales plataformas de formación online del mundo.</p>
+          </div>
+          <div className="card yellow-border">
+            <h3>🔗 API pública + Webhooks</h3>
+            <p>FitAcademy expone una <strong>API REST documentada</strong> con autenticación por API key. Permite integrar la plataforma con sistemas de RRHH, nóminas o ERP. Los <strong>Webhooks</strong> notifican en tiempo real eventos como finalización de curso, nuevo certificado o empleado vencido, sin necesidad de polling.</p>
+          </div>
+          <div className="card yellow-border">
+            <h3>🏷️ White Label / Marca propia</h3>
+            <p>Cada organización puede configurar su <strong>logo propio, color de marca y dominio de email</strong>. Los empleados ven la plataforma con la identidad visual de su empresa, no la de FitAcademy. Disponible en planes Chain y Enterprise.</p>
           </div>
         </div>
       </section>
@@ -220,7 +252,7 @@ export default function PresentacionPage() {
 
         <div className="comparativa">
           <div className="comp-col comp-sin">
-            <h3>❌ Sin Okeymas LMS</h3>
+            <h3>❌ Sin FitAcademy</h3>
             <ul>
               <li>Formación presencial: coste de sala, materiales, tiempo del formador</li>
               <li>Sin trazabilidad: no se sabe quién ha recibido qué formación</li>
@@ -228,10 +260,12 @@ export default function PresentacionPage() {
               <li>Onboarding lento: semanas hasta que el nuevo empleado es productivo</li>
               <li>Gestión manual de certificados: papel, correos, archivos dispersos</li>
               <li>Formación no estandarizada: cada sede forma de manera diferente</li>
+              <li>Alta manual de usuarios: emails individuales, errores de acceso</li>
+              <li>El mánager no sabe quién está atrasado hasta que es demasiado tarde</li>
             </ul>
           </div>
           <div className="comp-col comp-con">
-            <h3>✅ Con Okeymas LMS</h3>
+            <h3>✅ Con FitAcademy</h3>
             <ul>
               <li>Formación online 24/7: el empleado aprende cuando puede, sin coste de sala</li>
               <li>Trazabilidad total: informe en tiempo real de quién ha completado qué</li>
@@ -239,6 +273,8 @@ export default function PresentacionPage() {
               <li>Onboarding desde el día 1: el empleado llega con los cursos ya asignados</li>
               <li>Todo centralizado: un solo panel para gestionar toda la formación</li>
               <li>Estandarización: el mismo nivel de formación en todas las sedes</li>
+              <li>Alta masiva por Excel: 120 empleados dados de alta en 5 minutos</li>
+              <li>Recordatorios automáticos: la plataforma persigue a los atrasados sola</li>
             </ul>
           </div>
         </div>
@@ -319,10 +355,10 @@ export default function PresentacionPage() {
         {/* Planes */}
         <div style={{display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"16px", marginBottom:"32px"}}>
           {[
-            { nombre:"Starter", precio:"149", desc:"1 sede · hasta 50 empleados", color:"#f9fafb", border:"#e5e7eb", features:["Cursos y lecciones","Certificados oficiales","App móvil (PWA)","Reportes básicos","Soporte por email"] },
-            { nombre:"Professional", precio:"299", desc:"Hasta 3 sedes · hasta 150 empleados", color:"#f9fafb", border:"#e5e7eb", features:["Todo lo del Starter","IA generadora de contenido","Cumplimiento y alertas","Rol de mánager","Informes Excel/PDF","Auto-inscripción por puesto"] },
-            { nombre:"Chain", precio:"499", desc:"Hasta 8 sedes · hasta 400 empleados", color:"#0C0C0C", border:"#FCE900", features:["Todo lo del Professional","Encuestas post-curso","Foros por lección","SCORM import","Soporte prioritario","Reunión mensual de KPIs"] },
-            { nombre:"Enterprise", precio:"A medida", desc:"Sedes ilimitadas · empleados ilimitados", color:"#f9fafb", border:"#e5e7eb", features:["Todo lo del Chain","White label / marca propia","Integraciones con RRHH","SLA garantizado","Formación al equipo admin","Roadmap priorizado"] },
+            { nombre:"Starter", precio:"149", desc:"1 sede · hasta 50 empleados", color:"#f9fafb", border:"#e5e7eb", features:["Cursos, módulos y lecciones","Certificados oficiales PDF","Invitaciones por email","App móvil (PWA)","Notificaciones automáticas","Reportes básicos","Soporte por email"] },
+            { nombre:"Professional", precio:"299", desc:"Hasta 3 sedes · hasta 150 empleados", color:"#f9fafb", border:"#e5e7eb", features:["Todo lo del Starter","Alta masiva por Excel/CSV","IA generadora de contenido","Rol de mánager + vista equipo","Informes Excel/PDF","Auto-inscripción por puesto","Email con dominio propio"] },
+            { nombre:"Chain", precio:"499", desc:"Hasta 8 sedes · hasta 400 empleados", color:"#0C0C0C", border:"#FCE900", features:["Todo lo del Professional","API pública + Webhooks","White label / marca propia","Encuestas post-curso","SCORM import","Soporte prioritario","Reunión mensual de KPIs"] },
+            { nombre:"Enterprise", precio:"A medida", desc:"Sedes ilimitadas · empleados ilimitados", color:"#f9fafb", border:"#e5e7eb", features:["Todo lo del Chain","Integraciones con RRHH / ERP","SSO corporativo","SLA garantizado 99,9%","Formación al equipo admin","Roadmap priorizado con dirección"] },
           ].map((plan) => (
             <div key={plan.nombre} style={{background:plan.color, border:`2px solid ${plan.border}`, borderRadius:"16px", padding:"24px", display:"flex", flexDirection:"column", gap:"12px"}}>
               <div style={{fontWeight:900, fontSize:"15px", color: plan.color === "#0C0C0C" ? "#FCE900" : "#0C0C0C", letterSpacing:"1px"}}>{plan.nombre}</div>
@@ -357,16 +393,16 @@ export default function PresentacionPage() {
         {/* Comparativa */}
         <div className="highlight">
           <strong>Comparativa de mercado:</strong> iSpring Learn cobra ~2,50€/usuario/mes con mínimo 100 usuarios (mínimo €250/mes) sin especialización en fitness.
-          Okeymas LMS ofrece el mismo precio con IA, cumplimiento y soporte específico para gimnasios — sin coste extra por crecer.
+          FitAcademy ofrece el mismo precio con IA, cumplimiento y soporte específico para gimnasios — sin coste extra por crecer.
         </div>
       </section>
 
       {/* ── CIERRE ── */}
       <section className="cierre">
         <h2>La formación de tu equipo,<br /><span className="yellow">bajo control total.</span></h2>
-        <p>Okeymas LMS transforma la formación de empleados de un proceso costoso e incontrolable en un activo estratégico medible y escalable.</p>
+        <p>FitAcademy transforma la formación de empleados de un proceso costoso e incontrolable en un activo estratégico medible y escalable.</p>
         <div className="cierre-contacto">
-          <strong>Okeymas LMS</strong> · pedro.zamora@yelaugroup.com
+          <strong>FitAcademy</strong> · pedro.zamora@yelaugroup.com
         </div>
       </section>
 
@@ -392,16 +428,7 @@ export default function PresentacionPage() {
           padding: 60px 80px;
         }
         .portada-inner { max-width: 700px; width: 100%; }
-        .logo-block { display: flex; align-items: center; gap: 16px; margin-bottom: 60px; }
-        .logo-icon {
-          width: 56px; height: 56px;
-          background: #FCE900;
-          border-radius: 14px;
-          display: flex; align-items: center; justify-content: center;
-          font-size: 26px; font-weight: 900; color: #0C0C0C;
-        }
-        .logo-name { font-size: 20px; font-weight: 900; color: #fff; line-height: 1; }
-        .logo-sub  { font-size: 11px; font-weight: 700; color: #FCE900; letter-spacing: 4px; margin-top: 2px; }
+        .logo-block { margin-bottom: 60px; }
         .portada-title {
           font-size: 48px; font-weight: 900; color: #fff;
           line-height: 1.15; margin-bottom: 20px; letter-spacing: -1px;
@@ -452,7 +479,7 @@ export default function PresentacionPage() {
         }
 
         /* ROLES */
-        .roles-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+        .roles-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 12px; }
         .rol {
           background: #f8f8f8; border-radius: 8px; padding: 16px;
           display: flex; flex-direction: column; gap: 4px;

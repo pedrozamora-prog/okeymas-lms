@@ -5,8 +5,9 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, BookOpen, Users, Layers, Pencil, Eye } from "lucide-react";
+import { Plus, BookOpen, Users, Layers, Pencil, BarChart2, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BulkEnrollButton } from "./courses-client";
 
 export const metadata = { title: "Gestión de cursos" };
 
@@ -100,7 +101,7 @@ export default async function AdminCoursesPage() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="text-sm font-semibold text-foreground truncate">{course.title}</p>
                         {course.isRequired && (
-                          <Badge variant="outline" className="text-[10px] border-yelau-yellow/30 text-yelau-yellow bg-yelau-yellow/10 flex-shrink-0">
+                          <Badge variant="outline" className="text-[10px] border-amber-400 text-amber-700 bg-amber-50 flex-shrink-0">
                             Obligatorio
                           </Badge>
                         )}
@@ -129,6 +130,18 @@ export default async function AdminCoursesPage() {
                       <Button variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>
                         <Link href={`/dashboard/courses/${course.id}`} title="Vista previa">
                           <Eye className="w-4 h-4" />
+                        </Link>
+                      </Button>
+                      {course.status === "PUBLISHED" && (
+                        <BulkEnrollButton
+                          courseId={course.id}
+                          courseTitle={course.title}
+                        />
+                      )}
+                      <Button variant="outline" size="sm" className="h-8 gap-1.5" asChild>
+                        <Link href={`/admin/courses/${course.id}/analytics`}>
+                          <BarChart2 className="w-3.5 h-3.5" />
+                          Analytics
                         </Link>
                       </Button>
                       <Button variant="outline" size="sm" className="h-8 gap-1.5" asChild>

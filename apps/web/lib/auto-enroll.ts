@@ -15,7 +15,7 @@ export async function applyEnrollmentRules(userId: string, organizationId: strin
       },
       include: { course: { select: { title: true } } },
     }),
-    prisma.organization.findUnique({ where: { id: organizationId }, select: { notifyNewEnrollment: true } }),
+    prisma.organization.findUnique({ where: { id: organizationId }, select: { notifyNewEnrollment: true, emailFromName: true, emailFromAddress: true, emailReplyTo: true, resendApiKey: true } }),
     prisma.user.findUnique({ where: { id: userId }, select: { email: true, name: true } }),
   ]);
 
@@ -44,7 +44,12 @@ export async function applyEnrollmentRules(userId: string, organizationId: strin
 
     // Email solo si la organización lo tiene activado
     if (org?.notifyNewEnrollment) {
-      await sendNewEnrollmentEmail(user.email, user.name, rule.course.title, deadline);
+      await sendNewEnrollmentEmail(user.email, user.name, rule.course.title, deadline, {
+        fromName:    org.emailFromName,
+        fromAddress: org.emailFromAddress,
+        replyTo:     org.emailReplyTo,
+        resendApiKey: org.resendApiKey,
+      });
     }
   }
 }

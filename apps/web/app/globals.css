@@ -78,6 +78,8 @@
   --color-ring:              rgb(var(--ring));
   --color-yelau-yellow:      #FCE900;
   --color-yelau-black:       #0C0C0C;
+  /* Para texto sobre fondos CLAROS: amber oscuro con buen contraste (5:1) */
+  --color-brand-text:        #92400e;
   --color-chart-1:           rgb(var(--chart-1));
   --color-chart-2:           rgb(var(--chart-2));
   --color-chart-3:           rgb(var(--chart-3));
@@ -92,12 +94,27 @@
   --color-sidebar-border:    rgb(var(--sidebar-border));
   --color-sidebar-ring:      rgb(var(--sidebar-ring));
 
+  --color-brand-text:        var(--color-brand-text);
   --font-sans:  var(--font-geist-sans);
   --font-mono:  var(--font-geist-mono);
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+}
+
+/* ─── BRAND TEXT — legible en fondos claros ─────────────────────────── */
+/* Usar "text-brand" en lugar de "text-yelau-yellow" para texto sobre fondos blancos/claros */
+@layer utilities {
+  .text-brand {
+    color: #b45309; /* amber-700: contraste 5:1 sobre blanco */
+  }
+  .hover\:text-brand:hover {
+    color: #b45309;
+  }
+  .text-brand-muted {
+    color: #92400e; /* amber-800: contraste 7:1, para texto muy pequeño */
+  }
 }
 
 /* ─── FLUID TYPOGRAPHY ───────────────────────────────────────────────── */

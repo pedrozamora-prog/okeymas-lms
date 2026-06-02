@@ -6,12 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Award, Download, Calendar, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { getServerT } from "@/lib/server-t";
 
 export const metadata = { title: "Certificados" };
 
 export default async function CertificatesPage() {
   const session = await auth();
   const user = session?.user as { id: string; name?: string | null };
+  const t = await getServerT();
 
   const certificates = await prisma.certificate.findMany({
     where: { userId: user.id },
@@ -22,9 +24,9 @@ export default async function CertificatesPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-black text-foreground">Certificados</h1>
+        <h1 className="text-2xl font-black text-foreground">{t("certificates.title")}</h1>
         <p className="text-muted-foreground text-sm mt-1">
-          Tus certificados de formación obtenidos en Okeymas LMS
+          {t("certificates.subtitle")}
         </p>
       </div>
 
@@ -34,13 +36,13 @@ export default async function CertificatesPage() {
             <Award className="w-8 h-8 text-muted-foreground/40" />
           </div>
           <div>
-            <p className="font-semibold text-foreground">Aún no tienes certificados</p>
+            <p className="font-semibold text-foreground">{t("certificates.noCertificates")}</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Completa un curso para obtener tu primer certificado
+              {t("certificates.noCertificatesDesc")}
             </p>
           </div>
           <Button variant="outline" asChild>
-            <a href="/dashboard/courses">Ver cursos disponibles</a>
+            <a href="/dashboard/courses">{t("nav.myCourses")}</a>
           </Button>
         </div>
       ) : (
@@ -77,12 +79,12 @@ export default async function CertificatesPage() {
                   <div className="space-y-1 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1.5">
                       <Calendar className="w-3 h-3" />
-                      Emitido: {format(cert.issuedAt, "d MMM yyyy", { locale: es })}
+                      {t("certificates.issuedOn", { date: format(cert.issuedAt, "d MMM yyyy", { locale: es }) })}
                     </div>
                     {cert.expiresAt && (
                       <div className={`flex items-center gap-1.5 ${isExpired || expiresSoon ? "text-orange-400" : ""}`}>
                         <AlertCircle className="w-3 h-3" />
-                        Válido hasta: {format(cert.expiresAt, "d MMM yyyy", { locale: es })}
+                        {t("certificates.expiresOn", { date: format(cert.expiresAt, "d MMM yyyy", { locale: es }) })}
                       </div>
                     )}
                   </div>
@@ -93,7 +95,7 @@ export default async function CertificatesPage() {
                     className="inline-flex items-center justify-center gap-2 w-full h-8 px-3 text-xs font-medium rounded-md border border-input bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
                   >
                     <Download className="w-3.5 h-3.5" />
-                    Descargar PDF
+                    {t("certificates.download")}
                   </a>
                 </CardContent>
               </Card>

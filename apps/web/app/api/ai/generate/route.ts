@@ -30,7 +30,7 @@ Donde "correct" es el índice (0-3) de la respuesta correcta. Solo JSON, sin tex
 
   try {
     const systemPrompt = `Eres un experto en formación corporativa para cadenas de gimnasios y centros deportivos.
-Trabajas para Okeymas Fitness Club, una cadena de gimnasios que forma a su personal mediante una plataforma LMS.
+Trabajas para una cadena de gimnasios que forma a su personal mediante FitAcademy, una plataforma LMS profesional.
 Los empleados que usan esta plataforma trabajan en puestos como: recepción, monitores de sala, servicio de limpieza, administración y deporOcio.
 Toda la formación está orientada al sector fitness, atención al cliente en gimnasios, protocolos de seguridad deportiva, técnicas de venta de membresías y gestión de instalaciones deportivas.
 Genera contenido profesional, claro y directamente aplicable al trabajo diario en un gimnasio.`;

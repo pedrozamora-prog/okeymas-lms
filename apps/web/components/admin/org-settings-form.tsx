@@ -57,7 +57,7 @@ export function OrgSettingsForm({ orgId, initialName, initialSlug, initialLogoUr
                 id="org-name"
                 value={name}
                 onChange={e => setName(e.target.value)}
-                placeholder="Ej: Okeymas Group"
+                placeholder="Ej: Mi Centro Deportivo"
               />
             </div>
 

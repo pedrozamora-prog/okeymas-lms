@@ -3,16 +3,18 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { OrgSettingsForm } from "@/components/admin/org-settings-form";
 import { NotificationSettingsForm } from "@/components/admin/notification-settings-form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmailIntegrationsForm } from "@/components/admin/email-integrations-form";
+import { ReportScheduleForm } from "@/components/admin/report-schedule-form";
+import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Building2, Shield, Bell, Palette } from "lucide-react";
+import { Building2, Shield, Bell, Palette, Plug, BarChart3 } from "lucide-react";
 
 export const metadata = { title: "Configuración" };
 
 export default async function SettingsPage() {
   const session = await auth();
-  const user = session?.user as { id: string; role: string; organizationId: string };
+  const user = session?.user as { id: string; role: string; organizationId: string; email?: string };
 
   if (user.role !== "SUPER_ADMIN") redirect("/dashboard");
 
@@ -61,7 +63,7 @@ export default async function SettingsPage() {
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-md bg-yelau-yellow border border-border" />
                   <span className="text-sm font-mono text-foreground">#FCE900</span>
-                  <Badge variant="outline" className="text-[10px]">Marca Okeymas</Badge>
+                  <Badge variant="outline" className="text-[10px]">Marca FitAcademy</Badge>
                 </div>
               </div>
               <div className="space-y-2">
@@ -116,6 +118,34 @@ export default async function SettingsPage() {
 
       <Separator />
 
+      {/* Integraciones */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Plug className="w-4 h-4 text-yelau-yellow" />
+          <h2 className="text-base font-semibold text-foreground">Integraciones</h2>
+        </div>
+
+        {/* Email */}
+        <div className="space-y-3">
+          <div>
+            <p className="text-sm font-medium text-foreground">Email</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Configura el remitente y proveedor de email para los envíos automáticos a empleados.
+            </p>
+          </div>
+          <EmailIntegrationsForm
+            orgId={org.id}
+            userEmail={user.email ?? ""}
+            initialFromName={org.emailFromName ?? ""}
+            initialFromAddress={org.emailFromAddress ?? ""}
+            initialReplyTo={org.emailReplyTo ?? ""}
+            initialResendApiKey={org.resendApiKey ?? ""}
+          />
+        </div>
+      </section>
+
+      <Separator />
+
       {/* Notificaciones */}
       <section className="space-y-4">
         <div className="flex items-center gap-2">
@@ -134,6 +164,27 @@ export default async function SettingsPage() {
             notifyDeadline1d:    org.notifyDeadline1d,
             notifyOverdue:       org.notifyOverdue,
           }}
+        />
+      </section>
+
+      <Separator />
+
+      {/* Informes programados */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2">
+          <BarChart3 className="w-4 h-4 text-yelau-yellow" />
+          <h2 className="text-base font-semibold text-foreground">Informes automáticos</h2>
+        </div>
+        <p className="text-sm text-muted-foreground -mt-2">
+          Recibe un resumen de cumplimiento de formación de forma automática en tu email.
+          Se envía a todos los administradores y mánagers de la organización.
+        </p>
+        <ReportScheduleForm
+          orgId={org.id}
+          initialFrequency={(org.reportFrequency ?? "DISABLED") as "DISABLED" | "WEEKLY" | "MONTHLY"}
+          initialDayOfWeek={org.reportDayOfWeek ?? 1}
+          initialDayOfMonth={org.reportDayOfMonth ?? 1}
+          lastSentAt={org.reportLastSentAt?.toISOString() ?? null}
         />
       </section>
     </div>
