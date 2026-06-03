@@ -42,6 +42,7 @@ interface CourseFormProps {
     certificateValidityDays: number | null;
     certSignerName: string | null;
     certSignerTitle: string | null;
+    signatureEnabled: boolean;
   };
 }
 
@@ -66,7 +67,7 @@ export function CourseForm({ initial }: CourseFormProps) {
   const [certValidity, setCertValidity]   = useState(String(initial?.certificateValidityDays ?? ""));
   const [signerName, setSignerName]       = useState(initial?.certSignerName ?? "");
   const [signerTitle, setSignerTitle]     = useState(initial?.certSignerTitle ?? "");
-  const [sigEnabled, setSigEnabled]       = useState((initial as { signatureEnabled?: boolean })?.signatureEnabled ?? false);
+  const [sigEnabled, setSigEnabled]       = useState(initial?.signatureEnabled ?? false);
 
   async function generateDescription() {
     if (!title.trim()) { toast.error("Escribe primero el título del curso"); return; }
