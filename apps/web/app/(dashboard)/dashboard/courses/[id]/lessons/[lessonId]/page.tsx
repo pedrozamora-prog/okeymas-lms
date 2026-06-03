@@ -165,6 +165,7 @@ export default async function LessonPage({
         <LessonCompleteButton
           lessonId={lessonId}
           courseId={courseId}
+          courseTitle={lesson.module.course.title}
           isCompleted={progress?.completed ?? false}
           nextLessonId={nextLesson?.id}
         />

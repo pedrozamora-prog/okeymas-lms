@@ -221,6 +221,7 @@ model User {
   interactiveAnswers InteractiveAnswer[]
   jobRoles           UserJobRole[]
   auditLogs          AuditLog[]
+  courseSignatures   CourseSignature[]
 
   @@map("users")
 }
@@ -311,6 +312,8 @@ model Course {
   certSignerName          String?
   certSignerTitle         String?
 
+  signatureEnabled Boolean @default(false)
+
   modules          Module[]
   enrollments      Enrollment[]
   paths            LearningPathCourse[]
@@ -318,6 +321,7 @@ model Course {
   enrollmentRules  EnrollmentRule[]
   survey           CourseSurvey?
   competencies     CourseCompetency[]
+  signatures       CourseSignature[]
 
   @@map("courses")
 }
@@ -823,6 +827,24 @@ model UserJobRole {
 
   @@id([userId, jobRoleId])
   @@map("user_job_roles")
+}
+
+// ─── FIRMA DIGITAL ───────────────────────────────────────────────────────────
+
+model CourseSignature {
+  id            String   @id @default(cuid())
+  signatureData String   // base64 PNG del trazo del canvas
+  ipAddress     String?
+  userAgent     String?
+  signedAt      DateTime @default(now())
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@map("course_signatures")
 }
 
 // ─── AUDIT LOGS ──────────────────────────────────────────────────────────────

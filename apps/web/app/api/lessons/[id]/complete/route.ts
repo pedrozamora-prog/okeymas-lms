@@ -44,53 +44,68 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       },
     },
   });
+  // signatureEnabled and certificateEnabled are selected via the course include above
 
   const course = lesson?.module?.course;
-  if (course?.certificateEnabled) {
+  if (course) {
     const allLessonIds = course.modules.flatMap(m => m.lessons.map(l => l.id));
-    const completed = await prisma.lessonProgress.count({
+    const completedCount = await prisma.lessonProgress.count({
       where: { userId: user.id, lessonId: { in: allLessonIds }, completed: true },
     });
+    const courseFinished = completedCount >= allLessonIds.length;
 
-    if (completed >= allLessonIds.length) {
-      // Verificar que no tenga ya un certificado activo para este curso
-      const existingCert = await prisma.certificate.findFirst({
+    if (courseFinished) {
+      // Actualizar estado de enrollment
+      await prisma.enrollment.updateMany({
         where: { userId: user.id, courseId: course.id },
+        data: { status: "COMPLETED", completedAt: new Date() },
       });
 
-      if (!existingCert) {
-        const expiresAt = course.certificateValidityDays
-          ? new Date(Date.now() + course.certificateValidityDays * 86400000)
-          : null;
-
-        await prisma.certificate.create({
-          data: {
-            userId:      user.id,
-            courseId:    course.id,
-            courseTitle: course.title,
-            type:        course.certificateType,
-            expiresAt,
-          },
+      // Si requiere firma y no la tiene aún → pedir firma antes de emitir certificado
+      if (course.signatureEnabled) {
+        const existingSig = await prisma.courseSignature.findUnique({
+          where: { userId_courseId: { userId: user.id, courseId: course.id } },
         });
-
-        // Webhook: certificado emitido
-        if (user.organizationId) {
-          await dispatchWebhook(user.organizationId, "CERTIFICATE_ISSUED", {
-            userId: user.id, courseId: course.id, courseTitle: course.title,
-          });
+        if (!existingSig) {
+          return NextResponse.json({ ok: true, courseFinished: true, needsSignature: true, courseId: course.id });
         }
-
-        return NextResponse.json({ ok: true, certificateIssued: true });
       }
-    }
 
-    // Webhook: curso completado
-    if (user.organizationId) {
-      await dispatchWebhook(user.organizationId, "COURSE_COMPLETED", {
-        userId: user.id, courseId: course.id, courseTitle: course.title,
-      });
+      // Emitir certificado si está habilitado
+      if (course.certificateEnabled) {
+        const existingCert = await prisma.certificate.findFirst({
+          where: { userId: user.id, courseId: course.id },
+        });
+        if (!existingCert) {
+          const expiresAt = course.certificateValidityDays
+            ? new Date(Date.now() + course.certificateValidityDays * 86400000)
+            : null;
+          await prisma.certificate.create({
+            data: {
+              userId:      user.id,
+              courseId:    course.id,
+              courseTitle: course.title,
+              type:        course.certificateType,
+              expiresAt,
+            },
+          });
+          if (user.organizationId) {
+            await dispatchWebhook(user.organizationId, "CERTIFICATE_ISSUED", {
+              userId: user.id, courseId: course.id, courseTitle: course.title,
+            });
+          }
+          return NextResponse.json({ ok: true, courseFinished: true, certificateIssued: true });
+        }
+      }
+
+      if (user.organizationId) {
+        await dispatchWebhook(user.organizationId, "COURSE_COMPLETED", {
+          userId: user.id, courseId: course.id, courseTitle: course.title,
+        });
+      }
+      return NextResponse.json({ ok: true, courseFinished: true, certificateIssued: false });
     }
   }
 
-  return NextResponse.json({ ok: true, certificateIssued: false });
+  return NextResponse.json({ ok: true, courseFinished: false, certificateIssued: false });
 }

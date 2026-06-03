@@ -66,6 +66,7 @@ export function CourseForm({ initial }: CourseFormProps) {
   const [certValidity, setCertValidity]   = useState(String(initial?.certificateValidityDays ?? ""));
   const [signerName, setSignerName]       = useState(initial?.certSignerName ?? "");
   const [signerTitle, setSignerTitle]     = useState(initial?.certSignerTitle ?? "");
+  const [sigEnabled, setSigEnabled]       = useState((initial as { signatureEnabled?: boolean })?.signatureEnabled ?? false);
 
   async function generateDescription() {
     if (!title.trim()) { toast.error("Escribe primero el título del curso"); return; }
@@ -158,6 +159,7 @@ export function CourseForm({ initial }: CourseFormProps) {
           certificateValidityDays: certValidity ? Number(certValidity) : null,
           certSignerName:  signerName  || null,
           certSignerTitle: signerTitle || null,
+          signatureEnabled: sigEnabled,
         }),
       });
 
@@ -408,7 +410,7 @@ export function CourseForm({ initial }: CourseFormProps) {
             <h3 className="text-sm font-bold text-foreground">Certificado</h3>
           </div>
 
-          {/* Toggle */}
+          {/* Toggle certificado */}
           <div className="flex items-center justify-between p-4 rounded-lg border border-border bg-muted/30">
             <div>
               <p className="text-sm font-medium text-foreground">Emitir certificado al completar</p>
@@ -423,6 +425,25 @@ export function CourseForm({ initial }: CourseFormProps) {
             >
               <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
                 certEnabled ? "translate-x-5" : "translate-x-0"
+              }`} />
+            </button>
+          </div>
+
+          {/* Toggle firma digital */}
+          <div className="flex items-center justify-between p-4 rounded-lg border border-border bg-muted/30">
+            <div>
+              <p className="text-sm font-medium text-foreground">Requerir firma digital al completar</p>
+              <p className="text-xs text-muted-foreground mt-0.5">El empleado debe firmar digitalmente que ha leído y entendido el curso (compliance)</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSigEnabled(v => !v)}
+              className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${
+                sigEnabled ? "bg-yelau-yellow" : "bg-muted-foreground/30"
+              }`}
+            >
+              <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                sigEnabled ? "translate-x-5" : "translate-x-0"
               }`} />
             </button>
           </div>

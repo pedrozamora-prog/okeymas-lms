@@ -4,25 +4,28 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { SignatureModal } from "@/components/ui/signature-modal";
 import { CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
 
 interface Props {
-  lessonId: string;
-  courseId: string;
+  lessonId:    string;
+  courseId:    string;
+  courseTitle: string;
   isCompleted: boolean;
   nextLessonId?: string;
 }
 
-export function LessonCompleteButton({ lessonId, courseId, isCompleted, nextLessonId }: Props) {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [completed, setCompleted] = useState(isCompleted);
+export function LessonCompleteButton({ lessonId, courseId, courseTitle, isCompleted, nextLessonId }: Props) {
+  const router   = useRouter();
+  const [loading,          setLoading]          = useState(false);
+  const [completed,        setCompleted]        = useState(isCompleted);
+  const [showSignature,    setShowSignature]    = useState(false);
+  const [pendingCourseId,  setPendingCourseId]  = useState<string | null>(null);
 
   async function markComplete() {
     setLoading(true);
     try {
       if (!navigator.onLine) {
-        // Sin conexión: encolar para sync posterior
         const { queueProgress } = await import("@/lib/offline-db");
         await queueProgress({ lessonId, courseId, type: "complete" });
         setCompleted(true);
@@ -30,15 +33,29 @@ export function LessonCompleteButton({ lessonId, courseId, isCompleted, nextLess
         return;
       }
 
-      const res = await fetch(`/api/lessons/${lessonId}/complete`, { method: "POST" });
+      const res  = await fetch(`/api/lessons/${lessonId}/complete`, { method: "POST" });
+      const data = await res.json();
       if (!res.ok) throw new Error();
+
       setCompleted(true);
       toast.success("¡Lección completada!");
+
+      // El curso se terminó y requiere firma
+      if (data.needsSignature && data.courseId) {
+        setPendingCourseId(data.courseId);
+        setShowSignature(true);
+        return;
+      }
+
+      if (data.certificateIssued) {
+        toast.success("🎓 ¡Certificado emitido! Consúltalo en tu perfil.");
+      }
+
       if (nextLessonId) {
         router.push(`/dashboard/courses/${courseId}/lessons/${nextLessonId}`);
       } else {
         router.push(`/dashboard/courses/${courseId}`);
-        toast.success("¡Has completado todos los módulos!");
+        if (data.courseFinished) toast.success("¡Has completado el curso!");
       }
       router.refresh();
     } catch {
@@ -48,7 +65,16 @@ export function LessonCompleteButton({ lessonId, courseId, isCompleted, nextLess
     }
   }
 
-  if (completed) {
+  function handleSignComplete(certificateIssued: boolean) {
+    setShowSignature(false);
+    setPendingCourseId(null);
+    if (certificateIssued) toast.success("🎓 ¡Certificado emitido! Consúltalo en tu perfil.");
+    toast.success("✅ Firma guardada correctamente.");
+    router.push(`/dashboard/courses/${courseId}`);
+    router.refresh();
+  }
+
+  if (completed && !showSignature) {
     return nextLessonId ? (
       <Button
         className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2"
@@ -66,13 +92,23 @@ export function LessonCompleteButton({ lessonId, courseId, isCompleted, nextLess
   }
 
   return (
-    <Button
-      className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2"
-      onClick={markComplete}
-      disabled={loading}
-    >
-      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-      Marcar como completada
-    </Button>
+    <>
+      <Button
+        className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2"
+        onClick={markComplete}
+        disabled={loading}
+      >
+        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+        Marcar como completada
+      </Button>
+
+      {showSignature && pendingCourseId && (
+        <SignatureModal
+          courseId={pendingCourseId}
+          courseTitle={courseTitle}
+          onComplete={handleSignComplete}
+        />
+      )}
+    </>
   );
 }

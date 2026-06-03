@@ -92,6 +92,7 @@ export default async function EditCoursePage({ params }: { params: Promise<{ id:
               certificateValidityDays: course.certificateValidityDays,
               certSignerName: course.certSignerName,
               certSignerTitle: course.certSignerTitle,
+              signatureEnabled: course.signatureEnabled,
             }}
           />
         </section>
