@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CursorRipple } from "@/components/ui/cursor-ripple";
-import { Loader2, BookOpen, Award, Video, Users, ChevronRight } from "lucide-react";
+import { Loader2, BookOpen, Award, Video, Users, ChevronRight, KeyRound, AlertCircle } from "lucide-react";
 
 const features = [
   {
@@ -32,14 +32,47 @@ const features = [
   },
 ];
 
-export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail]     = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError]     = useState("");
-  const [loading, setLoading] = useState(false);
+const SSO_ERRORS: Record<string, string> = {
+  SSONotConfigured: "SSO no configurado para esta organización",
+  SSOError:         "Error al procesar la autenticación SSO",
+  SSONoEmail:       "El IdP no devolvió un email válido",
+  SSOUserInactive:  "Tu cuenta está desactivada",
+  SSONoResponse:    "No se recibió respuesta del IdP",
+  SSOInvalidProfile:"Perfil SSO inválido",
+};
 
-  async function handleSubmit(e: React.FormEvent) {
+export default function LoginPage() {
+  const router       = useRouter();
+  const searchParams = useSearchParams();
+  const [tab,      setTab]      = useState<"password"|"sso">("password");
+  const [email,    setEmail]    = useState("");
+  const [password, setPassword] = useState("");
+  const [orgSlug,  setOrgSlug]  = useState("");
+  const [error,    setError]    = useState("");
+  const [loading,  setLoading]  = useState(false);
+
+  // Handle SSO token redirect and SSO errors
+  useEffect(() => {
+    const ssoToken = searchParams.get("ssoToken");
+    const ssoError = searchParams.get("error");
+
+    if (ssoError && SSO_ERRORS[ssoError]) {
+      setError(SSO_ERRORS[ssoError]);
+      setTab("sso");
+      return;
+    }
+
+    if (ssoToken) {
+      setLoading(true);
+      signIn("credentials", { ssoToken, redirect: false }).then(result => {
+        setLoading(false);
+        if (result?.error) { setError("Token SSO inválido o expirado"); }
+        else { router.push("/dashboard"); router.refresh(); }
+      });
+    }
+  }, [searchParams, router]);
+
+  async function handlePasswordSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -48,6 +81,12 @@ export default function LoginPage() {
     if (result?.error) { setError("Email o contraseña incorrectos"); return; }
     router.push("/dashboard");
     router.refresh();
+  }
+
+  function handleSsoSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!orgSlug.trim()) { setError("Escribe el identificador de tu organización"); return; }
+    window.location.href = `/api/auth/sso/${orgSlug.trim()}/init`;
   }
 
   return (
@@ -132,62 +171,72 @@ export default function LoginPage() {
 
         <div className="w-full max-w-sm">
           {/* Header formulario */}
-          <div className="mb-8">
+          <div className="mb-6">
             <h2 className="text-2xl font-black text-foreground tracking-tight">Bienvenido</h2>
             <p className="text-muted-foreground text-sm mt-1">Accede con tu cuenta corporativa</p>
           </div>
 
-          {/* Formulario */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1.5">
-              <label htmlFor="email" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Correo electrónico
-              </label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="nombre@empresa.com"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
-                autoComplete="email"
-                className="h-11"
-              />
+          {/* Tabs */}
+          <div className="flex gap-1 p-1 bg-muted rounded-lg mb-6">
+            <button type="button" onClick={() => { setTab("password"); setError(""); }}
+              className={`flex-1 py-2 text-xs font-semibold rounded-md transition-colors ${tab==="password"?"bg-background text-foreground shadow-sm":"text-muted-foreground hover:text-foreground"}`}>
+              Contraseña
+            </button>
+            <button type="button" onClick={() => { setTab("sso"); setError(""); }}
+              className={`flex-1 py-2 text-xs font-semibold rounded-md transition-colors flex items-center justify-center gap-1.5 ${tab==="sso"?"bg-background text-foreground shadow-sm":"text-muted-foreground hover:text-foreground"}`}>
+              <KeyRound className="w-3 h-3" />SSO
+            </button>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div className="flex items-center gap-2 text-sm text-red-400 bg-red-500/10 border border-red-500/20 px-3 py-2 rounded-lg mb-4">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              {error}
             </div>
+          )}
 
-            <div className="space-y-1.5">
-              <label htmlFor="password" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Contraseña
-              </label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
-                autoComplete="current-password"
-                className="h-11"
-              />
-            </div>
+          {/* Formulario contraseña */}
+          {tab === "password" && (
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <div className="space-y-1.5">
+                <label htmlFor="email" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Correo electrónico
+                </label>
+                <Input id="email" type="email" placeholder="nombre@empresa.com" value={email}
+                  onChange={e => setEmail(e.target.value)} required autoComplete="email" className="h-11" />
+              </div>
+              <div className="space-y-1.5">
+                <label htmlFor="password" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Contraseña
+                </label>
+                <Input id="password" type="password" placeholder="••••••••" value={password}
+                  onChange={e => setPassword(e.target.value)} required autoComplete="current-password" className="h-11" />
+              </div>
+              <Button type="submit" disabled={loading}
+                className="w-full h-11 bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold text-sm mt-2 gap-2">
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Entrar <ChevronRight className="w-4 h-4" /></>}
+              </Button>
+            </form>
+          )}
 
-            {error && (
-              <p className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 px-3 py-2 rounded-lg">
-                {error}
-              </p>
-            )}
-
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full h-11 bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold text-sm mt-2 gap-2"
-            >
-              {loading
-                ? <Loader2 className="w-4 h-4 animate-spin" />
-                : <>Entrar <ChevronRight className="w-4 h-4" /></>
-              }
-            </Button>
-          </form>
+          {/* Formulario SSO */}
+          {tab === "sso" && (
+            <form onSubmit={handleSsoSubmit} className="space-y-4">
+              <div className="space-y-1.5">
+                <label htmlFor="orgSlug" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Identificador de la organización
+                </label>
+                <Input id="orgSlug" type="text" placeholder="okeymas" value={orgSlug}
+                  onChange={e => setOrgSlug(e.target.value)} required className="h-11" />
+                <p className="text-[10px] text-muted-foreground">El administrador te habrá dado este identificador.</p>
+              </div>
+              <Button type="submit" disabled={loading}
+                className="w-full h-11 bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold text-sm gap-2">
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><KeyRound className="w-4 h-4" />Entrar con SSO</>}
+              </Button>
+            </form>
+          )}
 
           <p className="text-center text-xs text-muted-foreground mt-6">
             ¿No tienes cuenta?{" "}

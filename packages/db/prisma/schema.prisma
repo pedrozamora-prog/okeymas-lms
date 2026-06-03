@@ -187,6 +187,7 @@ model Organization {
   jobRoles        JobRole[]
   auditLogs       AuditLog[]
   learningPaths   LearningPath[]
+  ssoConfig       OrgSsoConfig?
 
   @@map("organizations")
 }
@@ -845,6 +846,31 @@ model UserJobRole {
 
   @@id([userId, jobRoleId])
   @@map("user_job_roles")
+}
+
+// ─── SSO / SAML 2.0 ──────────────────────────────────────────────────────────
+
+model OrgSsoConfig {
+  id             String   @id @default(cuid())
+  isEnabled      Boolean  @default(false)
+  idpEntityId    String
+  idpSsoUrl      String
+  idpCertificate String   // PEM public cert (no headers needed)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("org_sso_configs")
+}
+
+model SsoToken {
+  id        String   @id @default(cuid())
+  userId    String
+  expiresAt DateTime
+
+  @@map("sso_tokens")
 }
 
 // ─── FIRMA DIGITAL ───────────────────────────────────────────────────────────

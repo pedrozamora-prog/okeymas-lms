@@ -5,10 +5,11 @@ import { OrgSettingsForm } from "@/components/admin/org-settings-form";
 import { NotificationSettingsForm } from "@/components/admin/notification-settings-form";
 import { EmailIntegrationsForm } from "@/components/admin/email-integrations-form";
 import { ReportScheduleForm } from "@/components/admin/report-schedule-form";
+import { SsoSettingsForm } from "@/components/admin/sso-settings-form";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Building2, Shield, Bell, Palette, Plug, BarChart3 } from "lucide-react";
+import { Building2, Shield, Bell, Palette, Plug, BarChart3, KeyRound } from "lucide-react";
 
 export const metadata = { title: "Configuración" };
 
@@ -114,6 +115,17 @@ export default async function SettingsPage() {
             ))}
           </CardContent>
         </Card>
+      </section>
+
+      <Separator />
+
+      {/* SSO / SAML 2.0 */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2">
+          <KeyRound className="w-4 h-4 text-yelau-yellow" />
+          <h2 className="text-base font-semibold text-foreground">SSO / SAML 2.0</h2>
+        </div>
+        <SsoSettingsForm orgSlug={org.slug} />
       </section>
 
       <Separator />
