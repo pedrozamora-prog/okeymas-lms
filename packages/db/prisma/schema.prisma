@@ -325,6 +325,12 @@ model Course {
 
   signatureEnabled Boolean @default(false)
 
+  // Marketplace
+  isMarketplace        Boolean @default(false)
+  marketplaceCategory  String?
+  marketplaceShortDesc String?
+  importedFromId       String? // original marketplace courseId if this is a clone
+
   modules          Module[]
   enrollments      Enrollment[]
   paths            LearningPathCourse[]

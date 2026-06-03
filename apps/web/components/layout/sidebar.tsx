@@ -31,6 +31,7 @@ import {
   Briefcase,
   ScrollText,
   GitBranch,
+  Store,
 } from "lucide-react";
 
 interface NavItem {
@@ -62,9 +63,11 @@ const adminItems: NavItem[] = [
   { href: "/admin/competencies",     labelKey: "admin.competencies",  labelFallback: "Competencias",      icon: Target,          roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/job-roles",        labelKey: "admin.jobRoles",      labelFallback: "Puestos de trabajo",icon: Briefcase,       roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/learning-paths",   labelKey: "admin.learningPaths", labelFallback: "Rutas de aprendizaje", icon: GitBranch,   roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/marketplace",       labelKey: "admin.marketplace",   labelFallback: "Marketplace",       icon: Store,           roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/audit-logs",       labelKey: "admin.auditLogs",     labelFallback: "Logs de auditoría", icon: ScrollText,      roles: ["SUPER_ADMIN"] },
   { href: "/admin/settings",         labelKey: "admin.settings",      labelFallback: "Configuración",     icon: Settings,        roles: ["SUPER_ADMIN"] },
   { href: "/superadmin",             labelKey: "",                    labelFallback: "Super Admin",       icon: Building2,       roles: ["SUPER_ADMIN"] },
+  { href: "/superadmin/marketplace", labelKey: "",                   labelFallback: "Gestión marketplace",icon: Store,           roles: ["SUPER_ADMIN"] },
   { href: "/manager/team",           labelKey: "admin.myTeam",        labelFallback: "Mi equipo",         icon: Users,           roles: ["MANAGER"] },
   { href: "/manager/compliance",     labelKey: "admin.compliance",    labelFallback: "Cumplimiento",      icon: ShieldCheck,     roles: ["MANAGER"] },
   { href: "/manager/reports",        labelKey: "admin.reports",       labelFallback: "Informes",          icon: BarChart3,       roles: ["MANAGER"] },
