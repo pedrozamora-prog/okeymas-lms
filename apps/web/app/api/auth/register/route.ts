@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { Department } from "@prisma/client";
 import { applyEnrollmentRules } from "@/lib/auto-enroll";
+import { createAuditLog } from "@/lib/audit";
 
 export async function POST(req: Request) {
   const { name, email, phone, password, department } = await req.json();
@@ -43,8 +44,16 @@ export async function POST(req: Request) {
     },
   });
 
-  // Auto-inscribir según reglas activas
   await applyEnrollmentRules(user.id, org.id, user.role, user.department);
+
+  await createAuditLog({
+    action: "USER_CREATED",
+    userId: user.id,
+    organizationId: org.id,
+    entity: "User",
+    entityId: user.id,
+    metadata: { name: user.name, email: user.email, role: user.role },
+  });
 
   return NextResponse.json({ ok: true, userId: user.id }, { status: 201 });
 }

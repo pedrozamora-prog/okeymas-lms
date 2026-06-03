@@ -29,6 +29,7 @@ import {
   ChevronDown,
   Target,
   Briefcase,
+  ScrollText,
 } from "lucide-react";
 
 interface NavItem {
@@ -59,6 +60,7 @@ const adminItems: NavItem[] = [
   { href: "/admin/reports",          labelKey: "admin.reports",       labelFallback: "Reportes",          icon: BarChart3,       roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/competencies",     labelKey: "admin.competencies",  labelFallback: "Competencias",      icon: Target,          roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/job-roles",        labelKey: "admin.jobRoles",      labelFallback: "Puestos de trabajo",icon: Briefcase,       roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/audit-logs",       labelKey: "admin.auditLogs",     labelFallback: "Logs de auditoría", icon: ScrollText,      roles: ["SUPER_ADMIN"] },
   { href: "/admin/settings",         labelKey: "admin.settings",      labelFallback: "Configuración",     icon: Settings,        roles: ["SUPER_ADMIN"] },
   { href: "/superadmin",             labelKey: "",                    labelFallback: "Super Admin",       icon: Building2,       roles: ["SUPER_ADMIN"] },
   { href: "/manager/team",           labelKey: "admin.myTeam",        labelFallback: "Mi equipo",         icon: Users,           roles: ["MANAGER"] },

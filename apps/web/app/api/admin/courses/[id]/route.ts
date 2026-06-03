@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { createAuditLog } from "@/lib/audit";
 
 async function authorize(courseId: string, userId: string, role: string, orgId: string) {
   const course = await prisma.course.findUnique({ where: { id: courseId } });
@@ -44,6 +45,19 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     },
   });
 
+  const auditAction = status === "PUBLISHED" ? "COURSE_PUBLISHED"
+    : status === "ARCHIVED" ? "COURSE_ARCHIVED"
+    : "COURSE_UPDATED";
+
+  await createAuditLog({
+    action: auditAction,
+    userId: user.id,
+    organizationId: user.organizationId,
+    entity: "Course",
+    entityId: id,
+    metadata: { title: updated.title, status: updated.status },
+  });
+
   return NextResponse.json(updated);
 }
 
@@ -56,6 +70,17 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   const check = await authorize(id, user.id, user.role, user.organizationId);
   if (check.error) return NextResponse.json({ error: check.error }, { status: check.status });
 
+  const course = check.course!;
   await prisma.course.delete({ where: { id } });
+
+  await createAuditLog({
+    action: "COURSE_DELETED",
+    userId: user.id,
+    organizationId: user.organizationId,
+    entity: "Course",
+    entityId: id,
+    metadata: { title: course.title },
+  });
+
   return NextResponse.json({ ok: true });
 }

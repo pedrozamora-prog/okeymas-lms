@@ -80,6 +80,32 @@ enum WebhookEvent {
   ENROLLMENT_CREATED
 }
 
+enum AuditAction {
+  USER_LOGIN
+  USER_LOGOUT
+  USER_CREATED
+  USER_UPDATED
+  USER_DEACTIVATED
+  USER_DELETED
+  USER_PASSWORD_RESET
+  COURSE_CREATED
+  COURSE_UPDATED
+  COURSE_PUBLISHED
+  COURSE_ARCHIVED
+  COURSE_DELETED
+  ENROLLMENT_CREATED
+  ENROLLMENT_COMPLETED
+  ENROLLMENT_EXPIRED
+  CERTIFICATE_ISSUED
+  QUIZ_PASSED
+  QUIZ_FAILED
+  SETTINGS_UPDATED
+  REPORT_EXPORTED
+  INVITATION_SENT
+  API_KEY_GENERATED
+  ROLE_CHANGED
+}
+
 enum Department {
   ADMINISTRACION
   RECEPCION
@@ -150,6 +176,7 @@ model Organization {
   invitations     Invitation[]
   competencies    Competency[]
   jobRoles        JobRole[]
+  auditLogs       AuditLog[]
 
   @@map("organizations")
 }
@@ -193,6 +220,7 @@ model User {
   watchSessions      VideoWatchSession[]
   interactiveAnswers InteractiveAnswer[]
   jobRoles           UserJobRole[]
+  auditLogs          AuditLog[]
 
   @@map("users")
 }
@@ -795,4 +823,26 @@ model UserJobRole {
 
   @@id([userId, jobRoleId])
   @@map("user_job_roles")
+}
+
+// ─── AUDIT LOGS ──────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id        String      @id @default(cuid())
+  action    AuditAction
+  entity    String?
+  entityId  String?
+  metadata  Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime    @default(now())
+
+  userId         String?
+  user           User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, createdAt])
+  @@index([userId, createdAt])
+  @@map("audit_logs")
 }

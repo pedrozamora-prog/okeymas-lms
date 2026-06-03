@@ -22,21 +22,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             include: { organization: { select: { id: true, name: true } } },
           });
 
-          console.log("[AUTH] user found:", user ? user.email : "null");
-
-          if (!user || !user.hashedPassword || !user.isActive) {
-            console.log("[AUTH] early return — user/hash/active check failed");
-            return null;
-          }
+          if (!user || !user.hashedPassword || !user.isActive) return null;
 
           const passwordMatch = await bcrypt.compare(
             credentials.password as string,
             user.hashedPassword
           );
 
-          console.log("[AUTH] passwordMatch:", passwordMatch);
-
           if (!passwordMatch) return null;
+
+          // Fire-and-forget audit log (no await to not slow down login)
+          import("@/lib/audit").then(({ createAuditLog }) =>
+            createAuditLog({
+              action: "USER_LOGIN",
+              userId: user.id,
+              organizationId: user.organizationId,
+              entity: "User",
+              entityId: user.id,
+            })
+          );
 
           return {
             id: user.id,
@@ -49,7 +53,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             organizationName: user.organization.name,
           };
         } catch (err) {
-          console.error("[AUTH] authorize error:", err);
+          console.error("[AUTH] error:", err);
           return null;
         }
       },

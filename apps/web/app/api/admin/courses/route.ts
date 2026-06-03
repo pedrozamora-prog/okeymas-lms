@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { createAuditLog } from "@/lib/audit";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -29,6 +30,15 @@ export async function POST(req: Request) {
       status: "DRAFT",
       organizationId: user.organizationId,
     },
+  });
+
+  await createAuditLog({
+    action: "COURSE_CREATED",
+    userId: user.id,
+    organizationId: user.organizationId,
+    entity: "Course",
+    entityId: course.id,
+    metadata: { title: course.title },
   });
 
   return NextResponse.json(course, { status: 201 });
