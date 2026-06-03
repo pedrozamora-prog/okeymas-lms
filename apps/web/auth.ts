@@ -14,33 +14,44 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
-        // Import prisma dynamically to avoid edge runtime issues
-        const { prisma } = await import("@/lib/prisma");
+        try {
+          const { prisma } = await import("@/lib/prisma");
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
-          include: { organization: { select: { id: true, name: true } } },
-        });
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email as string },
+            include: { organization: { select: { id: true, name: true } } },
+          });
 
-        if (!user || !user.hashedPassword || !user.isActive) return null;
+          console.log("[AUTH] user found:", user ? user.email : "null");
 
-        const passwordMatch = await bcrypt.compare(
-          credentials.password as string,
-          user.hashedPassword
-        );
+          if (!user || !user.hashedPassword || !user.isActive) {
+            console.log("[AUTH] early return — user/hash/active check failed");
+            return null;
+          }
 
-        if (!passwordMatch) return null;
+          const passwordMatch = await bcrypt.compare(
+            credentials.password as string,
+            user.hashedPassword
+          );
 
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          role: user.role,
-          department: user.department,
-          organizationId: user.organizationId,
-          organizationName: user.organization.name,
-        };
+          console.log("[AUTH] passwordMatch:", passwordMatch);
+
+          if (!passwordMatch) return null;
+
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            role: user.role,
+            department: user.department,
+            organizationId: user.organizationId,
+            organizationName: user.organization.name,
+          };
+        } catch (err) {
+          console.error("[AUTH] authorize error:", err);
+          return null;
+        }
       },
     }),
   ],
