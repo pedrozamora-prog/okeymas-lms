@@ -289,7 +289,7 @@ export function QuizPlayer({ lessonId, courseId, nextLessonId }: Props) {
                   <div className="pl-6 space-y-1 text-xs">
                     <p className="text-muted-foreground"><span className="font-medium">Tu respuesta: </span>{myAns as string}</p>
                     <p className="text-muted-foreground"><span className="font-medium">Puntuación IA: </span>{Math.round(pqs*100)}%</p>
-                    {ca && <p className="text-muted-foreground"><span className="font-medium">Respuesta modelo: </span>{ca as string}</p>}
+                    {ca ? <p className="text-muted-foreground"><span className="font-medium">Respuesta modelo: </span>{String(ca)}</p> : null}
                   </div>
                 )}
 
