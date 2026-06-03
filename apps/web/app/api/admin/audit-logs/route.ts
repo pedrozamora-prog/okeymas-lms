@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { requireFeature } from "@/lib/plan-gate";
 
 export async function GET(req: Request) {
   const session = await auth();
@@ -9,6 +10,9 @@ export async function GET(req: Request) {
   if (!user || !["SUPER_ADMIN", "BRANCH_ADMIN"].includes(user.role)) {
     return NextResponse.json({ error: "No autorizado" }, { status: 403 });
   }
+
+  const gate = await requireFeature(user.organizationId, "auditLogs");
+  if (gate) return gate;
 
   const { searchParams } = new URL(req.url);
   const page     = Math.max(1, parseInt(searchParams.get("page") ?? "1"));

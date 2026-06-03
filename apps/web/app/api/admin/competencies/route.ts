@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { requireFeature } from "@/lib/plan-gate";
 
 type AdminUser = { id?: string; role?: string; organizationId?: string };
 
@@ -13,6 +14,9 @@ export async function GET() {
   const session = await auth();
   const user = getAdmin(session);
   if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  const gate = await requireFeature(user.organizationId!, "competencies");
+  if (gate) return gate;
 
   const competencies = await prisma.competency.findMany({
     where:   { organizationId: user.organizationId },

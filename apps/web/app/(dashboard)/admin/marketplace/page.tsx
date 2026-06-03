@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Store, BookOpen, Layers, Search, CheckCircle2, Loader2, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { UpgradeBanner } from "@/components/ui/upgrade-banner";
 
 interface MarketplaceCourse {
   id: string;
@@ -37,6 +38,7 @@ export default function MarketplacePage() {
   const [query, setQuery]       = useState("");
   const [category, setCategory] = useState<string | null>(null);
   const [importing, setImporting] = useState<string | null>(null);
+  const [planError, setPlanError] = useState<{ requiredPlan: string; currentPlan: string } | null>(null);
   const [, startTransition]     = useTransition();
 
   useEffect(() => {
@@ -45,8 +47,14 @@ export default function MarketplacePage() {
       : `/api/admin/marketplace`;
     setLoading(true);
     fetch(url)
-      .then(r => r.json())
-      .then(data => { setCourses(Array.isArray(data) ? data : []); setLoading(false); })
+      .then(async r => {
+        if (r.status === 403) {
+          const data = await r.json();
+          if (data.error === "PLAN_LIMIT") { setPlanError({ requiredPlan: data.requiredPlan, currentPlan: data.currentPlan }); setLoading(false); return; }
+        }
+        return r.json();
+      })
+      .then(data => { if (data) { setCourses(Array.isArray(data) ? data : []); setLoading(false); } })
       .catch(() => setLoading(false));
   }, [category]);
 
@@ -131,7 +139,9 @@ export default function MarketplacePage() {
       </div>
 
       {/* Content */}
-      {loading ? (
+      {planError ? (
+        <UpgradeBanner feature="Marketplace de cursos" requiredPlan={planError.requiredPlan} currentPlan={planError.currentPlan} />
+      ) : loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="h-48 rounded-xl bg-muted animate-pulse" />
@@ -162,34 +172,25 @@ export default function MarketplacePage() {
               {/* Thumbnail */}
               <div className="relative h-36 bg-muted rounded-t-xl overflow-hidden flex-shrink-0">
                 {course.thumbnailUrl ? (
-                  <img
-                    src={course.thumbnailUrl}
-                    alt={course.title}
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={course.thumbnailUrl} alt={course.title} className="w-full h-full object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <BookOpen className="w-10 h-10 text-muted-foreground/30" />
                   </div>
                 )}
                 {course.marketplaceCategory && (
-                  <Badge
-                    variant="outline"
-                    className={cn("absolute top-2 left-2 text-[10px]", CATEGORY_COLORS[course.marketplaceCategory] ?? "border-border")}
-                  >
+                  <Badge variant="outline" className={cn("absolute top-2 left-2 text-[10px]", CATEGORY_COLORS[course.marketplaceCategory] ?? "border-border")}>
                     {course.marketplaceCategory}
                   </Badge>
                 )}
                 {course.alreadyImported && (
                   <div className="absolute inset-0 bg-background/60 flex items-center justify-center">
                     <div className="flex items-center gap-1.5 text-green-500 font-semibold text-sm">
-                      <CheckCircle2 className="w-4 h-4" />
-                      Importado
+                      <CheckCircle2 className="w-4 h-4" /> Importado
                     </div>
                   </div>
                 )}
               </div>
-
               <CardContent className="pt-4 pb-4 flex flex-col flex-1 gap-3">
                 <div className="flex-1">
                   <p className="font-semibold text-foreground text-sm leading-snug">{course.title}</p>
@@ -197,27 +198,17 @@ export default function MarketplacePage() {
                     <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{course.marketplaceShortDesc}</p>
                   )}
                 </div>
-
                 <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Layers className="w-3 h-3" />
-                    {course.moduleCount} mód.
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <BookOpen className="w-3 h-3" />
-                    {course.lessonCount} lecc.
-                  </span>
+                  <span className="flex items-center gap-1"><Layers className="w-3 h-3" />{course.moduleCount} mód.</span>
+                  <span className="flex items-center gap-1"><BookOpen className="w-3 h-3" />{course.lessonCount} lecc.</span>
                 </div>
-
                 <Button
                   size="sm"
                   disabled={course.alreadyImported || importing === course.id}
                   onClick={() => handleImport(course.id, course.title)}
-                  className={cn(
-                    "w-full gap-2",
-                    course.alreadyImported
-                      ? "bg-green-500/10 text-green-600 border border-green-500/20 hover:bg-green-500/10 cursor-default"
-                      : "bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold"
+                  className={cn("w-full gap-2", course.alreadyImported
+                    ? "bg-green-500/10 text-green-600 border border-green-500/20 hover:bg-green-500/10 cursor-default"
+                    : "bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold"
                   )}
                 >
                   {importing === course.id ? (

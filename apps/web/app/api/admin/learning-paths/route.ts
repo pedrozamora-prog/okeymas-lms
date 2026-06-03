@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { requireFeature } from "@/lib/plan-gate";
 
 export async function GET(_req: Request) {
   const session = await auth();
@@ -8,6 +9,9 @@ export async function GET(_req: Request) {
   if (!user || !["SUPER_ADMIN", "BRANCH_ADMIN"].includes(user.role)) {
     return NextResponse.json({ error: "No autorizado" }, { status: 403 });
   }
+
+  const gate = await requireFeature(user.organizationId, "branchingPaths");
+  if (gate) return gate;
 
   const paths = await prisma.learningPath.findMany({
     where: { organizationId: user.organizationId },

@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { requireFeature } from "@/lib/plan-gate";
 
 // GET — browse marketplace catalog
 export async function GET(req: Request) {
@@ -9,6 +10,9 @@ export async function GET(req: Request) {
   if (!user || !["SUPER_ADMIN", "BRANCH_ADMIN"].includes(user.role)) {
     return NextResponse.json({ error: "No autorizado" }, { status: 403 });
   }
+
+  const gate = await requireFeature(user.organizationId, "marketplace");
+  if (gate) return gate;
 
   const { searchParams } = new URL(req.url);
   const category = searchParams.get("category");

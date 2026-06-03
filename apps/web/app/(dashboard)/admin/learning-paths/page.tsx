@@ -10,15 +10,18 @@ import {
   Loader2, GitBranch, ArrowDown, ArrowRight, X, ToggleLeft, ToggleRight,
 } from "lucide-react";
 import { toast } from "sonner";
+import { UpgradeBanner } from "@/components/ui/upgrade-banner";
 
 type Course = { id: string; title: string };
 type PathCourse = { courseId: string; order: number; onFailGoTo: string | null; course: Course };
 type LPath = { id: string; title: string; description: string | null; isActive: boolean; courses: PathCourse[] };
+type PlanError = { requiredPlan: string; currentPlan: string };
 
 export default function LearningPathsPage() {
   const [paths,     setPaths]     = useState<LPath[]>([]);
   const [courses,   setCourses]   = useState<Course[]>([]);
   const [loading,   setLoading]   = useState(true);
+  const [planError, setPlanError] = useState<PlanError | null>(null);
   const [expanded,  setExpanded]  = useState<string | null>(null);
   const [saving,    setSaving]    = useState<string | null>(null);
 
@@ -36,6 +39,14 @@ export default function LearningPathsPage() {
       fetch("/api/admin/learning-paths"),
       fetch("/api/admin/courses"),
     ]);
+    if (pRes.status === 403) {
+      const data = await pRes.json();
+      if (data.error === "PLAN_LIMIT") {
+        setPlanError({ requiredPlan: data.requiredPlan, currentPlan: data.currentPlan });
+        setLoading(false);
+        return;
+      }
+    }
     if (pRes.ok) setPaths(await pRes.json());
     if (cRes.ok) {
       const data = await cRes.json();
@@ -140,6 +151,7 @@ export default function LearningPathsPage() {
   }
 
   if (loading) return <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-yelau-yellow" /></div>;
+  if (planError) return <UpgradeBanner feature="Rutas de aprendizaje" requiredPlan={planError.requiredPlan} currentPlan={planError.currentPlan} />;
 
   return (
     <div className="space-y-6">

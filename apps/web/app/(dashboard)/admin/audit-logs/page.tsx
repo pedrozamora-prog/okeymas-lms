@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Shield, Search, ChevronLeft, ChevronRight, Loader2, User, BookOpen, GraduationCap, Award, LogIn, Settings, Trash2, Eye } from "lucide-react";
+import { UpgradeBanner } from "@/components/ui/upgrade-banner";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -54,12 +55,15 @@ const ACTION_GROUPS = [
   { label: "Ajustes",      value: "SETTINGS_UPDATED" },
 ];
 
+type PlanError = { requiredPlan: string; currentPlan: string };
+
 export default function AuditLogsPage() {
   const [logs, setLogs]       = useState<AuditLog[]>([]);
   const [total, setTotal]     = useState(0);
   const [pages, setPages]     = useState(1);
   const [page, setPage]       = useState(1);
   const [loading, setLoading] = useState(true);
+  const [planError, setPlanError] = useState<PlanError | null>(null);
   const [search, setSearch]   = useState("");
   const [action, setAction]   = useState("");
   const [from, setFrom]       = useState("");
@@ -72,6 +76,10 @@ export default function AuditLogsPage() {
     if (from)   params.set("from", from);
     if (to)     params.set("to", to);
     const res = await fetch(`/api/admin/audit-logs?${params}`);
+    if (res.status === 403) {
+      const data = await res.json();
+      if (data.error === "PLAN_LIMIT") { setPlanError({ requiredPlan: data.requiredPlan, currentPlan: data.currentPlan }); setLoading(false); return; }
+    }
     if (res.ok) {
       const data = await res.json();
       setLogs(data.logs);
@@ -90,6 +98,8 @@ export default function AuditLogsPage() {
         l.action.toLowerCase().includes(search.toLowerCase())
       )
     : logs;
+
+  if (planError) return <UpgradeBanner feature="Logs de auditoría" requiredPlan={planError.requiredPlan} currentPlan={planError.currentPlan} />;
 
   return (
     <div className="space-y-6">

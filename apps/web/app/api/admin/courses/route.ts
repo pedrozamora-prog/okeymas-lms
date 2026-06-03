@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { createAuditLog } from "@/lib/audit";
+import { requireCourseSlot } from "@/lib/plan-gate";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -10,6 +11,9 @@ export async function POST(req: Request) {
   if (!user || !["SUPER_ADMIN", "BRANCH_ADMIN", "INSTRUCTOR"].includes(user.role)) {
     return NextResponse.json({ error: "No autorizado" }, { status: 403 });
   }
+
+  const gate = await requireCourseSlot(user.organizationId);
+  if (gate) return gate;
 
   const body = await req.json();
   const { title, description, thumbnailUrl, isRequired, daysToComplete, order, departments } = body;

@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { requireFeature } from "@/lib/plan-gate";
 
 export async function GET() {
   const session = await auth();
@@ -8,6 +9,9 @@ export async function GET() {
   if (!user || !["SUPER_ADMIN", "BRANCH_ADMIN"].includes(user.role)) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
+
+  const gate = await requireFeature(user.organizationId, "enrollmentRules");
+  if (gate) return gate;
 
   const rules = await prisma.enrollmentRule.findMany({
     where: { organizationId: user.organizationId },
