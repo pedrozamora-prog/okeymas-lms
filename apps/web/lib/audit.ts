@@ -1,4 +1,4 @@
-import { type AuditAction } from "@prisma/client";
+import { type AuditAction, Prisma } from "@prisma/client";
 import { headers } from "next/headers";
 
 interface AuditLogParams {
@@ -50,7 +50,7 @@ export async function createAuditLog({
         action,
         entity,
         entityId,
-        metadata: metadata ?? undefined,
+        metadata: metadata as Prisma.InputJsonValue | undefined,
         ipAddress,
         userAgent,
         userId: userId ?? undefined,
