@@ -632,9 +632,19 @@ function LessonEditForm({ lesson, moduleTitle, onSave, onCancel }: {
   const [saving, setSaving]       = useState(false);
   const [aiDescLoading, setAiDesc]       = useState(false);
   const [aiQuizLoading, setAiQuiz]       = useState(false);
-  const [quizQuestions, setQuiz]         = useState<Array<{question:string;options:string[];correct:number}> | null>(null);
+  type QType = "MULTIPLE_CHOICE"|"TRUE_FALSE"|"ORDER_ITEMS"|"FILL_BLANK"|"FREE_TEXT"|"IMAGE_CHOICE";
+  type QuizQ = { question:string; type:QType; options:string[]; correct:number; imageUrl?:string; modelAnswer?:string; explanation?:string };
+  const [quizQuestions, setQuiz]         = useState<QuizQ[] | null>(null);
   const [quizPassingScore, setQuizPassingScore] = useState(70);
   const [quizMaxAttempts,  setQuizMaxAttempts]  = useState(3);
+
+  function addQuestion() {
+    setQuiz(prev => [...(prev ?? []), { question:"", type:"MULTIPLE_CHOICE", options:["","","",""], correct:0 }]);
+  }
+
+  function setQField(qi:number, field:Partial<QuizQ>) {
+    setQuiz(prev => { if(!prev) return prev; const u=[...prev]; u[qi]={...u[qi],...field}; return u; });
+  }
 
   async function generateDesc() {
     if (!title.trim()) { toast.error("Escribe primero el título de la lección"); return; }
@@ -699,11 +709,15 @@ function LessonEditForm({ lesson, moduleTitle, onSave, onCancel }: {
           body: JSON.stringify({
             passingScore: quizPassingScore,
             maxAttempts:  quizMaxAttempts,
-            questions:    quizQuestions.map(q => ({
-              text:    q.question,
-              options: q.options.map((opt, oi) => ({
+            questions: quizQuestions.map(q => ({
+              text:        q.question,
+              type:        q.type,
+              imageUrl:    q.imageUrl    || null,
+              modelAnswer: q.modelAnswer || null,
+              explanation: q.explanation || null,
+              options: q.options.filter(o => o.trim()).map((opt, oi) => ({
                 text:      opt,
-                isCorrect: oi === q.correct,
+                isCorrect: ["MULTIPLE_CHOICE","TRUE_FALSE","IMAGE_CHOICE"].includes(q.type) ? oi === q.correct : false,
               })),
             })),
           }),
@@ -873,60 +887,113 @@ function LessonEditForm({ lesson, moduleTitle, onSave, onCancel }: {
 
           {/* Lista de preguntas editables */}
           {quizQuestions && quizQuestions.length > 0 && (
-            <div className="space-y-3 rounded-lg border border-border bg-background p-3 max-h-80 overflow-y-auto">
+            <div className="space-y-3 rounded-lg border border-border bg-background p-3 max-h-[480px] overflow-y-auto">
               {quizQuestions.map((q, qi) => (
                 <div key={qi} className="space-y-2 pb-3 border-b border-border/50 last:border-0 last:pb-0">
+                  {/* Header pregunta */}
                   <div className="flex gap-2 items-start">
-                    <span className="text-[10px] font-bold text-brand mt-1.5 flex-shrink-0">{qi + 1}.</span>
-                    <input
-                      value={q.question}
-                      onChange={e => {
-                        const updated = [...quizQuestions];
-                        updated[qi] = { ...updated[qi], question: e.target.value };
-                        setQuiz(updated);
-                      }}
-                      className="flex-1 text-xs bg-muted/50 border border-border rounded px-2 py-1 text-foreground focus:outline-none focus:ring-1 focus:ring-yelau-yellow/50"
-                    />
-                    <button onClick={() => setQuiz(quizQuestions.filter((_, i) => i !== qi))}
+                    <span className="text-[10px] font-bold text-brand mt-1.5 flex-shrink-0">{qi+1}.</span>
+                    <input value={q.question} placeholder="Texto de la pregunta…"
+                      onChange={e => setQField(qi, {question:e.target.value})}
+                      className="flex-1 text-xs bg-muted/50 border border-border rounded px-2 py-1 text-foreground focus:outline-none focus:ring-1 focus:ring-yelau-yellow/50" />
+                    <button onClick={() => setQuiz(quizQuestions.filter((_,i)=>i!==qi))}
                       className="text-muted-foreground hover:text-red-400 transition-colors mt-1 flex-shrink-0">
                       <X className="w-3 h-3" />
                     </button>
                   </div>
-                  <div className="space-y-1 pl-4">
-                    {q.options.map((opt, oi) => (
-                      <div key={oi} className="flex items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const updated = [...quizQuestions];
-                            updated[qi] = { ...updated[qi], correct: oi };
-                            setQuiz(updated);
-                          }}
-                          className={`w-3.5 h-3.5 rounded-full border flex-shrink-0 transition-colors ${
-                            oi === q.correct ? "border-green-500 bg-green-500" : "border-border"
-                          }`}
-                        />
-                        <input
-                          value={opt}
-                          onChange={e => {
-                            const updated = [...quizQuestions];
-                            const opts = [...updated[qi].options];
-                            opts[oi] = e.target.value;
-                            updated[qi] = { ...updated[qi], options: opts };
-                            setQuiz(updated);
-                          }}
-                          className={cn("flex-1 text-[11px] bg-transparent border-b border-border/30 focus:border-yelau-yellow/50 focus:outline-none py-0.5 text-foreground",
-                            oi === q.correct && "text-green-400 font-medium")}
-                        />
-                      </div>
-                    ))}
-                  </div>
+
+                  {/* Tipo */}
+                  <select value={q.type}
+                    onChange={e => {
+                      const t = e.target.value as QuizQ["type"];
+                      const opts = t==="TRUE_FALSE" ? ["Verdadero","Falso"] : t==="FREE_TEXT" ? [] : ["","","",""];
+                      setQField(qi, {type:t, options:opts, correct:0});
+                    }}
+                    className="text-[10px] bg-muted border border-border rounded px-2 py-1 text-foreground ml-4">
+                    <option value="MULTIPLE_CHOICE">Opción múltiple</option>
+                    <option value="TRUE_FALSE">Verdadero / Falso</option>
+                    <option value="ORDER_ITEMS">Ordenar elementos</option>
+                    <option value="FILL_BLANK">Rellenar huecos</option>
+                    <option value="FREE_TEXT">Respuesta libre (IA)</option>
+                    <option value="IMAGE_CHOICE">Pregunta con imagen</option>
+                  </select>
+
+                  {/* IMAGE_CHOICE: URL de imagen */}
+                  {q.type==="IMAGE_CHOICE" && (
+                    <input value={q.imageUrl??""} placeholder="URL de la imagen (https://…)"
+                      onChange={e=>setQField(qi,{imageUrl:e.target.value})}
+                      className="w-full ml-4 text-[10px] bg-muted/50 border border-border rounded px-2 py-1 text-foreground focus:outline-none" />
+                  )}
+
+                  {/* FREE_TEXT: respuesta modelo */}
+                  {q.type==="FREE_TEXT" && (
+                    <textarea value={q.modelAnswer??""} placeholder="Respuesta modelo (la IA la usará para evaluar)…" rows={2}
+                      onChange={e=>setQField(qi,{modelAnswer:e.target.value})}
+                      className="w-full ml-4 text-[10px] bg-muted/50 border border-border rounded px-2 py-1 text-foreground focus:outline-none resize-none" />
+                  )}
+
+                  {/* FILL_BLANK: instrucción */}
+                  {q.type==="FILL_BLANK" && (
+                    <p className="text-[10px] text-muted-foreground ml-4">Añade las respuestas correctas de cada hueco en orden (una por línea).</p>
+                  )}
+
+                  {/* ORDER_ITEMS: instrucción */}
+                  {q.type==="ORDER_ITEMS" && (
+                    <p className="text-[10px] text-muted-foreground ml-4">Escribe los elementos en el orden correcto (arriba = primero).</p>
+                  )}
+
+                  {/* Opciones (MC, TF, IMAGE, ORDER, FILL) */}
+                  {q.type!=="FREE_TEXT" && (
+                    <div className="space-y-1 pl-4">
+                      {q.options.map((opt, oi) => (
+                        <div key={oi} className="flex items-center gap-1.5">
+                          {["MULTIPLE_CHOICE","TRUE_FALSE","IMAGE_CHOICE"].includes(q.type) && (
+                            <button type="button"
+                              onClick={() => setQField(qi,{correct:oi})}
+                              className={`w-3.5 h-3.5 rounded-full border flex-shrink-0 transition-colors ${oi===q.correct?"border-green-500 bg-green-500":"border-border"}`}
+                            />
+                          )}
+                          {["ORDER_ITEMS","FILL_BLANK"].includes(q.type) && (
+                            <span className="text-[9px] text-muted-foreground w-3.5 text-center flex-shrink-0">{oi+1}.</span>
+                          )}
+                          <input value={opt}
+                            readOnly={q.type==="TRUE_FALSE"}
+                            onChange={e => {
+                              const opts=[...q.options]; opts[oi]=e.target.value;
+                              setQField(qi,{options:opts});
+                            }}
+                            className={cn("flex-1 text-[11px] bg-transparent border-b border-border/30 focus:border-yelau-yellow/50 focus:outline-none py-0.5 text-foreground",
+                              ["MULTIPLE_CHOICE","IMAGE_CHOICE"].includes(q.type) && oi===q.correct && "text-green-400 font-medium",
+                              q.type==="TRUE_FALSE" && "text-muted-foreground cursor-not-allowed")} />
+                          {!["TRUE_FALSE"].includes(q.type) && q.options.length > 1 && (
+                            <button onClick={()=>{const o=q.options.filter((_,i)=>i!==oi);setQField(qi,{options:o,correct:Math.min(q.correct,o.length-1)});}}
+                              className="text-muted-foreground hover:text-red-400"><X className="w-2.5 h-2.5"/></button>
+                          )}
+                        </div>
+                      ))}
+                      {!["TRUE_FALSE"].includes(q.type) && (
+                        <button type="button"
+                          onClick={()=>setQField(qi,{options:[...q.options,""]})}
+                          className="text-[10px] text-brand hover:text-amber-600 ml-5 mt-1">+ Añadir opción</button>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Explicación opcional */}
+                  <input value={q.explanation??""} placeholder="Explicación (opcional, se muestra tras responder)…"
+                    onChange={e=>setQField(qi,{explanation:e.target.value})}
+                    className="w-full ml-4 text-[10px] bg-transparent border-b border-border/20 focus:border-yelau-yellow/30 focus:outline-none py-0.5 text-muted-foreground" />
                 </div>
               ))}
             </div>
           )}
+
+          <div className="flex items-center gap-3">
+            <button type="button" onClick={addQuestion}
+              className="text-[10px] text-brand hover:text-amber-600 transition-colors font-medium">+ Añadir pregunta manualmente</button>
+          </div>
           <p className="text-[10px] text-muted-foreground">
-            Haz clic en el círculo junto a una opción para marcarla como correcta (verde). Las preguntas se guardan al hacer clic en Guardar.
+            Selecciona el tipo de cada pregunta. Las preguntas se guardan al hacer clic en Guardar.
           </p>
         </div>
       )}

@@ -73,6 +73,15 @@ enum OrgPlan {
   ENTERPRISE
 }
 
+enum QuizQuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  ORDER_ITEMS
+  FILL_BLANK
+  FREE_TEXT
+  IMAGE_CHOICE
+}
+
 enum WebhookEvent {
   COURSE_COMPLETED
   CERTIFICATE_ISSUED
@@ -403,10 +412,14 @@ model QuizAttempt {
 }
 
 model QuizQuestion {
-  id        String   @id @default(cuid())
-  text      String
-  order     Int      @default(0)
-  createdAt DateTime @default(now())
+  id          String           @id @default(cuid())
+  text        String
+  type        QuizQuestionType @default(MULTIPLE_CHOICE)
+  imageUrl    String?
+  modelAnswer String?
+  explanation String?
+  order       Int              @default(0)
+  createdAt   DateTime         @default(now())
 
   quizId String
   quiz   Quiz   @relation(fields: [quizId], references: [id], onDelete: Cascade)

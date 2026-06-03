@@ -3,8 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 interface QuestionInput {
-  text:    string;
-  options: { text: string; isCorrect: boolean }[];
+  text:        string;
+  type?:       string;
+  imageUrl?:   string | null;
+  modelAnswer?: string | null;
+  explanation?: string | null;
+  options:     { text: string; isCorrect: boolean }[];
 }
 
 // GET — obtener quiz existente para el editor
@@ -48,8 +52,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return NextResponse.json({ error: "Se necesita al menos una pregunta" }, { status: 400 });
   }
 
-  // Validar que cada pregunta tenga exactamente una respuesta correcta
+  // Validar según tipo de pregunta
+  const noCorrectTypes = ["ORDER_ITEMS", "FILL_BLANK", "FREE_TEXT"];
   for (const q of questions) {
+    const qtype = q.type ?? "MULTIPLE_CHOICE";
+    if (noCorrectTypes.includes(qtype)) continue;
     const correctCount = q.options.filter(o => o.isCorrect).length;
     if (correctCount !== 1) {
       return NextResponse.json(
@@ -73,7 +80,15 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   for (let qi = 0; qi < questions.length; qi++) {
     const q = questions[qi];
     const question = await prisma.quizQuestion.create({
-      data: { quizId: quiz.id, text: q.text, order: qi },
+      data: {
+        quizId:      quiz.id,
+        text:        q.text,
+        type:        (q.type ?? "MULTIPLE_CHOICE") as never,
+        imageUrl:    q.imageUrl    ?? null,
+        modelAnswer: q.modelAnswer ?? null,
+        explanation: q.explanation ?? null,
+        order:       qi,
+      },
     });
     for (let oi = 0; oi < q.options.length; oi++) {
       await prisma.quizOption.create({
