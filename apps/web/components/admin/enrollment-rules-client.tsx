@@ -50,8 +50,8 @@ export function EnrollmentRulesClient({ initialRules, courses }: Props) {
 
   // Form state
   const [courseId, setCourseId]           = useState("");
-  const [triggerRole, setTriggerRole]     = useState("");
-  const [triggerDept, setTriggerDept]     = useState("");
+  const [triggerRole, setTriggerRole]     = useState("all");
+  const [triggerDept, setTriggerDept]     = useState("all");
   const [daysToComplete, setDays]         = useState("");
   const [enrollExisting, setExisting]     = useState(false);
 
@@ -65,8 +65,8 @@ export function EnrollmentRulesClient({ initialRules, courses }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           courseId,
-          triggerRole:    triggerRole || null,
-          triggerDept:    triggerDept || null,
+          triggerRole:    triggerRole === "all" ? null : triggerRole,
+          triggerDept:    triggerDept === "all" ? null : triggerDept,
           daysToComplete: daysToComplete || null,
           enrollExisting,
         }),
@@ -74,7 +74,7 @@ export function EnrollmentRulesClient({ initialRules, courses }: Props) {
       if (!res.ok) throw new Error((await res.json()).error);
       toast.success("Regla creada correctamente");
       setOpen(false);
-      setCourseId(""); setTriggerRole(""); setTriggerDept(""); setDays(""); setExisting(false);
+      setCourseId(""); setTriggerRole("all"); setTriggerDept("all"); setDays(""); setExisting(false);
       router.refresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Error al crear la regla");
@@ -155,7 +155,7 @@ export function EnrollmentRulesClient({ initialRules, courses }: Props) {
                   <Select value={triggerRole} onValueChange={setTriggerRole}>
                     <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Todos los roles</SelectItem>
+                      <SelectItem value="all">Todos los roles</SelectItem>
                       {ROLES.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -165,7 +165,7 @@ export function EnrollmentRulesClient({ initialRules, courses }: Props) {
                   <Select value={triggerDept} onValueChange={setTriggerDept}>
                     <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Todos los depts.</SelectItem>
+                      <SelectItem value="all">Todos los depts.</SelectItem>
                       {DEPTS.map(d => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
                     </SelectContent>
                   </Select>
