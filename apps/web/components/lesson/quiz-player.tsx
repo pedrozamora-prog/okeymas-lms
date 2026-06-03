@@ -359,9 +359,9 @@ export function QuizPlayer({ lessonId, courseId, nextLessonId }: Props) {
                 </span>
               </div>
 
-              {q.type==="MULTIPLE_CHOICE"&&<MCQuestion q={q} answer={(answers[q.id]??"")}  onAnswer={v=>setAnswer(q.id,v)}/>}
-              {q.type==="IMAGE_CHOICE"   &&<MCQuestion q={q} answer={(answers[q.id]??"")}  onAnswer={v=>setAnswer(q.id,v)}/>}
-              {q.type==="TRUE_FALSE"     &&<TFQuestion q={q} answer={(answers[q.id]??"")}  onAnswer={v=>setAnswer(q.id,v)}/>}
+              {q.type==="MULTIPLE_CHOICE"&&<MCQuestion q={q} answer={(answers[q.id] as string)??""} onAnswer={v=>setAnswer(q.id,v)}/>}
+              {q.type==="IMAGE_CHOICE"   &&<MCQuestion q={q} answer={(answers[q.id] as string)??""} onAnswer={v=>setAnswer(q.id,v)}/>}
+              {q.type==="TRUE_FALSE"     &&<TFQuestion q={q} answer={(answers[q.id] as string)??""} onAnswer={v=>setAnswer(q.id,v)}/>}
               {q.type==="ORDER_ITEMS"    &&<OrderQuestion q={q} answer={(answers[q.id] as string[])||(q.options.map(o=>o.id))} onAnswer={v=>setAnswer(q.id,v)}/>}
               {q.type==="FILL_BLANK"     &&<FillBlankQuestion q={q} answer={(answers[q.id] as string[])||[]} onAnswer={v=>setAnswer(q.id,v)}/>}
               {q.type==="FREE_TEXT"      &&<FreeTextQuestion q={q} answer={(answers[q.id] as string)||""} onAnswer={v=>setAnswer(q.id,v)}/>}
