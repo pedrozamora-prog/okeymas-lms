@@ -22,7 +22,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ orgSlug
       callbackUrl:      `${appUrl}/api/auth/sso/${orgSlug}/callback`,
       entryPoint:       config.idpSsoUrl,
       issuer:           `${appUrl}/api/auth/sso/sp`,
-      cert:             config.idpCertificate,
+      idpCert:          config.idpCertificate,
       wantAssertionsSigned: false,
       wantAuthnResponseSigned: false,
     });
