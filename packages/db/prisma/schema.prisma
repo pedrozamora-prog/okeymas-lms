@@ -186,6 +186,7 @@ model Organization {
   competencies    Competency[]
   jobRoles        JobRole[]
   auditLogs       AuditLog[]
+  learningPaths   LearningPath[]
 
   @@map("organizations")
 }
@@ -524,12 +525,15 @@ model LiveAttendance {
 // ─── LEARNING PATHS ──────────────────────────────────────────────────────────
 
 model LearningPath {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String   @id @default(cuid())
+  title          String
+  description    String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   courses LearningPathCourse[]
 
@@ -537,7 +541,8 @@ model LearningPath {
 }
 
 model LearningPathCourse {
-  order  Int @default(0)
+  order      Int     @default(0)
+  onFailGoTo String? // courseId within same path — redirect here when quiz fails
 
   pathId   String
   path     LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
