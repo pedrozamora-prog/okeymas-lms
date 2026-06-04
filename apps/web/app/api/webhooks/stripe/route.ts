@@ -72,15 +72,18 @@ export async function POST(req: Request) {
     }
 
     case "invoice.payment_failed": {
-      const invoice = event.data.object as Stripe.Invoice;
-      const sub     = invoice.subscription
-        ? await stripe.subscriptions.retrieve(invoice.subscription as string)
-        : null;
-      const orgId   = sub?.metadata?.organizationId;
-      if (!orgId) break;
+      const invoice    = event.data.object as Stripe.Invoice;
+      const customerId = invoice.customer as string;
+      if (!customerId) break;
+
+      const org = await prisma.organization.findUnique({
+        where:  { stripeCustomerId: customerId },
+        select: { id: true },
+      });
+      if (!org) break;
 
       await prisma.organization.update({
-        where: { id: orgId },
+        where: { id: org.id },
         data:  { stripeStatus: "past_due" },
       });
       break;
