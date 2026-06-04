@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const baseConfig: NextConfig = {
+  output: "standalone",
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "drive.google.com" },
