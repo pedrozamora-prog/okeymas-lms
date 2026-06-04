@@ -5,6 +5,7 @@ WORKDIR /app
 # Install dependencies using workspace files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages/db/package.json ./packages/db/
+COPY packages/db/prisma ./packages/db/prisma
 COPY apps/web/package.json ./apps/web/
 RUN pnpm install --frozen-lockfile
 
