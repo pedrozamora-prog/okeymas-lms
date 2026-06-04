@@ -136,10 +136,16 @@ model Organization {
   updatedAt DateTime @updatedAt
 
   // Plan SaaS
-  plan           OrgPlan  @default(STARTER)
-  maxUsers       Int      @default(50)
-  planExpiresAt  DateTime?
-  trialEndsAt    DateTime?
+  plan                 OrgPlan  @default(STARTER)
+  maxUsers             Int      @default(50)
+  planExpiresAt        DateTime?
+  trialEndsAt          DateTime?
+
+  // Stripe billing
+  stripeCustomerId     String?  @unique
+  stripeSubscriptionId String?  @unique
+  stripePriceId        String?
+  stripeStatus         String?  // active, trialing, past_due, canceled
 
   // White label
   primaryColor   String?

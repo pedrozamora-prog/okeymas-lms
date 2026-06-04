@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -24,7 +24,7 @@ export default function VerifyPage() {
       {/* Header */}
       <header className="bg-[#0C0C0C] px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center gap-3">
-          <img src="/fitacademy-logo.svg" alt="FitAcademy" className="h-9 w-auto" />
+          <img src="/Formia-logo.svg" alt="Formia" className="h-9 w-auto" />
         </div>
       </header>
 
@@ -101,7 +101,7 @@ export default function VerifyPage() {
       {/* Footer */}
       <footer className="py-6 px-4 border-t border-[#eee] text-center">
         <p className="text-xs text-[#999]">
-          © {new Date().getFullYear()} FitAcademy · Sistema de verificación de certificados
+          © {new Date().getFullYear()} Formia · Sistema de verificación de certificados
         </p>
       </footer>
     </div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { toast } from "sonner";
@@ -95,11 +95,11 @@ export function EmailIntegrationsForm({
             <div className={`w-2 h-2 rounded-full flex-shrink-0 ${usingPlatform ? "bg-yelau-yellow" : "bg-green-500"}`} />
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-foreground">
-                {usingPlatform ? "Usando cuenta de FitAcademy" : "Usando tu cuenta Resend"}
+                {usingPlatform ? "Usando cuenta de Formia" : "Usando tu cuenta Resend"}
               </p>
               <p className="text-[11px] text-muted-foreground mt-0.5">
                 {usingPlatform
-                  ? "Los emails salen desde noreply@fitacademy.com. Configura tu propia API key para enviar desde tu dominio."
+                  ? "Los emails salen desde noreply@Formia.com. Configura tu propia API key para enviar desde tu dominio."
                   : "Los emails salen desde tu propia cuenta Resend con tu dominio verificado."}
               </p>
             </div>

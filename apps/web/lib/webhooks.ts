@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+﻿import { prisma } from "@/lib/prisma";
 import { createHmac } from "crypto";
 
 type WebhookEventType = "COURSE_COMPLETED" | "CERTIFICATE_ISSUED" | "USER_CREATED" | "ENROLLMENT_CREATED";
@@ -28,12 +28,12 @@ export async function dispatchWebhook(
     webhooks.map(async wh => {
       const headers: Record<string, string> = {
         "Content-Type":    "application/json",
-        "X-FitAcademy-Event": event,
+        "X-Formia-Event": event,
       };
 
       if (wh.secret) {
         const sig = createHmac("sha256", wh.secret).update(body).digest("hex");
-        headers["X-FitAcademy-Signature"] = `sha256=${sig}`;
+        headers["X-Formia-Signature"] = `sha256=${sig}`;
       }
 
       await fetch(wh.url, { method: "POST", headers, body });

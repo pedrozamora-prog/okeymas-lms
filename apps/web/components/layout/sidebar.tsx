@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -32,6 +32,7 @@ import {
   ScrollText,
   GitBranch,
   Store,
+  CreditCard,
 } from "lucide-react";
 
 interface NavItem {
@@ -64,6 +65,7 @@ const adminItems: NavItem[] = [
   { href: "/admin/job-roles",        labelKey: "admin.jobRoles",      labelFallback: "Puestos de trabajo",icon: Briefcase,       roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/learning-paths",   labelKey: "admin.learningPaths", labelFallback: "Rutas de aprendizaje", icon: GitBranch,   roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/marketplace",       labelKey: "admin.marketplace",   labelFallback: "Marketplace",       icon: Store,           roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/billing",           labelKey: "",                    labelFallback: "Facturación",        icon: CreditCard,      roles: ["SUPER_ADMIN"] },
   { href: "/admin/audit-logs",       labelKey: "admin.auditLogs",     labelFallback: "Logs de auditoría", icon: ScrollText,      roles: ["SUPER_ADMIN"] },
   { href: "/admin/settings",         labelKey: "admin.settings",      labelFallback: "Configuración",     icon: Settings,        roles: ["SUPER_ADMIN"] },
   { href: "/superadmin",             labelKey: "",                    labelFallback: "Super Admin",       icon: Building2,       roles: ["SUPER_ADMIN"] },
@@ -109,10 +111,10 @@ export function Sidebar({ userRole, userName, userEmail, orgLogoUrl, orgName }: 
             <img src={orgLogoUrl} alt={orgName ?? "Logo"} className="h-9 w-auto object-contain max-w-[160px]" />
           ) : (
             <>
-              <img src="/fitacademy-mark.svg" alt="" className="h-9 w-9 flex-shrink-0" />
+              <img src="/formia-mark.svg" alt="" className="h-9 w-9 flex-shrink-0" />
               <div className="min-w-0 leading-none">
                 <p className="text-[17px] font-black tracking-tight leading-none">
-                  <span className="text-yelau-yellow">Fit</span><span className="text-foreground">Academy</span>
+                  <span className="text-yelau-yellow">For</span><span className="text-foreground">mia</span>
                 </p>
                 <p className="text-[8px] text-muted-foreground tracking-[2.5px] uppercase mt-1">Learning Platform</p>
               </div>
@@ -206,9 +208,9 @@ export function Sidebar({ userRole, userName, userEmail, orgLogoUrl, orgName }: 
       {/* ── MOBILE TOP BAR ──────────────────────────────────────────── */}
       <header className="lg:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-card border-b border-border flex items-center justify-between px-4">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <img src="/fitacademy-mark.svg" alt="" className="h-8 w-8 flex-shrink-0" />
+          <img src="/Formia-mark.svg" alt="" className="h-8 w-8 flex-shrink-0" />
           <span className="text-[16px] font-black tracking-tight leading-none">
-            <span className="text-yelau-yellow">Fit</span><span className="text-foreground">Academy</span>
+            <span className="text-yelau-yellow">For</span><span className="text-foreground">mia</span>
           </span>
         </Link>
         <button

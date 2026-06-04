@@ -1,4 +1,4 @@
-export const runtime = "nodejs";
+﻿export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { auth } from "@/auth";
@@ -96,7 +96,7 @@ function generateExcel({ employees, courses, enrollments, now, dateLabel, user }
   const enrollMap = new Map<string, any>(enrollments.map((e: any) => [`${e.userId}:${e.courseId}`, e]));
 
   const complianceRows = [
-    ["INFORME DE CUMPLIMIENTO — FITACADEMY"],
+    ["INFORME DE CUMPLIMIENTO — Formia"],
     [`Generado el ${format(now, "d 'de' MMMM 'de' yyyy", { locale: es })} por ${user.name ?? "Admin"}`],
     [],
     ["Empleado", "Email", "Departamento", ...courses.map((c: any) => c.title), "% Completado"],
@@ -226,7 +226,7 @@ async function generatePDF({ employees, courses, enrollments, now, dateLabel, us
     createElement(Page, { size: "A4", style: styles.page },
       // Header
       createElement(View, { style: styles.header },
-        createElement(Text, { style: styles.h1 }, "FITACADEMY"),
+        createElement(Text, { style: styles.h1 }, "Formia"),
         createElement(Text, { style: styles.h1sub }, "INFORME DE CUMPLIMIENTO"),
       ),
       createElement(Text, { style: styles.meta },

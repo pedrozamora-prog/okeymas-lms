@@ -25,7 +25,7 @@ interface PlanConfig {
 export const PLAN_CONFIG: Record<string, PlanConfig> = {
   STARTER: {
     label:      "Starter",
-    maxUsers:   15,
+    maxUsers:   50,
     maxCourses: 5,
     features: {
       marketplace:      false,
@@ -47,7 +47,7 @@ export const PLAN_CONFIG: Record<string, PlanConfig> = {
   },
   PROFESSIONAL: {
     label:      "Professional",
-    maxUsers:   50,
+    maxUsers:   150,
     maxCourses: 25,
     features: {
       marketplace:      true,
@@ -69,11 +69,11 @@ export const PLAN_CONFIG: Record<string, PlanConfig> = {
   },
   CHAIN: {
     label:      "Chain",
-    maxUsers:   200,
+    maxUsers:   400,
     maxCourses: 99999,
     features: {
       marketplace:      true,
-      sso:              true,
+      sso:              false,
       branchingPaths:   true,
       digitalSignature: true,
       auditLogs:        true,

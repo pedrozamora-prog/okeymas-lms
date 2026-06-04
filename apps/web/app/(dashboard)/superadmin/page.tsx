@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+﻿import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -7,7 +7,7 @@ import { Building2, Users, BookOpen, Award, TrendingUp, Plus, Settings } from "l
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
-export const metadata = { title: "Super Admin — FitAcademy" };
+export const metadata = { title: "Super Admin — Formia" };
 
 const PLAN_COLOR: Record<string, string> = {
   STARTER:      "bg-muted text-muted-foreground border-border",

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -56,7 +56,7 @@ export default function RegisterPage() {
         <div className="relative z-10 flex flex-col justify-between h-full px-10 py-8">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <img src="/fitacademy-logo.svg" alt="FitAcademy" className="h-12 w-auto object-contain" />
+            <img src="/Formia-logo.svg" alt="Formia" className="h-12 w-auto object-contain" />
           </div>
 
           {/* Centro */}
@@ -121,7 +121,7 @@ export default function RegisterPage() {
 
         {/* Logo mobile */}
         <div className="lg:hidden mb-8">
-          <img src="/fitacademy-logo-dark.svg" alt="FitAcademy" className="h-10 w-auto object-contain" />
+          <img src="/Formia-logo-dark.svg" alt="Formia" className="h-10 w-auto object-contain" />
         </div>
 
         <div className="w-full max-w-sm">
@@ -244,7 +244,7 @@ export default function RegisterPage() {
           </p>
 
           <p className="text-center text-xs text-muted-foreground mt-6">
-            © {new Date().getFullYear()} FitAcademy · Todos los derechos reservados
+            © {new Date().getFullYear()} Formia · Todos los derechos reservados
           </p>
         </div>
       </div>

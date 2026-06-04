@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+﻿import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { OrgSettingsForm } from "@/components/admin/org-settings-form";
@@ -64,7 +64,7 @@ export default async function SettingsPage() {
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-md bg-yelau-yellow border border-border" />
                   <span className="text-sm font-mono text-foreground">#FCE900</span>
-                  <Badge variant="outline" className="text-[10px]">Marca FitAcademy</Badge>
+                  <Badge variant="outline" className="text-[10px]">Marca Formia</Badge>
                 </div>
               </div>
               <div className="space-y-2">

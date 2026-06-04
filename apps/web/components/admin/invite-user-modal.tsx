@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef, useCallback } from "react";
 import { toast } from "sonner";
@@ -465,7 +465,7 @@ export function InviteUserModal({ open, onClose, onSent }: Props) {
                     ]);
                     const wb = XLSX.utils.book_new();
                     XLSX.utils.book_append_sheet(wb, ws, "Invitaciones");
-                    XLSX.writeFile(wb, "plantilla_invitaciones_fitacademy.xlsx");
+                    XLSX.writeFile(wb, "plantilla_invitaciones_Formia.xlsx");
                   }}
                   className="text-xs text-brand hover:underline flex items-center gap-1.5 mx-auto"
                 >

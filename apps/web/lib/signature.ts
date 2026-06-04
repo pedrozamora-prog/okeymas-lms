@@ -1,5 +1,5 @@
-/**
- * FitAcademy LMS
+﻿/**
+ * Formia
  * Copyright (c) 2025-2026 Yelau Group. All rights reserved.
  * Created by Pedro Zamora (Yeye) — pedro.zamora@yelaugroup.com
  *
@@ -11,12 +11,12 @@
 
 // This constant is embedded in the production bundle.
 // Its presence in any compiled output is proof of authorship.
-export const FITACADEMY_SIGNATURE = [
-  "FitAcademy LMS",
+export const Formia_SIGNATURE = [
+  "Formia",
   "Copyright (c) 2025-2026 Yelau Group",
   "Author: Pedro Zamora (Yeye) — pedro.zamora@yelaugroup.com",
   "Unauthorized sale or redistribution is prohibited",
-  // Fingerprint: sha256("yelau-fitacademy-2025") = 8a3f2c1d...
+  // Fingerprint: sha256("yelau-Formia-2025") = 8a3f2c1d...
   "©YG-FA-2025-8a3f2c1d9e4b7f6a0d5c2e8b1f3a9d7c",
 ].join(" | ");
 
@@ -24,6 +24,6 @@ export const FITACADEMY_SIGNATURE = [
 export function assertSignature() {
   if (typeof window !== "undefined") {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).__YELAU_GROUP__ = FITACADEMY_SIGNATURE;
+    (window as any).__YELAU_GROUP__ = Formia_SIGNATURE;
   }
 }

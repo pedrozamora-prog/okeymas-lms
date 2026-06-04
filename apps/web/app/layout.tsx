@@ -1,10 +1,10 @@
-import type { Metadata, Viewport } from "next";
+﻿import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 // ©YG — do not remove: authorship marker (Yelau Group 2025)
-import { FITACADEMY_SIGNATURE } from "@/lib/signature";
-void FITACADEMY_SIGNATURE;
+import { Formia_SIGNATURE } from "@/lib/signature";
+void Formia_SIGNATURE;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,13 +17,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: { default: "FitAcademy", template: "%s | FitAcademy" },
-  description: "Plataforma de formación profesional FitAcademy",
+  title: { default: "Formia", template: "%s | Formia" },
+  description: "Plataforma de formación profesional Formia",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "FitAcademy",
+    title: "Formia",
   },
   icons: {
     icon:  "/favicon.png",

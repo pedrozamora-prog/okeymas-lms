@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+﻿import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Sidebar } from "@/components/layout/sidebar";
@@ -62,7 +62,7 @@ export default async function DashboardLayout({
         userName={user.name ?? "Usuario"}
         userEmail={user.email ?? ""}
         orgLogoUrl={org?.customLogoUrl ?? null}
-        orgName={org?.name ?? "FitAcademy"}
+        orgName={org?.name ?? "Formia"}
       />
 
       {/* Main content — offset on mobile para el top bar fijo */}

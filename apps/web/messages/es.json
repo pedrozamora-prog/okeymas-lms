@@ -1,4 +1,4 @@
-{
+﻿{
   "nav": {
     "home": "Inicio",
     "myCourses": "Mis cursos",
@@ -11,7 +11,7 @@
   },
   "dashboard": {
     "hello": "¡Hola, {name}!",
-    "subtitle": "Bienvenido a FitAcademy. Aquí tienes tu resumen de hoy.",
+    "subtitle": "Bienvenido a Formia. Aquí tienes tu resumen de hoy.",
     "coursesEnrolled": "Cursos inscritos",
     "completed": "Completados",
     "inProgress": "En progreso",
@@ -82,7 +82,7 @@
   },
   "certificates": {
     "title": "Certificados",
-    "subtitle": "Tus certificados de formación obtenidos en FitAcademy",
+    "subtitle": "Tus certificados de formación obtenidos en Formia",
     "download": "Descargar PDF",
     "verify": "Verificar",
     "issuedOn": "Emitido el {date}",
@@ -95,7 +95,7 @@
   },
   "achievements": {
     "title": "Logros y Puntos",
-    "subtitle": "Tu progreso y recompensas en FitAcademy",
+    "subtitle": "Tu progreso y recompensas en Formia",
     "totalPoints": "Puntos totales",
     "badges": "Insignias",
     "currentLevel": "Nivel actual",

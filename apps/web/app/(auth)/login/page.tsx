@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, Suspense } from "react";
 import { signIn } from "next-auth/react";
@@ -103,7 +103,7 @@ function LoginContent() {
 
           {/* Logo */}
           <div className="flex-shrink-0">
-            <img src="/fitacademy-logo.svg" alt="FitAcademy" className="h-12 w-auto object-contain" />
+            <img src="/Formia-logo.svg" alt="Formia" className="h-12 w-auto object-contain" />
           </div>
 
           {/* Centro */}
@@ -166,7 +166,7 @@ function LoginContent() {
 
         {/* Logo mobile */}
         <div className="lg:hidden mb-8">
-          <img src="/fitacademy-logo-dark.svg" alt="FitAcademy" className="h-10 w-auto object-contain" />
+          <img src="/Formia-logo-dark.svg" alt="Formia" className="h-10 w-auto object-contain" />
         </div>
 
         <div className="w-full max-w-sm">
@@ -247,7 +247,7 @@ function LoginContent() {
 
           {/* Footer derecho */}
           <p className="text-center text-xs text-muted-foreground mt-4">
-            © {new Date().getFullYear()} FitAcademy · Todos los derechos reservados
+            © {new Date().getFullYear()} Formia · Todos los derechos reservados
           </p>
         </div>
       </div>

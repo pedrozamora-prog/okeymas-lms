@@ -1,6 +1,6 @@
-{
-  "name": "FitAcademy",
-  "short_name": "FitAcademy",
+﻿{
+  "name": "Formia",
+  "short_name": "Formia",
   "description": "Plataforma de formación profesional para gimnasios y centros deportivos",
   "start_url": "/dashboard",
   "display": "standalone",

@@ -1,4 +1,4 @@
-export const metadata = { title: "Argumentario — FitAcademy" };
+﻿export const metadata = { title: "Argumentario — Formia" };
 
 export default function PresentacionPage() {
   return (
@@ -8,7 +8,7 @@ export default function PresentacionPage() {
       <section className="portada">
         <div className="portada-inner">
           <div className="logo-block">
-            <img src="/fitacademy-logo.svg" alt="FitAcademy" style={{ height: "72px", width: "auto" }} />
+            <img src="/Formia-logo.svg" alt="Formia" style={{ height: "72px", width: "auto" }} />
           </div>
           <h1 className="portada-title">
             Plataforma de Formación<br />
@@ -27,9 +27,9 @@ export default function PresentacionPage() {
       {/* ── SECCIÓN 1: QUÉ ES ── */}
       <section className="seccion page-break">
         <div className="seccion-num">01</div>
-        <h2 className="seccion-titulo">¿Qué es FitAcademy?</h2>
+        <h2 className="seccion-titulo">¿Qué es Formia?</h2>
         <p className="seccion-intro">
-          FitAcademy es una <strong>plataforma SaaS de gestión del aprendizaje</strong> desarrollada a medida para cadenas de gimnasios.
+          Formia es una <strong>plataforma SaaS de gestión del aprendizaje</strong> desarrollada a medida para cadenas de gimnasios.
           Permite formar, evaluar y certificar a los empleados de forma 100% digital, centralizada y trazable.
         </p>
         <div className="cards-3">
@@ -206,7 +206,7 @@ export default function PresentacionPage() {
             <li><strong>Recordatorio a 7, 3 y 1 día</strong> — antes de que venza el plazo de un curso obligatorio</li>
             <li><strong>Formación vencida</strong> — alerta automática al superar la fecha límite</li>
           </ul>
-          <p>Cada organización puede <strong>configurar su propio remitente</strong> (nombre + email) y conectar su cuenta Resend para que los emails salgan desde su dominio corporativo, no desde FitAcademy.</p>
+          <p>Cada organización puede <strong>configurar su propio remitente</strong> (nombre + email) y conectar su cuenta Resend para que los emails salgan desde su dominio corporativo, no desde Formia.</p>
           <div className="highlight">
             Argumento clave: el responsable no necesita perseguir a los empleados. La plataforma lo hace por él con el nombre de la empresa, no de un proveedor externo.
           </div>
@@ -236,11 +236,11 @@ export default function PresentacionPage() {
           </div>
           <div className="card yellow-border">
             <h3>🔗 API pública + Webhooks</h3>
-            <p>FitAcademy expone una <strong>API REST documentada</strong> con autenticación por API key. Permite integrar la plataforma con sistemas de RRHH, nóminas o ERP. Los <strong>Webhooks</strong> notifican en tiempo real eventos como finalización de curso, nuevo certificado o empleado vencido, sin necesidad de polling.</p>
+            <p>Formia expone una <strong>API REST documentada</strong> con autenticación por API key. Permite integrar la plataforma con sistemas de RRHH, nóminas o ERP. Los <strong>Webhooks</strong> notifican en tiempo real eventos como finalización de curso, nuevo certificado o empleado vencido, sin necesidad de polling.</p>
           </div>
           <div className="card yellow-border">
             <h3>🏷️ White Label / Marca propia</h3>
-            <p>Cada organización puede configurar su <strong>logo propio, color de marca y dominio de email</strong>. Los empleados ven la plataforma con la identidad visual de su empresa, no la de FitAcademy. Disponible en planes Chain y Enterprise.</p>
+            <p>Cada organización puede configurar su <strong>logo propio, color de marca y dominio de email</strong>. Los empleados ven la plataforma con la identidad visual de su empresa, no la de Formia. Disponible en planes Chain y Enterprise.</p>
           </div>
         </div>
       </section>
@@ -252,7 +252,7 @@ export default function PresentacionPage() {
 
         <div className="comparativa">
           <div className="comp-col comp-sin">
-            <h3>❌ Sin FitAcademy</h3>
+            <h3>❌ Sin Formia</h3>
             <ul>
               <li>Formación presencial: coste de sala, materiales, tiempo del formador</li>
               <li>Sin trazabilidad: no se sabe quién ha recibido qué formación</li>
@@ -265,7 +265,7 @@ export default function PresentacionPage() {
             </ul>
           </div>
           <div className="comp-col comp-con">
-            <h3>✅ Con FitAcademy</h3>
+            <h3>✅ Con Formia</h3>
             <ul>
               <li>Formación online 24/7: el empleado aprende cuando puede, sin coste de sala</li>
               <li>Trazabilidad total: informe en tiempo real de quién ha completado qué</li>
@@ -393,16 +393,16 @@ export default function PresentacionPage() {
         {/* Comparativa */}
         <div className="highlight">
           <strong>Comparativa de mercado:</strong> iSpring Learn cobra ~2,50€/usuario/mes con mínimo 100 usuarios (mínimo €250/mes) sin especialización en fitness.
-          FitAcademy ofrece el mismo precio con IA, cumplimiento y soporte específico para gimnasios — sin coste extra por crecer.
+          Formia ofrece el mismo precio con IA, cumplimiento y soporte específico para gimnasios — sin coste extra por crecer.
         </div>
       </section>
 
       {/* ── CIERRE ── */}
       <section className="cierre">
         <h2>La formación de tu equipo,<br /><span className="yellow">bajo control total.</span></h2>
-        <p>FitAcademy transforma la formación de empleados de un proceso costoso e incontrolable en un activo estratégico medible y escalable.</p>
+        <p>Formia transforma la formación de empleados de un proceso costoso e incontrolable en un activo estratégico medible y escalable.</p>
         <div className="cierre-contacto">
-          <strong>FitAcademy</strong> · pedro.zamora@yelaugroup.com
+          <strong>Formia</strong> · pedro.zamora@yelaugroup.com
         </div>
       </section>
 

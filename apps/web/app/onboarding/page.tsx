@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -88,7 +88,7 @@ export default function OnboardingPage() {
       {/* Header con logo y progreso */}
       <header className="px-6 pt-6 pb-0 max-w-2xl mx-auto w-full">
         <div className="flex items-center justify-between mb-6">
-          <img src="/fitacademy-logo.svg" alt="FitAcademy" className="h-9 w-auto" />
+          <img src="/Formia-logo.svg" alt="Formia" className="h-9 w-auto" />
           {step < 4 && (
             <span className="text-xs text-[#555]">
               Paso {step} de {STEPS.length - 1}
@@ -144,7 +144,7 @@ export default function OnboardingPage() {
             <div className="space-y-6">
               <div>
                 <h1 className="text-2xl font-black text-white">
-                  Bienvenido a <span className="text-yelau-yellow">FitAcademy</span>
+                  Bienvenido a <span className="text-yelau-yellow">Formia</span>
                 </h1>
                 <p className="text-[#666] mt-2 text-sm">
                   Configura tu plataforma en 3 pasos. Puedes cambiar todo esto más tarde desde Configuración.
@@ -279,7 +279,7 @@ export default function OnboardingPage() {
                 </h1>
                 <p className="text-[#666] mt-2 text-sm">
                   Personaliza el remitente de los emails automáticos. Sin configurar, los emails saldrán
-                  desde <span className="text-[#888]">noreply@fitacademy.com</span>.
+                  desde <span className="text-[#888]">noreply@Formia.com</span>.
                 </p>
               </div>
 
@@ -386,7 +386,7 @@ export default function OnboardingPage() {
 
               <div>
                 <h1 className="text-3xl font-black text-white leading-tight">
-                  ¡Tu <span className="text-yelau-yellow">FitAcademy</span><br />está listo!
+                  ¡Tu <span className="text-yelau-yellow">Formia</span><br />está listo!
                 </h1>
                 <p className="text-[#666] mt-3 text-sm max-w-sm mx-auto">
                   La plataforma está configurada. Empieza creando tu primer curso o explora el panel de administración.
@@ -398,7 +398,7 @@ export default function OnboardingPage() {
                 {[
                   { done: true,            label: "Organización configurada" },
                   { done: sentCount > 0,   label: sentCount > 0 ? `${sentCount} invitación${sentCount > 1 ? "es" : ""} enviada${sentCount > 1 ? "s" : ""}` : "Sin invitaciones (puedes hacerlo desde Usuarios)" },
-                  { done: !!(fromName || fromAddress), label: (fromName || fromAddress) ? "Email personalizado configurado" : "Usando email de FitAcademy" },
+                  { done: !!(fromName || fromAddress), label: (fromName || fromAddress) ? "Email personalizado configurado" : "Usando email de Formia" },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 72">
+  <!-- ── MARK ── -->
+  <rect width="72" height="72" rx="16" fill="#FCE900"/>
+
+  <!-- Cap brim -->
+  <rect x="10" y="11" width="52" height="11" rx="3" fill="#0C0C0C"/>
+  <!-- Cap crown -->
+  <rect x="33" y="4" width="6" height="11" rx="2" fill="#0C0C0C"/>
+  <!-- Tassel -->
+  <line x1="54" y1="17" x2="62" y2="17" stroke="#0C0C0C" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="62" cy="21" r="4" fill="#0C0C0C"/>
+
+  <!-- Lightning bolt -->
+  <polygon points="40,22 25,42 33,42 30,64 46,40 38,40" fill="#0C0C0C"/>
+
+  <!-- ── WORDMARK (texto oscuro para fondo claro) ── -->
+  <text
+    x="86" y="47"
+    font-family="Arial Black, Helvetica Neue, Impact, sans-serif"
+    font-weight="900"
+    font-size="38"
+    letter-spacing="-1"
+  ><tspan fill="#FCE900">For</tspan><tspan fill="#0C0C0C">mia</tspan></text>
+
+  <!-- Tagline -->
+  <text
+    x="87" y="63"
+    font-family="Arial, Helvetica, sans-serif"
+    font-weight="400"
+    font-size="11"
+    fill="#888888"
+    letter-spacing="3"
+  >LEARNING PLATFORM</text>
+</svg>

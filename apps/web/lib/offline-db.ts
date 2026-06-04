@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { openDB, type IDBPDatabase } from "idb";
 
@@ -22,7 +22,7 @@ let dbPromise: Promise<IDBPDatabase<OfflineDB>> | null = null;
 
 function getDB() {
   if (!dbPromise) {
-    dbPromise = openDB<OfflineDB>("fitacademy-offline", 1, {
+    dbPromise = openDB<OfflineDB>("Formia-offline", 1, {
       upgrade(db) {
         const store = db.createObjectStore("progress-queue", { keyPath: "id" });
         store.createIndex("by_lesson", "lessonId");

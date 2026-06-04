@@ -1,4 +1,4 @@
-export const runtime = "nodejs";
+﻿export const runtime = "nodejs";
 
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
@@ -141,7 +141,7 @@ export async function GET(req: NextRequest) {
       departments,
       atRisk,
       overdue,
-      dashboardUrl:   `${process.env.NEXTAUTH_URL ?? "https://app.fitacademy.com"}/admin/compliance`,
+      dashboardUrl:   `${process.env.NEXTAUTH_URL ?? "https://app.Formia.com"}/admin/compliance`,
     };
 
     const emailCfg: OrgEmailConfig = {

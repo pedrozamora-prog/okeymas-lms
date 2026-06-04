@@ -1,4 +1,4 @@
-import { Resend } from "resend";
+﻿import { Resend } from "resend";
 
 export interface OrgEmailConfig {
   fromName?:     string | null;
@@ -7,8 +7,8 @@ export interface OrgEmailConfig {
   resendApiKey?: string | null;
 }
 
-const PLATFORM_FROM_NAME    = "FitAcademy";
-const PLATFORM_FROM_ADDRESS = "noreply@fitacademy.com";
+const PLATFORM_FROM_NAME    = "Formia";
+const PLATFORM_FROM_ADDRESS = "noreply@Formia.com";
 
 function getResend(apiKey?: string | null) {
   const key = apiKey || process.env.RESEND_API_KEY;
@@ -43,7 +43,7 @@ function baseTemplate(content: string, orgName?: string) {
         <!-- Footer -->
         <tr><td style="background:#f9fafb;padding:20px 32px;border-top:1px solid #e5e7eb">
           <p style="margin:0;font-size:11px;color:#9ca3af;text-align:center">
-            © ${new Date().getFullYear()} ${displayName} · FitAcademy Learning Platform<br>
+            © ${new Date().getFullYear()} ${displayName} · Formia Learning Platform<br>
             Este es un mensaje automático, no respondas a este email.
           </p>
         </td></tr>
@@ -160,7 +160,7 @@ export async function sendTestEmail(to: string, cfg: OrgEmailConfig) {
   const result = await resend.emails.send({
     from: buildFrom(cfg),
     to,
-    subject: "Email de prueba — FitAcademy",
+    subject: "Email de prueba — Formia",
     html: baseTemplate(`
       <h2 style="margin:0 0 8px;font-size:22px;color:#0C0C0C">¡Configuración correcta! ✅</h2>
       <p style="margin:0 0 20px;color:#6b7280;font-size:15px">Este es un email de prueba enviado desde la configuración de integraciones.</p>
@@ -192,15 +192,15 @@ export async function sendInvitationEmail(
   await resend.emails.send({
     from: buildFrom(cfg),
     to,
-    subject: `${inviterName} te invita a unirte a ${orgName} en FitAcademy`,
+    subject: `${inviterName} te invita a unirte a ${orgName} en Formia`,
     html: baseTemplate(`
       <h2 style="margin:0 0 8px;font-size:22px;color:#0C0C0C">Tienes una invitación 🎉</h2>
       <p style="margin:0 0 20px;color:#6b7280;font-size:15px">
         <strong>${inviterName}</strong> te ha invitado a unirte a <strong>${orgName}</strong>
-        en FitAcademy como <strong>${roleLabel}</strong>.
+        en Formia como <strong>${roleLabel}</strong>.
       </p>
       <div style="background:#fafafa;border:1px solid #e5e7eb;border-left:4px solid #FCE900;border-radius:8px;padding:20px;margin-bottom:24px">
-        <p style="margin:0;font-size:14px;color:#374151">Con FitAcademy podrás:</p>
+        <p style="margin:0;font-size:14px;color:#374151">Con Formia podrás:</p>
         <ul style="margin:10px 0 0;padding-left:20px;color:#6b7280;font-size:13px;line-height:1.8">
           <li>Acceder a tus cursos de formación profesional</li>
           <li>Seguir tu progreso y obtener certificados</li>
