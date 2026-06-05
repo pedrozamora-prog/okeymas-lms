@@ -34,7 +34,7 @@ export default function VerifyPage() {
 
           {/* Icono */}
           <div className="flex justify-center">
-            <div className="w-20 h-20 rounded-2xl bg-[#FCE900] flex items-center justify-center shadow-lg shadow-[#FCE900]/20">
+            <div className="w-20 h-20 rounded-2xl bg-[#A855F7] flex items-center justify-center shadow-lg shadow-[#A855F7]/20">
               <ShieldCheck className="w-10 h-10 text-[#0C0C0C]" />
             </div>
           </div>
@@ -57,14 +57,14 @@ export default function VerifyPage() {
                 value={code}
                 onChange={e => { setCode(e.target.value.toUpperCase()); setError(""); }}
                 placeholder="Ej: CM3K9X7P4Q2A"
-                className="h-12 text-center font-mono text-base tracking-widest uppercase bg-white border-2 focus-visible:border-[#FCE900] focus-visible:ring-0"
+                className="h-12 text-center font-mono text-base tracking-widest uppercase bg-white border-2 focus-visible:border-[#A855F7] focus-visible:ring-0"
                 autoFocus
                 autoComplete="off"
                 spellCheck={false}
               />
               <Button
                 type="submit"
-                className="h-12 px-5 bg-[#FCE900] text-[#0C0C0C] hover:bg-[#FCE900]/90 font-bold gap-2 flex-shrink-0"
+                className="h-12 px-5 bg-[#A855F7] text-[#0C0C0C] hover:bg-[#A855F7]/90 font-bold gap-2 flex-shrink-0"
               >
                 <Search className="w-4 h-4" />
                 Verificar
@@ -90,7 +90,7 @@ export default function VerifyPage() {
             { icon: Users,       title: "Verificación para RRHH",    desc: "Ideal para procesos de selección, auditorías o inspecciones laborales." },
           ].map(f => (
             <div key={f.title} className="bg-white rounded-xl border border-[#eee] p-5 text-left">
-              <f.icon className="w-5 h-5 text-[#FCE900] mb-3" />
+              <f.icon className="w-5 h-5 text-[#A855F7] mb-3" />
               <p className="text-sm font-bold text-[#0C0C0C] mb-1">{f.title}</p>
               <p className="text-xs text-[#777] leading-relaxed">{f.desc}</p>
             </div>

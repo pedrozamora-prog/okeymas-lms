@@ -30,7 +30,7 @@ export default async function AchievementsPage() {
     { name: "Principiante", min: 0,   max: 100,  color: "text-gray-400"   },
     { name: "Activo",       min: 100, max: 300,  color: "text-blue-400"   },
     { name: "Avanzado",     min: 300, max: 600,  color: "text-purple-400" },
-    { name: "Experto",      min: 600, max: 1000, color: "text-yelau-yellow"},
+    { name: "Experto",      min: 600, max: 1000, color: "text-primary"},
     { name: "Élite",        min: 1000, max: Infinity, color: "text-orange-400" },
   ];
   const currentLevel = levels.findLast(l => totalPoints >= l.min) ?? levels[0];
@@ -50,7 +50,7 @@ export default async function AchievementsPage() {
       {/* Stats top */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { id: "points",    label: t("achievements.totalPoints"), value: totalPoints,           icon: Star,   color: "text-yelau-yellow" },
+          { id: "points",    label: t("achievements.totalPoints"), value: totalPoints,           icon: Star,   color: "text-primary" },
           { id: "level",     label: t("achievements.currentLevel"), value: currentLevel.name, icon: Zap, color: currentLevel.color },
           { id: "completed", label: t("dashboard.completed"),      value: completedCourses,       icon: Target, color: "text-green-400"    },
           { id: "badges",    label: t("achievements.badges"),      value: `${earnedIds.size}/${allBadges.length}`, icon: Trophy, color: "text-purple-400" },
@@ -96,12 +96,12 @@ export default async function AchievementsPage() {
             return (
               <Card key={badge.id} className={cn(
                 "text-center transition-colors",
-                earned ? "border-yelau-yellow/40 bg-yelau-yellow/5" : "opacity-50 grayscale"
+                earned ? "border-primary/40 bg-primary/5" : "opacity-50 grayscale"
               )}>
                 <CardContent className="pt-5 pb-5 flex flex-col items-center gap-2">
                   <div className={cn(
                     "w-14 h-14 rounded-full flex items-center justify-center text-2xl",
-                    earned ? "bg-yelau-yellow/20" : "bg-muted"
+                    earned ? "bg-primary/20" : "bg-muted"
                   )}>
                     {badge.imageUrl ?? "🏅"}
                   </div>

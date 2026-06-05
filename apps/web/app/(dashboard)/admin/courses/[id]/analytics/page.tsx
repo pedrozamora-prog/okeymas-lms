@@ -96,7 +96,7 @@ export default async function CourseAnalyticsPage({ params }: { params: Promise<
               { icon: HelpCircle, label: "Quizzes",  count: course.modules.flatMap(m => m.lessons).filter(l => l.type === "QUIZ").length },
             ].map(({ icon: Icon, label, count }) => (
               <div key={label} className="flex items-center gap-3 p-3 rounded-lg bg-muted/40">
-                <Icon className="w-4 h-4 text-yelau-yellow flex-shrink-0" />
+                <Icon className="w-4 h-4 text-primary flex-shrink-0" />
                 <div>
                   <p className="text-lg font-black text-foreground leading-none">{count}</p>
                   <p className="text-xs text-muted-foreground">{label}</p>

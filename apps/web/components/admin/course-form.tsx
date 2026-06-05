@@ -246,7 +246,7 @@ export function CourseForm({ initial }: CourseFormProps) {
                   <img src={thumbnailUrl} alt="Portada del curso" className="w-full h-full object-cover" />
                   {imgLoading && (
                     <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                      <Loader2 className="w-8 h-8 animate-spin text-yelau-yellow" />
+                      <Loader2 className="w-8 h-8 animate-spin text-primary" />
                     </div>
                   )}
                   <div className="absolute inset-0 bg-black/0 hover:bg-black/30 transition-colors flex items-end justify-start p-2">
@@ -261,7 +261,7 @@ export function CourseForm({ initial }: CourseFormProps) {
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={imgLoading}
-                    className="flex items-center gap-1.5 border border-border hover:border-yelau-yellow/50 text-muted-foreground hover:text-foreground text-xs font-medium px-3 py-1.5 rounded-md transition-colors"
+                    className="flex items-center gap-1.5 border border-border hover:border-primary/50 text-muted-foreground hover:text-foreground text-xs font-medium px-3 py-1.5 rounded-md transition-colors"
                   >
                     <ImagePlus className="w-3.5 h-3.5" />
                     Cambiar imagen
@@ -281,10 +281,10 @@ export function CourseForm({ initial }: CourseFormProps) {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={imgLoading}
-                className="w-full h-44 rounded-lg border-2 border-dashed border-border hover:border-yelau-yellow/50 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-foreground"
+                className="w-full h-44 rounded-lg border-2 border-dashed border-border hover:border-primary/50 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-foreground"
               >
                 {imgLoading
-                  ? <Loader2 className="w-8 h-8 animate-spin text-yelau-yellow" />
+                  ? <Loader2 className="w-8 h-8 animate-spin text-primary" />
                   : <>
                       <ImagePlus className="w-8 h-8" />
                       <span className="text-sm font-medium">Haz clic para subir imagen</span>
@@ -362,7 +362,7 @@ export function CourseForm({ initial }: CourseFormProps) {
       <Card>
         <CardContent className="pt-6 space-y-4">
           <div className="flex items-center gap-2 mb-1">
-            <Users className="w-4 h-4 text-yelau-yellow" />
+            <Users className="w-4 h-4 text-primary" />
             <h3 className="text-sm font-bold text-foreground">Departamentos</h3>
           </div>
           <p className="text-xs text-muted-foreground -mt-2">
@@ -376,13 +376,13 @@ export function CourseForm({ initial }: CourseFormProps) {
                   key={d.value}
                   className={`flex items-center gap-2.5 p-3 rounded-lg border cursor-pointer transition-colors ${
                     checked
-                      ? "border-yelau-yellow bg-yelau-yellow/10 text-foreground"
-                      : "border-border bg-muted/20 text-muted-foreground hover:border-yelau-yellow/40"
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-border bg-muted/20 text-muted-foreground hover:border-primary/40"
                   }`}
                 >
                   <input
                     type="checkbox"
-                    className="accent-yelau-yellow"
+                    className="accent-primary"
                     checked={checked}
                     onChange={() =>
                       setDepts(prev =>
@@ -407,7 +407,7 @@ export function CourseForm({ initial }: CourseFormProps) {
       <Card>
         <CardContent className="pt-6 space-y-5">
           <div className="flex items-center gap-2 mb-1">
-            <Award className="w-4 h-4 text-yelau-yellow" />
+            <Award className="w-4 h-4 text-primary" />
             <h3 className="text-sm font-bold text-foreground">Certificado</h3>
           </div>
 
@@ -421,7 +421,7 @@ export function CourseForm({ initial }: CourseFormProps) {
               type="button"
               onClick={() => setCertEnabled(v => !v)}
               className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${
-                certEnabled ? "bg-yelau-yellow" : "bg-muted-foreground/30"
+                certEnabled ? "bg-primary" : "bg-muted-foreground/30"
               }`}
             >
               <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
@@ -440,7 +440,7 @@ export function CourseForm({ initial }: CourseFormProps) {
               type="button"
               onClick={() => setSigEnabled(v => !v)}
               className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${
-                sigEnabled ? "bg-yelau-yellow" : "bg-muted-foreground/30"
+                sigEnabled ? "bg-primary" : "bg-muted-foreground/30"
               }`}
             >
               <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
@@ -514,7 +514,7 @@ export function CourseForm({ initial }: CourseFormProps) {
         <Button
           type="submit"
           disabled={loading}
-          className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold"
+          className="bg-primary text-yelau-black hover:bg-primary/90 font-bold"
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           {isEdit ? "Guardar cambios" : "Crear curso"}

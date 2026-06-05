@@ -78,7 +78,7 @@ export default async function VerifyCertPage({ params }: Props) {
 
                 {/* Tipo de certificado */}
                 <div className="flex items-center gap-2">
-                  <Award className="w-5 h-5 text-[#FCE900]" />
+                  <Award className="w-5 h-5 text-[#A855F7]" />
                   <span className="font-black text-[#0C0C0C] text-lg">
                     {TYPE_LABELS[cert!.type] ?? cert!.type}
                   </span>
@@ -88,7 +88,7 @@ export default async function VerifyCertPage({ params }: Props) {
 
                   {/* Empleado */}
                   <div className="flex items-start gap-3 p-4 bg-[#f8f8f8] rounded-xl">
-                    <div className="w-9 h-9 rounded-full bg-[#FCE900]/20 flex items-center justify-center flex-shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-[#A855F7]/20 flex items-center justify-center flex-shrink-0">
                       <User className="w-4 h-4 text-[#0C0C0C]" />
                     </div>
                     <div>
@@ -100,7 +100,7 @@ export default async function VerifyCertPage({ params }: Props) {
 
                   {/* Curso */}
                   <div className="flex items-start gap-3 p-4 bg-[#f8f8f8] rounded-xl">
-                    <div className="w-9 h-9 rounded-full bg-[#FCE900]/20 flex items-center justify-center flex-shrink-0">
+                    <div className="w-9 h-9 rounded-full bg-[#A855F7]/20 flex items-center justify-center flex-shrink-0">
                       <BookOpen className="w-4 h-4 text-[#0C0C0C]" />
                     </div>
                     <div>
@@ -115,7 +115,7 @@ export default async function VerifyCertPage({ params }: Props) {
                   <div className="grid grid-cols-2 gap-3">
                     {/* Fecha de emisión */}
                     <div className="flex items-start gap-3 p-4 bg-[#f8f8f8] rounded-xl">
-                      <Calendar className="w-4 h-4 text-[#FCE900] flex-shrink-0 mt-0.5" />
+                      <Calendar className="w-4 h-4 text-[#A855F7] flex-shrink-0 mt-0.5" />
                       <div>
                         <p className="text-xs font-semibold text-[#999] uppercase tracking-wider mb-0.5">Emitido el</p>
                         <p className="font-bold text-sm text-[#0C0C0C]">
@@ -126,7 +126,7 @@ export default async function VerifyCertPage({ params }: Props) {
 
                     {/* Caducidad */}
                     <div className="flex items-start gap-3 p-4 bg-[#f8f8f8] rounded-xl">
-                      <Clock className="w-4 h-4 text-[#FCE900] flex-shrink-0 mt-0.5" />
+                      <Clock className="w-4 h-4 text-[#A855F7] flex-shrink-0 mt-0.5" />
                       <div>
                         <p className="text-xs font-semibold text-[#999] uppercase tracking-wider mb-0.5">Válido hasta</p>
                         <p className="font-bold text-sm text-[#0C0C0C]">

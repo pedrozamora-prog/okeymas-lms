@@ -127,8 +127,8 @@ export default function SuperAdminMarketplacePage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-yelau-yellow/10 flex items-center justify-center">
-            <Store className="w-5 h-5 text-yelau-yellow" />
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Store className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h1 className="text-2xl font-black text-foreground">Gestión del Marketplace</h1>
@@ -181,14 +181,14 @@ export default function SuperAdminMarketplacePage() {
                     className={cn(
                       "border-b border-border last:border-0 transition-colors",
                       i % 2 === 0 ? "" : "bg-muted/20",
-                      course.isMarketplace && "bg-yelau-yellow/5"
+                      course.isMarketplace && "bg-primary/5"
                     )}
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-yelau-yellow/10 flex items-center justify-center flex-shrink-0">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                           {course.isMarketplace
-                            ? <CheckCircle2 className="w-4 h-4 text-yelau-yellow" />
+                            ? <CheckCircle2 className="w-4 h-4 text-primary" />
                             : <BookOpen className="w-4 h-4 text-muted-foreground" />
                           }
                         </div>
@@ -221,7 +221,7 @@ export default function SuperAdminMarketplacePage() {
                             <Switch
                               checked={course.isMarketplace}
                               onCheckedChange={() => toggle(course.id, course.isMarketplace)}
-                              className="data-[state=checked]:bg-yelau-yellow"
+                              className="data-[state=checked]:bg-primary"
                             />
                           )
                         }
@@ -249,7 +249,7 @@ export default function SuperAdminMarketplacePage() {
                   </tr>
                   {/* Inline metadata editor */}
                   {editing === course.id && (
-                    <tr className="border-b border-border bg-yelau-yellow/5">
+                    <tr className="border-b border-border bg-primary/5">
                       <td colSpan={5} className="px-4 pb-4 pt-1">
                         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
                           <div className="flex flex-col gap-1 flex-1">
@@ -278,7 +278,7 @@ export default function SuperAdminMarketplacePage() {
                             size="sm"
                             disabled={saving === course.id}
                             onClick={() => saveMetadata(course.id)}
-                            className="h-9 bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold flex-shrink-0"
+                            className="h-9 bg-primary text-yelau-black hover:bg-primary/90 font-bold flex-shrink-0"
                           >
                             {saving === course.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Guardar"}
                           </Button>

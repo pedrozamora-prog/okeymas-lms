@@ -32,7 +32,7 @@ export function UsersClient({ invitations: _ }: Props) {
     <>
       <Button
         onClick={() => setModalOpen(true)}
-        className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2"
+        className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2"
       >
         <UserPlus className="w-4 h-4" />
         Invitar usuario

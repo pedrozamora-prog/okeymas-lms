@@ -115,7 +115,7 @@ export function EnrollmentRulesClient({ initialRules, courses }: Props) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-black text-foreground flex items-center gap-2">
-            <Zap className="w-6 h-6 text-yelau-yellow" />
+            <Zap className="w-6 h-6 text-primary" />
             Inscripción automática
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
@@ -125,7 +125,7 @@ export function EnrollmentRulesClient({ initialRules, courses }: Props) {
 
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2">
+            <Button className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2">
               <Plus className="w-4 h-4" />
               Nueva regla
             </Button>
@@ -133,7 +133,7 @@ export function EnrollmentRulesClient({ initialRules, courses }: Props) {
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-yelau-yellow" />
+                <Zap className="w-4 h-4 text-primary" />
                 Nueva regla de inscripción
               </DialogTitle>
             </DialogHeader>
@@ -186,7 +186,7 @@ export function EnrollmentRulesClient({ initialRules, courses }: Props) {
               </div>
 
               <div className="flex gap-3 pt-2">
-                <Button type="submit" disabled={loading} className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold flex-1">
+                <Button type="submit" disabled={loading} className="bg-primary text-yelau-black hover:bg-primary/90 font-bold flex-1">
                   Crear regla
                 </Button>
                 <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
@@ -209,8 +209,8 @@ export function EnrollmentRulesClient({ initialRules, courses }: Props) {
         <div className="space-y-3">
           {rules.map(rule => (
             <div key={rule.id} className={`bg-card border rounded-xl p-4 flex items-center gap-4 transition-opacity ${rule.isActive ? "" : "opacity-50"}`}>
-              <div className="w-10 h-10 rounded-full bg-yelau-yellow/10 flex items-center justify-center flex-shrink-0">
-                <Zap className="w-5 h-5 text-yelau-yellow" />
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <Zap className="w-5 h-5 text-primary" />
               </div>
 
               <div className="flex-1 min-w-0">

@@ -132,8 +132,8 @@ export function FileUploader({
         className={cn(
           "relative border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer",
           dragOver
-            ? "border-yelau-yellow bg-yelau-yellow/5"
-            : "border-border hover:border-yelau-yellow/50 hover:bg-muted/30",
+            ? "border-primary bg-primary/5"
+            : "border-border hover:border-primary/50 hover:bg-muted/30",
           uploading && "pointer-events-none opacity-60"
         )}
         onDragOver={e => { e.preventDefault(); setDragOver(true); }}
@@ -151,7 +151,7 @@ export function FileUploader({
 
         {uploading ? (
           <div className="space-y-2 py-2">
-            <Loader2 className="w-7 h-7 mx-auto text-yelau-yellow animate-spin" />
+            <Loader2 className="w-7 h-7 mx-auto text-primary animate-spin" />
             <p className="text-sm font-medium text-foreground">Subiendo {label}… {Math.round(progress)}%</p>
           </div>
         ) : (

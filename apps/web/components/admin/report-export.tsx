@@ -59,7 +59,7 @@ export function ReportExport({ fixedDept }: Props = {}) {
     <Card>
       <CardContent className="pt-5 pb-5 space-y-5">
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-yelau-yellow" />
+          <Filter className="w-4 h-4 text-primary" />
           <p className="text-sm font-semibold text-foreground">Filtros del informe</p>
         </div>
 

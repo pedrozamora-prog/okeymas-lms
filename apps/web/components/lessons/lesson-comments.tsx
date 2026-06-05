@@ -25,8 +25,8 @@ interface Props {
 
 function Avatar({ name }: { name: string }) {
   return (
-    <div className="w-8 h-8 rounded-full bg-yelau-yellow/20 flex items-center justify-center flex-shrink-0">
-      <span className="text-xs font-bold text-yelau-yellow">{name.charAt(0).toUpperCase()}</span>
+    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+      <span className="text-xs font-bold text-primary">{name.charAt(0).toUpperCase()}</span>
     </div>
   );
 }
@@ -139,7 +139,7 @@ function CommentItem({
             />
             <div className="flex flex-col gap-1">
               <Button size="sm" onClick={handleReply} disabled={loading || !replyText.trim()}
-                className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 h-8 px-3">
+                className="bg-primary text-yelau-black hover:bg-primary/90 h-8 px-3">
                 <Send className="w-3.5 h-3.5" />
               </Button>
               <Button size="sm" variant="ghost" onClick={() => setReplying(false)} className="h-8 px-3">✕</Button>
@@ -204,7 +204,7 @@ export function LessonComments({ lessonId, currentUserId, currentUserRole }: Pro
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <MessageSquare className="w-5 h-5 text-yelau-yellow" />
+        <MessageSquare className="w-5 h-5 text-primary" />
         <h3 className="font-bold text-foreground">
           Foro de la lección
           {comments.length > 0 && (
@@ -229,7 +229,7 @@ export function LessonComments({ lessonId, currentUserId, currentUserRole }: Pro
             <Button
               type="submit"
               disabled={loading || !text.trim()}
-              className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2"
+              className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2"
             >
               <Send className="w-4 h-4" />
               Publicar

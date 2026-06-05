@@ -19,7 +19,7 @@ const roleLabel: Record<string, string> = {
   EMPLOYEE:     "Empleado",
 };
 const roleColor: Record<string, string> = {
-  SUPER_ADMIN:  "bg-yelau-yellow/20 text-yelau-yellow border-yelau-yellow/30",
+  SUPER_ADMIN:  "bg-primary/20 text-primary border-primary/30",
   BRANCH_ADMIN: "bg-blue-500/20 text-blue-400 border-blue-500/30",
   MANAGER:      "bg-green-500/20 text-green-600 border-green-500/30",
   INSTRUCTOR:   "bg-purple-500/20 text-purple-400 border-purple-500/30",
@@ -78,7 +78,7 @@ export default async function UsersPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
           { label: "Total usuarios",  value: stats.total,       icon: Users,       color: "text-foreground"    },
-          { label: "Administradores", value: stats.admins,      icon: ShieldCheck,  color: "text-yelau-yellow" },
+          { label: "Administradores", value: stats.admins,      icon: ShieldCheck,  color: "text-primary" },
           { label: "Instructores",    value: stats.instructors, icon: BookOpen,     color: "text-purple-400"   },
           { label: "Empleados",       value: stats.employees,   icon: Trophy,       color: "text-blue-400"     },
         ].map(stat => {
@@ -149,7 +149,7 @@ export default async function UsersPage() {
             {users.map(u => (
               <div key={u.id} className="flex items-center gap-4 px-6 py-4 hover:bg-muted/30 transition-colors">
                 <Avatar className="h-9 w-9 flex-shrink-0">
-                  <AvatarFallback className="bg-yelau-yellow/20 text-yelau-yellow font-bold text-sm">
+                  <AvatarFallback className="bg-primary/20 text-primary font-bold text-sm">
                     {(u.name ?? u.email).charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>

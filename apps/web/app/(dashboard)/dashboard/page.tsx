@@ -58,12 +58,12 @@ export default async function DashboardPage() {
       : 0;
 
     const adminStats = [
-      { label: t("admin.activeUsers"),       value: String(totalUsers),             icon: Users,         color: "text-yelau-yellow", bg: "bg-yelau-yellow/10" },
+      { label: t("admin.activeUsers"),       value: String(totalUsers),             icon: Users,         color: "text-primary", bg: "bg-primary/10" },
       { label: t("admin.publishedCourses"),  value: String(totalCourses),           icon: BookOpen,      color: "text-blue-400",     bg: "bg-blue-500/10"     },
       { label: t("admin.totalEnrollments"),  value: String(totalEnrollments),       icon: GraduationCap, color: "text-purple-400",   bg: "bg-purple-500/10"   },
       { label: t("admin.completedCourses"),  value: String(completedEnrollments),   icon: CheckCircle,   color: "text-green-400",    bg: "bg-green-500/10"    },
       { label: t("admin.issuedCertificates"),value: String(totalCertificates),      icon: Award,         color: "text-orange-400",   bg: "bg-orange-500/10"   },
-      { label: t("admin.completionRate"),    value: `${completionRate}%`,           icon: TrendingUp,    color: "text-yelau-yellow", bg: "bg-yelau-yellow/10" },
+      { label: t("admin.completionRate"),    value: `${completionRate}%`,           icon: TrendingUp,    color: "text-primary", bg: "bg-primary/10" },
     ];
 
     return (
@@ -104,7 +104,7 @@ export default async function DashboardPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-                <BarChart3 className="w-4 h-4 text-yelau-yellow flex-shrink-0" />
+                <BarChart3 className="w-4 h-4 text-primary flex-shrink-0" />
                 {t("admin.topCourses")}
               </CardTitle>
             </CardHeader>
@@ -135,7 +135,7 @@ export default async function DashboardPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-                <TrendingUp className="w-4 h-4 text-yelau-yellow flex-shrink-0" />
+                <TrendingUp className="w-4 h-4 text-primary flex-shrink-0" />
                 {t("admin.recentEnrollments")}
               </CardTitle>
             </CardHeader>
@@ -144,7 +144,7 @@ export default async function DashboardPage() {
                 <p className="text-sm text-muted-foreground text-center py-6">{t("admin.noRecentActivity")}</p>
               ) : recentEnrollments.map((e) => (
                 <div key={`${e.userId}-${e.courseId}`} className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-full bg-yelau-yellow flex items-center justify-center flex-shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                     <span className="text-yelau-black text-xs font-bold">
                       {e.user.name?.charAt(0).toUpperCase()}
                     </span>
@@ -168,7 +168,7 @@ export default async function DashboardPage() {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center justify-between text-sm font-semibold">
               <span className="flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-yelau-yellow flex-shrink-0" />
+                <AlertTriangle className="w-4 h-4 text-primary flex-shrink-0" />
                 {t("admin.atRiskEmployees")}
               </span>
             </CardTitle>
@@ -183,7 +183,7 @@ export default async function DashboardPage() {
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-                <Video className="w-4 h-4 text-yelau-yellow flex-shrink-0" />
+                <Video className="w-4 h-4 text-primary flex-shrink-0" />
                 {t("admin.upcomingClasses")}
               </CardTitle>
             </CardHeader>
@@ -259,7 +259,7 @@ export default async function DashboardPage() {
         {/* Stats instructor */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
           {[
-            { label: t("admin.publishedCourses"),  value: String(myCourses.length),  icon: BookOpen,      color: "text-yelau-yellow", bg: "bg-yelau-yellow/10" },
+            { label: t("admin.publishedCourses"),  value: String(myCourses.length),  icon: BookOpen,      color: "text-primary", bg: "bg-primary/10" },
             { label: t("admin.activeUsers"),        value: String(totalAlumnos),      icon: Users,         color: "text-blue-400",     bg: "bg-blue-500/10"     },
             { label: t("admin.totalEnrollments"),   value: String(totalInscritos),    icon: GraduationCap, color: "text-purple-400",   bg: "bg-purple-500/10"   },
           ].map(s => {
@@ -285,7 +285,7 @@ export default async function DashboardPage() {
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center justify-between text-sm font-semibold">
               <span className="flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-yelau-yellow" />
+                <BookOpen className="w-4 h-4 text-primary" />
                 {t("nav.myCourses")}
               </span>
               <Link href="/admin/courses" className="text-xs text-brand hover:underline font-normal">
@@ -310,7 +310,7 @@ export default async function DashboardPage() {
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <span className="text-xs text-muted-foreground">{course._count.enrollments} {t("admin.enrolled")}</span>
                       <Link href={`/admin/courses/${course.id}/edit`}>
-                        <Badge variant="outline" className="text-[10px] hover:border-yelau-yellow/40 cursor-pointer transition-colors">{t("common.edit")}</Badge>
+                        <Badge variant="outline" className="text-[10px] hover:border-primary/40 cursor-pointer transition-colors">{t("common.edit")}</Badge>
                       </Link>
                     </div>
                   </div>
@@ -329,7 +329,7 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-              <Video className="w-4 h-4 text-yelau-yellow flex-shrink-0" />
+              <Video className="w-4 h-4 text-primary flex-shrink-0" />
               {t("admin.upcomingClasses")}
             </CardTitle>
           </CardHeader>
@@ -408,10 +408,10 @@ export default async function DashboardPage() {
   const inProgressCourses = courseStats.filter(c => c.done > 0 && c.done < c.total).slice(0, 3);
 
   const stats = [
-    { label: t("dashboard.coursesEnrolled"), value: String(totalEnrolled),          icon: BookOpen,    color: "text-yelau-yellow", bg: "bg-yelau-yellow/10" },
+    { label: t("dashboard.coursesEnrolled"), value: String(totalEnrolled),          icon: BookOpen,    color: "text-primary", bg: "bg-primary/10" },
     { label: t("dashboard.completed"),       value: String(totalCompleted),         icon: CheckCircle, color: "text-green-400",    bg: "bg-green-400/10"    },
     { label: t("dashboard.inProgress"),      value: String(totalInProgress),        icon: Clock,       color: "text-blue-400",     bg: "bg-blue-400/10"     },
-    { label: t("dashboard.points"),          value: String(userPoints?.total ?? 0), icon: Trophy,      color: "text-yelau-yellow", bg: "bg-yelau-yellow/10" },
+    { label: t("dashboard.points"),          value: String(userPoints?.total ?? 0), icon: Trophy,      color: "text-primary", bg: "bg-primary/10" },
     { label: t("dashboard.liveClasses"),     value: String(upcomingClasses.length), icon: Video,       color: "text-purple-400",   bg: "bg-purple-400/10"   },
     { label: t("dashboard.certificates"),    value: String(certificates),           icon: Award,       color: "text-orange-400",   bg: "bg-orange-400/10"   },
   ];
@@ -452,7 +452,7 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-              <Video className="w-4 h-4 text-yelau-yellow flex-shrink-0" />
+              <Video className="w-4 h-4 text-primary flex-shrink-0" />
               {t("dashboard.upcomingClasses")}
             </CardTitle>
           </CardHeader>
@@ -462,7 +462,7 @@ export default async function DashboardPage() {
                 <Video className="w-8 h-8 text-muted-foreground/40" />
                 <p className="text-sm text-muted-foreground">{t("dashboard.noClasses")}</p>
                 <Link href="/dashboard/live">
-                  <Badge variant="outline" className="text-xs mt-1 cursor-pointer hover:border-yelau-yellow/40 transition-colors">{t("dashboard.viewAll")}</Badge>
+                  <Badge variant="outline" className="text-xs mt-1 cursor-pointer hover:border-primary/40 transition-colors">{t("dashboard.viewAll")}</Badge>
                 </Link>
               </div>
             ) : (
@@ -492,7 +492,7 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-              <BookOpen className="w-4 h-4 text-yelau-yellow flex-shrink-0" />
+              <BookOpen className="w-4 h-4 text-primary flex-shrink-0" />
               {t("dashboard.continuelearning")}
             </CardTitle>
           </CardHeader>
@@ -504,7 +504,7 @@ export default async function DashboardPage() {
                   {totalEnrolled === 0 ? t("dashboard.noEnrollments") : t("courses.start")}
                 </p>
                 <Link href="/dashboard/courses">
-                  <Badge variant="outline" className="text-xs mt-1 cursor-pointer hover:border-yelau-yellow/40 transition-colors">{t("nav.myCourses")}</Badge>
+                  <Badge variant="outline" className="text-xs mt-1 cursor-pointer hover:border-primary/40 transition-colors">{t("nav.myCourses")}</Badge>
                 </Link>
               </div>
             ) : (
@@ -513,7 +513,7 @@ export default async function DashboardPage() {
                   const pct = total > 0 ? Math.round((done / total) * 100) : 0;
                   return (
                     <Link key={e.courseId} href={`/dashboard/courses/${e.courseId}`}>
-                      <div className="p-3 rounded-lg bg-muted/40 border border-border/50 hover:border-yelau-yellow/30 transition-colors space-y-2">
+                      <div className="p-3 rounded-lg bg-muted/40 border border-border/50 hover:border-primary/30 transition-colors space-y-2">
                         <div className="flex items-center justify-between gap-2">
                           <p className="text-sm font-medium text-foreground truncate">{e.course.title}</p>
                           <span className="text-xs text-brand font-bold flex-shrink-0">{pct}%</span>

@@ -55,7 +55,7 @@ export default async function CompliancePage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-black text-foreground flex items-center gap-2">
-          <ShieldCheck className="w-6 h-6 text-yelau-yellow" />
+          <ShieldCheck className="w-6 h-6 text-primary" />
           Cumplimiento de formación
         </h1>
         <p className="text-muted-foreground text-sm mt-1">
@@ -116,8 +116,8 @@ export default async function CompliancePage() {
                 <tr key={emp.id} className={`border-b border-border last:border-0 ${i % 2 === 0 ? "" : "bg-muted/20"}`}>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-yelau-yellow/20 flex items-center justify-center flex-shrink-0">
-                        <User className="w-4 h-4 text-yelau-yellow" />
+                      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                        <User className="w-4 h-4 text-primary" />
                       </div>
                       <div className="min-w-0">
                         <p className="font-medium text-foreground truncate">{emp.name}</p>

@@ -37,7 +37,7 @@ export default async function SettingsPage() {
       {/* Organización */}
       <section className="space-y-4">
         <div className="flex items-center gap-2">
-          <Building2 className="w-4 h-4 text-yelau-yellow" />
+          <Building2 className="w-4 h-4 text-primary" />
           <h2 className="text-base font-semibold text-foreground">Organización</h2>
         </div>
         <OrgSettingsForm
@@ -53,7 +53,7 @@ export default async function SettingsPage() {
       {/* Apariencia */}
       <section className="space-y-4">
         <div className="flex items-center gap-2">
-          <Palette className="w-4 h-4 text-yelau-yellow" />
+          <Palette className="w-4 h-4 text-primary" />
           <h2 className="text-base font-semibold text-foreground">Apariencia</h2>
         </div>
         <Card>
@@ -62,8 +62,8 @@ export default async function SettingsPage() {
               <div className="space-y-2">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Color primario</p>
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-md bg-yelau-yellow border border-border" />
-                  <span className="text-sm font-mono text-foreground">#FCE900</span>
+                  <div className="w-8 h-8 rounded-md bg-primary border border-border" />
+                  <span className="text-sm font-mono text-foreground">#A855F7</span>
                   <Badge variant="outline" className="text-[10px]">Marca Formia</Badge>
                 </div>
               </div>
@@ -88,7 +88,7 @@ export default async function SettingsPage() {
       {/* Seguridad */}
       <section className="space-y-4">
         <div className="flex items-center gap-2">
-          <Shield className="w-4 h-4 text-yelau-yellow" />
+          <Shield className="w-4 h-4 text-primary" />
           <h2 className="text-base font-semibold text-foreground">Seguridad</h2>
         </div>
         <Card>
@@ -106,7 +106,7 @@ export default async function SettingsPage() {
                 </div>
                 <Badge variant="outline" className={
                   item.status === "activo"    ? "border-green-500/30 text-green-400 bg-green-500/10" :
-                  item.status === "próximo"   ? "border-yelau-yellow/30 text-yelau-yellow bg-yelau-yellow/10" :
+                  item.status === "próximo"   ? "border-primary/30 text-primary bg-primary/10" :
                   "border-border text-muted-foreground"
                 }>
                   {item.status}
@@ -122,7 +122,7 @@ export default async function SettingsPage() {
       {/* SSO / SAML 2.0 */}
       <section className="space-y-4">
         <div className="flex items-center gap-2">
-          <KeyRound className="w-4 h-4 text-yelau-yellow" />
+          <KeyRound className="w-4 h-4 text-primary" />
           <h2 className="text-base font-semibold text-foreground">SSO / SAML 2.0</h2>
         </div>
         <SsoSettingsForm orgSlug={org.slug} />
@@ -133,7 +133,7 @@ export default async function SettingsPage() {
       {/* Integraciones */}
       <section className="space-y-4">
         <div className="flex items-center gap-2">
-          <Plug className="w-4 h-4 text-yelau-yellow" />
+          <Plug className="w-4 h-4 text-primary" />
           <h2 className="text-base font-semibold text-foreground">Integraciones</h2>
         </div>
 
@@ -161,7 +161,7 @@ export default async function SettingsPage() {
       {/* Notificaciones */}
       <section className="space-y-4">
         <div className="flex items-center gap-2">
-          <Bell className="w-4 h-4 text-yelau-yellow" />
+          <Bell className="w-4 h-4 text-primary" />
           <h2 className="text-base font-semibold text-foreground">Notificaciones por email</h2>
         </div>
         <p className="text-sm text-muted-foreground -mt-2">
@@ -184,7 +184,7 @@ export default async function SettingsPage() {
       {/* Informes programados */}
       <section className="space-y-4">
         <div className="flex items-center gap-2">
-          <BarChart3 className="w-4 h-4 text-yelau-yellow" />
+          <BarChart3 className="w-4 h-4 text-primary" />
           <h2 className="text-base font-semibold text-foreground">Informes automáticos</h2>
         </div>
         <p className="text-sm text-muted-foreground -mt-2">

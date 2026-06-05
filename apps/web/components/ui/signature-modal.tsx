@@ -38,8 +38,8 @@ export function SignatureModal({ courseId, courseTitle, onComplete }: SignatureM
 
         {/* Header */}
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-xl bg-yelau-yellow/10 flex items-center justify-center flex-shrink-0">
-            <PenLine className="w-5 h-5 text-yelau-yellow" />
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+            <PenLine className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h2 className="text-lg font-black text-foreground">Acuse de recibo</h2>
@@ -63,7 +63,7 @@ export function SignatureModal({ courseId, courseTitle, onComplete }: SignatureM
         {/* Canvas */}
         {submitting ? (
           <div className="flex flex-col items-center justify-center py-10 gap-3">
-            <Loader2 className="w-8 h-8 animate-spin text-yelau-yellow" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
             <p className="text-sm text-muted-foreground">Guardando firma…</p>
           </div>
         ) : (

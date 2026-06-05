@@ -89,8 +89,8 @@ function MemberCard({ member }: { member: Member }) {
         <div className="flex items-start gap-3">
           {/* Avatar con indicador */}
           <div className="relative flex-shrink-0">
-            <div className="w-11 h-11 rounded-full bg-yelau-yellow/20 flex items-center justify-center">
-              <span className="text-base font-black text-yelau-yellow">
+            <div className="w-11 h-11 rounded-full bg-primary/20 flex items-center justify-center">
+              <span className="text-base font-black text-primary">
                 {member.name.charAt(0).toUpperCase()}
               </span>
             </div>
@@ -150,7 +150,7 @@ function MemberCard({ member }: { member: Member }) {
 
           {/* Métricas derecha */}
           <div className="flex flex-col items-end gap-1.5 flex-shrink-0 ml-1">
-            <div className="flex items-center gap-1 text-yelau-yellow">
+            <div className="flex items-center gap-1 text-primary">
               <Award className="w-3.5 h-3.5" />
               <span className="text-xs font-bold">{member.certs}</span>
             </div>
@@ -193,7 +193,7 @@ function MemberCard({ member }: { member: Member }) {
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <p className="text-xs font-medium text-foreground truncate">{course.title}</p>
                     {course.isRequired && (
-                      <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-yelau-yellow/50 text-yelau-yellow">
+                      <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-primary/50 text-primary">
                         Obligatorio
                       </Badge>
                     )}
@@ -291,7 +291,7 @@ export function TeamClient({ members, stats, deptLabel }: Props) {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-black text-foreground flex items-center gap-2">
-            <Users className="w-6 h-6 text-yelau-yellow" />
+            <Users className="w-6 h-6 text-primary" />
             Mi equipo
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
@@ -346,7 +346,7 @@ export function TeamClient({ members, stats, deptLabel }: Props) {
               onClick={() => setFilter(f)}
               className={`text-xs px-3 py-1.5 rounded-full border transition-colors font-medium ${
                 filter === f
-                  ? "bg-yelau-yellow text-yelau-black border-yelau-yellow"
+                  ? "bg-primary text-yelau-black border-primary"
                   : "border-border text-muted-foreground hover:border-muted-foreground/50 hover:text-foreground"
               }`}
             >

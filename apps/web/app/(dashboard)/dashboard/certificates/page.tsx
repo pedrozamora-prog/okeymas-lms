@@ -54,10 +54,10 @@ export default async function CertificatesPage() {
               differenceInDays(new Date(cert.expiresAt), new Date()) <= 30;
 
             return (
-              <Card key={cert.id} className={isExpired ? "opacity-60" : "hover:border-yelau-yellow/40 transition-colors"}>
+              <Card key={cert.id} className={isExpired ? "opacity-60" : "hover:border-primary/40 transition-colors"}>
                 {/* Certificate header */}
-                <div className="h-32 bg-gradient-to-br from-yelau-yellow/20 to-muted rounded-t-xl flex items-center justify-center relative">
-                  <Award className="w-12 h-12 text-yelau-yellow/60" />
+                <div className="h-32 bg-gradient-to-br from-primary/20 to-muted rounded-t-xl flex items-center justify-center relative">
+                  <Award className="w-12 h-12 text-primary/60" />
                   {isExpired && (
                     <Badge className="absolute top-2 right-2 bg-red-500 text-white text-[10px]">
                       Expirado

@@ -106,7 +106,7 @@ export function OrgSettingsForm({ orgId, initialName, initialSlug, initialLogoUr
             <Button
               type="submit"
               disabled={loading}
-              className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2"
+              className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2"
             >
               {loading
                 ? <Loader2 className="w-4 h-4 animate-spin" />

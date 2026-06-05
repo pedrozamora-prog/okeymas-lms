@@ -56,7 +56,7 @@ export function IssueCertificateForm({ users, courses }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2">
+        <Button className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2">
           <Plus className="w-4 h-4" />
           Emitir certificado
         </Button>
@@ -65,7 +65,7 @@ export function IssueCertificateForm({ users, courses }: Props) {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Award className="w-4 h-4 text-yelau-yellow" />
+            <Award className="w-4 h-4 text-primary" />
             Emitir certificado manualmente
           </DialogTitle>
         </DialogHeader>
@@ -136,7 +136,7 @@ export function IssueCertificateForm({ users, courses }: Props) {
             <Button
               type="submit"
               disabled={loading}
-              className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold flex-1"
+              className="bg-primary text-yelau-black hover:bg-primary/90 font-bold flex-1"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Award className="w-4 h-4" />}
               Emitir

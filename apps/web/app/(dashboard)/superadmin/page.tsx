@@ -12,7 +12,7 @@ export const metadata = { title: "Super Admin — Formia" };
 const PLAN_COLOR: Record<string, string> = {
   STARTER:      "bg-muted text-muted-foreground border-border",
   PROFESSIONAL: "bg-blue-50 text-blue-600 border-blue-200",
-  CHAIN:        "bg-yelau-yellow/10 text-yelau-yellow border-yelau-yellow/30",
+  CHAIN:        "bg-primary/10 text-primary border-primary/30",
   ENTERPRISE:   "bg-purple-50 text-purple-600 border-purple-200",
 };
 
@@ -53,7 +53,7 @@ export default async function SuperAdminPage() {
         </div>
         <Link
           href="/superadmin/orgs/new"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-yelau-yellow text-yelau-black font-bold rounded-lg text-sm hover:bg-yelau-yellow/90 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-yelau-black font-bold rounded-lg text-sm hover:bg-primary/90 transition-colors"
         >
           <Plus className="w-4 h-4" />
           Nueva organización
@@ -66,7 +66,7 @@ export default async function SuperAdminPage() {
           { label: "Organizaciones",  value: totalOrgs,   icon: Building2,  color: "text-blue-500",   bg: "bg-blue-50"   },
           { label: "Activas",         value: activeOrgs,  icon: TrendingUp, color: "text-green-600",  bg: "bg-green-50"  },
           { label: "Usuarios totales",value: totalUsers,  icon: Users,      color: "text-purple-500", bg: "bg-purple-50" },
-          { label: "Cursos totales",  value: totalCourses,icon: BookOpen,   color: "text-yelau-yellow",bg: "bg-yelau-yellow/10" },
+          { label: "Cursos totales",  value: totalCourses,icon: BookOpen,   color: "text-primary",bg: "bg-primary/10" },
         ].map(s => (
           <div key={s.label} className="bg-card rounded-xl border border-border p-4 flex items-center gap-3">
             <div className={`w-10 h-10 rounded-full ${s.bg} flex items-center justify-center flex-shrink-0`}>
@@ -102,8 +102,8 @@ export default async function SuperAdminPage() {
                 <tr key={org.id} className={`border-b border-border last:border-0 ${i % 2 === 0 ? "" : "bg-muted/20"}`}>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-yelau-yellow/20 flex items-center justify-center flex-shrink-0">
-                        <Building2 className="w-4 h-4 text-yelau-yellow" />
+                      <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
+                        <Building2 className="w-4 h-4 text-primary" />
                       </div>
                       <div>
                         <p className="font-semibold text-foreground">{org.name}</p>

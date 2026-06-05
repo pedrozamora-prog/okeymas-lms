@@ -151,7 +151,7 @@ export function BulkEnrollModal({ open, onClose, onEnrolled, courseId, courseTit
       <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2 text-lg font-black">
-            <UserPlus className="w-5 h-5 text-yelau-yellow" />
+            <UserPlus className="w-5 h-5 text-primary" />
             Inscripción masiva
           </DialogTitle>
           <DialogDescription className="truncate">
@@ -216,13 +216,13 @@ export function BulkEnrollModal({ open, onClose, onEnrolled, courseId, courseTit
                       onClick={() => toggleDept(dept.value)}
                       className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all text-left ${
                         selected
-                          ? "border-yelau-yellow bg-yelau-yellow/5"
+                          ? "border-primary bg-primary/5"
                           : "border-border hover:border-muted-foreground/40"
                       }`}
                     >
                       <span className="text-2xl flex-shrink-0">{dept.emoji}</span>
                       <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-semibold ${selected ? "text-yelau-yellow" : "text-foreground"}`}>
+                        <p className={`text-sm font-semibold ${selected ? "text-primary" : "text-foreground"}`}>
                           {dept.label}
                         </p>
                         <p className="text-[11px] text-muted-foreground">
@@ -233,7 +233,7 @@ export function BulkEnrollModal({ open, onClose, onEnrolled, courseId, courseTit
                       {newCount > 0 && (
                         <Badge className={`text-[10px] flex-shrink-0 ${
                           selected
-                            ? "bg-yelau-yellow text-yelau-black"
+                            ? "bg-primary text-yelau-black"
                             : "bg-muted text-muted-foreground"
                         }`}>
                           +{newCount} nuevos
@@ -286,10 +286,10 @@ export function BulkEnrollModal({ open, onClose, onEnrolled, courseId, courseTit
                             checked={selectedUsers.includes(u.id)}
                             disabled={u.enrolled}
                             onChange={() => !u.enrolled && toggleUser(u.id)}
-                            className="accent-yelau-yellow"
+                            className="accent-primary"
                           />
-                          <div className="w-7 h-7 rounded-full bg-yelau-yellow/20 flex items-center justify-center flex-shrink-0">
-                            <span className="text-xs font-bold text-yelau-yellow">
+                          <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                            <span className="text-xs font-bold text-primary">
                               {u.name.charAt(0).toUpperCase()}
                             </span>
                           </div>
@@ -350,7 +350,7 @@ export function BulkEnrollModal({ open, onClose, onEnrolled, courseId, courseTit
               type="checkbox"
               checked={notify}
               onChange={e => setNotify(e.target.checked)}
-              className="accent-yelau-yellow w-4 h-4"
+              className="accent-primary w-4 h-4"
             />
             <span className="text-xs text-muted-foreground">
               Enviar email de notificación a los nuevos inscritos
@@ -362,8 +362,8 @@ export function BulkEnrollModal({ open, onClose, onEnrolled, courseId, courseTit
         <div className="flex-shrink-0 pt-4 border-t border-border space-y-3">
           {/* Resumen */}
           {canEnroll && (
-            <div className="flex items-center gap-2 text-xs bg-yelau-yellow/10 border border-yelau-yellow/30 rounded-lg px-3 py-2">
-              <UserPlus className="w-3.5 h-3.5 text-yelau-yellow flex-shrink-0" />
+            <div className="flex items-center gap-2 text-xs bg-primary/10 border border-primary/30 rounded-lg px-3 py-2">
+              <UserPlus className="w-3.5 h-3.5 text-primary flex-shrink-0" />
               <span className="text-foreground">
                 Se inscribirán <strong>{targetUsers.length} empleado{targetUsers.length !== 1 ? "s" : ""}</strong>
                 {alreadyEnrolled > 0 && ` · ${alreadyEnrolled} ya inscritos serán omitidos`}
@@ -375,7 +375,7 @@ export function BulkEnrollModal({ open, onClose, onEnrolled, courseId, courseTit
             <Button
               onClick={handleEnroll}
               disabled={!canEnroll || enrolling}
-              className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2 flex-1"
+              className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2 flex-1"
             >
               {enrolling
                 ? <><Loader2 className="w-4 h-4 animate-spin" />Inscribiendo…</>

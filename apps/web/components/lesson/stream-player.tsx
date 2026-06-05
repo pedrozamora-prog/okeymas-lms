@@ -116,7 +116,7 @@ export function StreamPlayer({ uid, title, onEnded, onProgress, onTimeUpdate }: 
       <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
         {!loaded && (
           <div className="absolute inset-0 flex items-center justify-center bg-black">
-            <Loader2 className="w-8 h-8 text-yelau-yellow animate-spin" />
+            <Loader2 className="w-8 h-8 text-primary animate-spin" />
           </div>
         )}
         <iframe

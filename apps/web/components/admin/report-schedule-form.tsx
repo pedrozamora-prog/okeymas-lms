@@ -101,11 +101,11 @@ export function ReportScheduleForm({
                 onClick={() => setFrequency(opt.value)}
                 className={`p-3 rounded-lg border text-left transition-colors ${
                   frequency === opt.value
-                    ? "border-yelau-yellow bg-yelau-yellow/10"
+                    ? "border-primary bg-primary/10"
                     : "border-border hover:border-muted-foreground/40"
                 }`}
               >
-                <p className={`text-xs font-bold ${frequency === opt.value ? "text-yelau-yellow" : "text-foreground"}`}>
+                <p className={`text-xs font-bold ${frequency === opt.value ? "text-primary" : "text-foreground"}`}>
                   {opt.label}
                 </p>
                 <p className="text-[10px] text-muted-foreground mt-0.5">{opt.desc}</p>
@@ -132,7 +132,7 @@ export function ReportScheduleForm({
                     variant="outline"
                     className={`cursor-pointer transition-colors text-xs px-3 py-1 ${
                       dayOfWeek === d.value
-                        ? "border-yelau-yellow bg-yelau-yellow/10 text-yelau-yellow"
+                        ? "border-primary bg-primary/10 text-primary"
                         : "hover:border-muted-foreground/40"
                     }`}
                   >
@@ -157,7 +157,7 @@ export function ReportScheduleForm({
                   onClick={() => setDayOfMonth(d)}
                   className={`w-9 h-9 rounded-lg text-xs font-semibold transition-colors border ${
                     dayOfMonth === d
-                      ? "bg-yelau-yellow text-yelau-black border-yelau-yellow"
+                      ? "bg-primary text-yelau-black border-primary"
                       : "border-border text-muted-foreground hover:border-muted-foreground/50 hover:text-foreground"
                   }`}
                 >
@@ -171,10 +171,10 @@ export function ReportScheduleForm({
 
         {/* Estado actual */}
         <div className={`flex items-center gap-3 p-3 rounded-lg ${
-          frequency === "DISABLED" ? "bg-muted/50 border border-border" : "bg-yelau-yellow/10 border border-yelau-yellow/20"
+          frequency === "DISABLED" ? "bg-muted/50 border border-border" : "bg-primary/10 border border-primary/20"
         }`}>
           <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
-            frequency === "DISABLED" ? "bg-muted-foreground" : "bg-yelau-yellow animate-pulse"
+            frequency === "DISABLED" ? "bg-muted-foreground" : "bg-primary animate-pulse"
           }`} />
           <div className="flex-1">
             <p className="text-xs font-semibold text-foreground">{scheduleDesc}</p>
@@ -188,7 +188,7 @@ export function ReportScheduleForm({
             )}
           </div>
           {frequency !== "DISABLED" && (
-            <Badge variant="outline" className="text-[10px] border-yelau-yellow/30 text-yelau-yellow bg-yelau-yellow/10">
+            <Badge variant="outline" className="text-[10px] border-primary/30 text-primary bg-primary/10">
               Activo
             </Badge>
           )}
@@ -206,7 +206,7 @@ export function ReportScheduleForm({
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2"
+            className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2"
           >
             {saving
               ? <Loader2 className="w-4 h-4 animate-spin" />

@@ -132,11 +132,11 @@ export default async function PathsPage() {
 
             return (
               <Card key={path.id} className="overflow-hidden">
-                <CardHeader className="pb-3 bg-gradient-to-r from-yelau-yellow/10 to-transparent border-b border-border">
+                <CardHeader className="pb-3 bg-gradient-to-r from-primary/10 to-transparent border-b border-border">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-yelau-yellow/20 flex items-center justify-center flex-shrink-0">
-                        <GraduationCap className="w-5 h-5 text-yelau-yellow" />
+                      <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
+                        <GraduationCap className="w-5 h-5 text-primary" />
                       </div>
                       <div>
                         <CardTitle className="text-base">{path.title}</CardTitle>
@@ -170,14 +170,14 @@ export default async function PathsPage() {
                         <div key={pc.courseId}>
                           <div className={cn(
                             "flex items-center gap-3 p-3 rounded-lg border transition-colors",
-                            s.completed ? "border-yelau-yellow/30 bg-yelau-yellow/5"
+                            s.completed ? "border-primary/30 bg-primary/5"
                             : s.needsRemedial ? "border-orange-500/30 bg-orange-500/5"
-                            : s.unlocked ? "border-border hover:border-yelau-yellow/30 hover:bg-muted/50"
+                            : s.unlocked ? "border-border hover:border-primary/30 hover:bg-muted/50"
                             : "border-border/50 opacity-50"
                           )}>
                             <div className={cn(
                               "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0",
-                              s.completed ? "bg-yelau-yellow text-yelau-black" : "bg-muted text-muted-foreground"
+                              s.completed ? "bg-primary text-yelau-black" : "bg-muted text-muted-foreground"
                             )}>
                               {s.completed ? <CheckCircle2 className="w-4 h-4" /> : idx + 1}
                             </div>

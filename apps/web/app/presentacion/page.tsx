@@ -8,7 +8,7 @@ export default function PresentacionPage() {
       <section className="portada">
         <div className="portada-inner">
           <div className="logo-block">
-            <img src="/Formia-logo.svg" alt="Formia" style={{ height: "72px", width: "auto" }} />
+            <img src="/logo-light.png" alt="Formia" style={{ height: "300px", width: "auto" }} />
           </div>
           <h1 className="portada-title">
             Plataforma de Formación<br />
@@ -34,17 +34,23 @@ export default function PresentacionPage() {
         </p>
         <div className="cards-3">
           <div className="card yellow-border">
-            <div className="card-icon">🎯</div>
+            <div className="card-icon">
+              <svg style={{width:"28px",height:"28px"}} viewBox="0 0 24 24" fill="none" stroke="#A855F7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </div>
             <h3>Problema que resuelve</h3>
             <p>La formación en gimnasios es dispersa, difícil de controlar y sin trazabilidad. Los responsables no saben quién ha completado qué, ni si el personal cumple los estándares requeridos.</p>
           </div>
           <div className="card yellow-border">
-            <div className="card-icon">💡</div>
+            <div className="card-icon">
+              <svg style={{width:"28px",height:"28px"}} viewBox="0 0 24 24" fill="none" stroke="#A855F7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21h6"/><path d="M9 18h6"/><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17H8v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z"/></svg>
+            </div>
             <h3>Nuestra solución</h3>
             <p>Un sistema centralizado donde cada empleado tiene su itinerario personalizado según su departamento, con seguimiento en tiempo real y certificación automática al completar los cursos.</p>
           </div>
           <div className="card yellow-border">
-            <div className="card-icon">📈</div>
+            <div className="card-icon">
+              <svg style={{width:"28px",height:"28px"}} viewBox="0 0 24 24" fill="none" stroke="#A855F7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+            </div>
             <h3>Resultado esperado</h3>
             <p>Reducción del tiempo de onboarding, estandarización de procesos, empleados más cualificados y cumplimiento normativo documentado con certificados oficiales.</p>
           </div>
@@ -83,7 +89,7 @@ export default function PresentacionPage() {
           <ul>
             <li><strong>Vídeo</strong> — lecciones grabadas con reproductor integrado</li>
             <li><strong>PDF</strong> — documentos y manuales descargables</li>
-            <li><strong>Quiz</strong> — evaluaciones con nota mínima configurable y múltiples intentos</li>
+            <li><strong>Quiz avanzado</strong> — nota mínima configurable, múltiples intentos y rutas adaptativas según el resultado (branching)</li>
             <li><strong>Clase en directo</strong> — sesiones programadas con instructor, grabadas automáticamente</li>
           </ul>
           <p>Cada curso puede asignarse a <strong>uno o varios departamentos</strong> (Administración, Recepción, Servicio de Limpieza, Monitor, Deporocio), de modo que cada empleado solo ve los cursos relevantes para su rol.</p>
@@ -102,7 +108,7 @@ export default function PresentacionPage() {
             <li>Nombre completo del empleado y nombre del curso</li>
             <li>Tipo de certificado: <strong>Finalización</strong> (confirma la realización) o <strong>Profesional</strong> (acredita competencias)</li>
             <li>Fecha de emisión y fecha de caducidad configurable</li>
-            <li>Nombre y cargo del firmante oficial</li>
+            <li>Nombre y cargo del firmante oficial con <strong>firma digital</strong> incrustada</li>
             <li>Código único de verificación</li>
           </ul>
           <div className="highlight">
@@ -115,6 +121,23 @@ export default function PresentacionPage() {
       <section className="seccion page-break">
         <div className="seccion-num">03</div>
         <h2 className="seccion-titulo">Funcionalidades avanzadas</h2>
+
+        <div className="modulo">
+          <div className="modulo-header">
+            <span className="modulo-tag">ITINERARIOS</span>
+            <h3>Rutas de Aprendizaje Personalizadas</h3>
+          </div>
+          <p>La plataforma crea <strong>itinerarios formativos ramificados</strong> donde el contenido se adapta al rendimiento de cada empleado:</p>
+          <ul>
+            <li><strong>Rutas adaptativas (branching)</strong> — si el empleado aprueba el quiz con nota alta, avanza; si suspende, recibe contenido de refuerzo automáticamente</li>
+            <li><strong>Asignación automática por departamento</strong> — el itinerario completo se activa en el momento del alta, sin intervención manual</li>
+            <li><strong>Progreso visual</strong> — el empleado ve su ruta completa, qué ha completado y qué le queda por recorrer</li>
+            <li><strong>Prerequisitos configurables</strong> — un módulo puede requerir completar otro anterior antes de desbloquearse</li>
+          </ul>
+          <div className="highlight">
+            Argumento clave: los itinerarios eliminan la ambigüedad. La plataforma guía a cada empleado sola, sin que el administrador tenga que dar indicaciones individuales a 120 personas.
+          </div>
+        </div>
 
         <div className="modulo">
           <div className="modulo-header">
@@ -219,27 +242,45 @@ export default function PresentacionPage() {
         <h2 className="seccion-titulo">Infraestructura y seguridad</h2>
         <div className="cards-2">
           <div className="card">
-            <h3>☁️ 100% en la nube</h3>
+            <h3 style={{display:"flex",alignItems:"center",gap:"8px"}}>
+              <svg style={{width:"18px",height:"18px",flexShrink:0}} viewBox="0 0 24 24" fill="none" stroke="#A855F7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+              100% en la nube
+            </h3>
             <p>Desplegado en <strong>Vercel</strong> (la infraestructura que usa empresas como TikTok, Airbnb y Nike), con base de datos <strong>PostgreSQL</strong> en servidores europeos cumpliendo con el <strong>RGPD</strong>.</p>
           </div>
           <div className="card">
-            <h3>🔒 Seguridad</h3>
+            <h3 style={{display:"flex",alignItems:"center",gap:"8px"}}>
+              <svg style={{width:"18px",height:"18px",flexShrink:0}} viewBox="0 0 24 24" fill="none" stroke="#A855F7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Seguridad
+            </h3>
             <p>Autenticación segura con <strong>NextAuth v5</strong> y tokens JWT cifrados. Contraseñas hasheadas con bcrypt. Acceso por roles — cada usuario solo ve lo que le corresponde. HTTPS en todas las comunicaciones.</p>
           </div>
           <div className="card">
-            <h3>📱 Multiplataforma + PWA</h3>
+            <h3 style={{display:"flex",alignItems:"center",gap:"8px"}}>
+              <svg style={{width:"18px",height:"18px",flexShrink:0}} viewBox="0 0 24 24" fill="none" stroke="#A855F7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              Multiplataforma + PWA
+            </h3>
             <p>Funciona en cualquier dispositivo sin instalar nada: <strong>ordenador, tablet y móvil</strong>. La app puede instalarse como PWA en el móvil del empleado para acceso con un toque, con soporte offline.</p>
           </div>
           <div className="card">
-            <h3>⚡ Tecnología moderna</h3>
+            <h3 style={{display:"flex",alignItems:"center",gap:"8px"}}>
+              <svg style={{width:"18px",height:"18px",flexShrink:0}} viewBox="0 0 24 24" fill="none" stroke="#A855F7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Tecnología moderna
+            </h3>
             <p>Construido con <strong>Next.js 16, TypeScript, Prisma y Tailwind CSS</strong> — las mismas tecnologías que usan las principales plataformas de formación online del mundo.</p>
           </div>
           <div className="card yellow-border">
-            <h3>🔗 API pública + Webhooks</h3>
+            <h3 style={{display:"flex",alignItems:"center",gap:"8px"}}>
+              <svg style={{width:"18px",height:"18px",flexShrink:0}} viewBox="0 0 24 24" fill="none" stroke="#A855F7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              API pública + Webhooks
+            </h3>
             <p>Formia expone una <strong>API REST documentada</strong> con autenticación por API key. Permite integrar la plataforma con sistemas de RRHH, nóminas o ERP. Los <strong>Webhooks</strong> notifican en tiempo real eventos como finalización de curso, nuevo certificado o empleado vencido, sin necesidad de polling.</p>
           </div>
           <div className="card yellow-border">
-            <h3>🏷️ White Label / Marca propia</h3>
+            <h3 style={{display:"flex",alignItems:"center",gap:"8px"}}>
+              <svg style={{width:"18px",height:"18px",flexShrink:0}} viewBox="0 0 24 24" fill="none" stroke="#A855F7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              White Label / Marca propia
+            </h3>
             <p>Cada organización puede configurar su <strong>logo propio, color de marca y dominio de email</strong>. Los empleados ven la plataforma con la identidad visual de su empresa, no la de Formia. Disponible en planes Chain y Enterprise.</p>
           </div>
         </div>
@@ -252,7 +293,10 @@ export default function PresentacionPage() {
 
         <div className="comparativa">
           <div className="comp-col comp-sin">
-            <h3>❌ Sin Formia</h3>
+            <h3 style={{display:"flex",alignItems:"center",gap:"8px"}}>
+              <svg style={{width:"18px",height:"18px",flexShrink:0}} viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Sin Formia
+            </h3>
             <ul>
               <li>Formación presencial: coste de sala, materiales, tiempo del formador</li>
               <li>Sin trazabilidad: no se sabe quién ha recibido qué formación</li>
@@ -265,7 +309,10 @@ export default function PresentacionPage() {
             </ul>
           </div>
           <div className="comp-col comp-con">
-            <h3>✅ Con Formia</h3>
+            <h3 style={{display:"flex",alignItems:"center",gap:"8px"}}>
+              <svg style={{width:"18px",height:"18px",flexShrink:0}} viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Con Formia
+            </h3>
             <ul>
               <li>Formación online 24/7: el empleado aprende cuando puede, sin coste de sala</li>
               <li>Trazabilidad total: informe en tiempo real de quién ha completado qué</li>
@@ -355,13 +402,13 @@ export default function PresentacionPage() {
         {/* Planes */}
         <div style={{display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"16px", marginBottom:"32px"}}>
           {[
-            { nombre:"Starter", precio:"149", desc:"1 sede · hasta 50 empleados", color:"#f9fafb", border:"#e5e7eb", features:["Cursos, módulos y lecciones","Certificados oficiales PDF","Invitaciones por email","App móvil (PWA)","Notificaciones automáticas","Reportes básicos","Soporte por email"] },
-            { nombre:"Professional", precio:"299", desc:"Hasta 3 sedes · hasta 150 empleados", color:"#f9fafb", border:"#e5e7eb", features:["Todo lo del Starter","Alta masiva por Excel/CSV","IA generadora de contenido","Rol de mánager + vista equipo","Informes Excel/PDF","Auto-inscripción por puesto","Email con dominio propio"] },
-            { nombre:"Chain", precio:"499", desc:"Hasta 8 sedes · hasta 400 empleados", color:"#0C0C0C", border:"#FCE900", features:["Todo lo del Professional","API pública + Webhooks","White label / marca propia","Encuestas post-curso","SCORM import","Soporte prioritario","Reunión mensual de KPIs"] },
-            { nombre:"Enterprise", precio:"A medida", desc:"Sedes ilimitadas · empleados ilimitados", color:"#f9fafb", border:"#e5e7eb", features:["Todo lo del Chain","Integraciones con RRHH / ERP","SSO corporativo","SLA garantizado 99,9%","Formación al equipo admin","Roadmap priorizado con dirección"] },
+            { nombre:"Starter", precio:"149", desc:"1 sede · hasta 50 empleados", color:"#f9fafb", border:"#e5e7eb", features:["Cursos, módulos y lecciones","Quiz avanzado con nota mínima y múltiples intentos","Certificados con firma digital y QR verificable","Invitaciones por email","App móvil (PWA)","Notificaciones automáticas","Soporte por email"] },
+            { nombre:"Professional", precio:"299", desc:"Hasta 3 sedes · hasta 150 empleados", color:"#f9fafb", border:"#e5e7eb", features:["Todo lo del Starter","Itinerarios de aprendizaje ramificados","Alta masiva por Excel/CSV","IA generadora de contenido","Rol de mánager + vista equipo","Informes Excel/PDF","Email con dominio propio"] },
+            { nombre:"Chain", precio:"499", desc:"Hasta 8 sedes · hasta 400 empleados", color:"#0C0C0C", border:"#A855F7", features:["Todo lo del Professional","API pública + Webhooks","White label / marca propia","Audit logs completos y exportables","Encuestas post-curso","SCORM import","Soporte prioritario","Reunión mensual de KPIs"] },
+            { nombre:"Enterprise", precio:"A medida", desc:"Sedes ilimitadas · empleados ilimitados", color:"#f9fafb", border:"#e5e7eb", features:["Todo lo del Chain","Integraciones con RRHH / ERP","SSO / SAML corporativo","SLA garantizado 99,9%","Formación al equipo admin","Roadmap priorizado con dirección"] },
           ].map((plan) => (
             <div key={plan.nombre} style={{background:plan.color, border:`2px solid ${plan.border}`, borderRadius:"16px", padding:"24px", display:"flex", flexDirection:"column", gap:"12px"}}>
-              <div style={{fontWeight:900, fontSize:"15px", color: plan.color === "#0C0C0C" ? "#FCE900" : "#0C0C0C", letterSpacing:"1px"}}>{plan.nombre}</div>
+              <div style={{fontWeight:900, fontSize:"15px", color: plan.color === "#0C0C0C" ? "#A855F7" : "#0C0C0C", letterSpacing:"1px"}}>{plan.nombre}</div>
               <div style={{fontSize: plan.precio === "A medida" ? "22px" : "36px", fontWeight:900, color: plan.color === "#0C0C0C" ? "#fff" : "#0C0C0C", lineHeight:1}}>
                 {plan.precio !== "A medida" && <span style={{fontSize:"16px", fontWeight:600}}>€</span>}
                 {plan.precio}
@@ -371,7 +418,7 @@ export default function PresentacionPage() {
               <ul style={{listStyle:"none", padding:0, margin:0, display:"flex", flexDirection:"column", gap:"6px"}}>
                 {plan.features.map(f => (
                   <li key={f} style={{fontSize:"11px", color: plan.color === "#0C0C0C" ? "#ccc" : "#374151", display:"flex", gap:"6px", alignItems:"flex-start"}}>
-                    <span style={{color:"#FCE900", fontWeight:700, flexShrink:0}}>✓</span>{f}
+                    <span style={{color:"#A855F7", fontWeight:700, flexShrink:0}}>✓</span>{f}
                   </li>
                 ))}
               </ul>
@@ -381,7 +428,9 @@ export default function PresentacionPage() {
 
         {/* Descuento anual */}
         <div style={{background:"#fefce8", border:"1px solid #fde047", borderRadius:"12px", padding:"20px 24px", display:"flex", alignItems:"center", gap:"20px", marginBottom:"24px"}}>
-          <div style={{fontSize:"32px"}}>🎁</div>
+          <div style={{flexShrink:0}}>
+            <svg style={{width:"36px",height:"36px"}} viewBox="0 0 24 24" fill="none" stroke="#A855F7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+          </div>
           <div>
             <p style={{fontWeight:700, fontSize:"15px", color:"#0C0C0C", margin:0}}>Descuento por pago anual — 20% menos</p>
             <p style={{fontSize:"13px", color:"#6b7280", margin:"4px 0 0"}}>
@@ -439,11 +488,11 @@ export default function PresentacionPage() {
           border-top: 1px solid #222; padding-top: 20px;
           color: #555; font-size: 13px;
         }
-        .yellow { color: #FCE900; }
+        .yellow { color: #A855F7; }
 
         /* SECCIONES */
         .seccion { padding: 60px 80px; border-bottom: 1px solid #eee; }
-        .seccion-num { font-size: 72px; font-weight: 900; color: #FCE900; line-height: 1; margin-bottom: -10px; opacity: 0.4; }
+        .seccion-num { font-size: 72px; font-weight: 900; color: #A855F7; line-height: 1; margin-bottom: -10px; opacity: 0.4; }
         .seccion-titulo { font-size: 32px; font-weight: 900; color: #0C0C0C; margin-bottom: 20px; }
         .seccion-intro { font-size: 16px; color: #444; line-height: 1.7; margin-bottom: 32px; }
 
@@ -454,7 +503,7 @@ export default function PresentacionPage() {
           background: #f8f8f8; border-radius: 12px; padding: 24px;
           border: 1px solid #eee;
         }
-        .yellow-border { border-top: 3px solid #FCE900; }
+        .yellow-border { border-top: 3px solid #A855F7; }
         .card-icon { font-size: 28px; margin-bottom: 12px; }
         .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 10px; color: #0C0C0C; }
         .card p { font-size: 13px; color: #555; line-height: 1.6; }
@@ -464,7 +513,7 @@ export default function PresentacionPage() {
         .modulo:last-child { border-bottom: none; }
         .modulo-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
         .modulo-tag {
-          background: #FCE900; color: #0C0C0C;
+          background: #A855F7; color: #0C0C0C;
           font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
           padding: 3px 10px; border-radius: 4px;
         }
@@ -473,7 +522,7 @@ export default function PresentacionPage() {
         .modulo ul { padding-left: 20px; margin-bottom: 16px; }
         .modulo ul li { font-size: 14px; color: #444; line-height: 1.8; }
         .highlight {
-          background: #FFF9E0; border-left: 4px solid #FCE900;
+          background: #FFF9E0; border-left: 4px solid #A855F7;
           padding: 12px 16px; border-radius: 0 8px 8px 0;
           font-size: 13px; color: #333; font-style: italic;
         }
@@ -502,7 +551,7 @@ export default function PresentacionPage() {
           text-align: center; padding: 28px 20px;
           background: #0C0C0C; border-radius: 12px; color: #fff;
         }
-        .kpi-valor { font-size: 40px; font-weight: 900; color: #FCE900; }
+        .kpi-valor { font-size: 40px; font-weight: 900; color: #A855F7; }
         .kpi-label { font-size: 12px; color: #aaa; margin-top: 8px; line-height: 1.4; }
 
         /* PLANES */
@@ -512,12 +561,12 @@ export default function PresentacionPage() {
           padding: 28px 24px; position: relative;
         }
         .plan-destacado {
-          border: 2px solid #FCE900;
+          border: 2px solid #A855F7;
           background: #FFFDE0;
         }
         .plan-badge {
           position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-          background: #FCE900; color: #0C0C0C;
+          background: #A855F7; color: #0C0C0C;
           font-size: 10px; font-weight: 700; letter-spacing: 1px;
           padding: 3px 12px; border-radius: 20px;
         }

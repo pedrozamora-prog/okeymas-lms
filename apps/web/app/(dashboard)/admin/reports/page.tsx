@@ -72,7 +72,7 @@ export default async function ReportsPage() {
       {/* Exportar informes */}
       <section className="space-y-3">
         <div className="flex items-center gap-2">
-          <Download className="w-4 h-4 text-yelau-yellow" />
+          <Download className="w-4 h-4 text-primary" />
           <h2 className="text-base font-semibold text-foreground">Exportar informe</h2>
         </div>
         <ReportExport />
@@ -83,7 +83,7 @@ export default async function ReportsPage() {
         {[
           { label: "Usuarios activos",     value: totalUsers,        icon: Users,      color: "text-blue-400"        },
           { label: "Cursos publicados",    value: totalCourses,      icon: BookOpen,   color: "text-purple-400"      },
-          { label: "Inscripciones totales",value: totalEnrollments,  icon: TrendingUp, color: "text-yelau-yellow"    },
+          { label: "Inscripciones totales",value: totalEnrollments,  icon: TrendingUp, color: "text-primary"    },
           { label: "Tasa de finalización", value: `${completionRate}%`, icon: CheckCircle2, color: "text-green-400" },
         ].map(stat => {
           const Icon = stat.icon;
@@ -104,7 +104,7 @@ export default async function ReportsPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-yelau-yellow" />
+              <BookOpen className="w-4 h-4 text-primary" />
               Cursos más populares
             </CardTitle>
           </CardHeader>
@@ -144,7 +144,7 @@ export default async function ReportsPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold flex items-center gap-2">
-              <Trophy className="w-4 h-4 text-yelau-yellow" />
+              <Trophy className="w-4 h-4 text-primary" />
               Ranking de empleados
             </CardTitle>
           </CardHeader>
@@ -155,14 +155,14 @@ export default async function ReportsPage() {
             {topUsers.map((u, idx) => (
               <div key={u.id} className="flex items-center gap-3">
                 <span className={`text-sm font-black w-5 flex-shrink-0 ${
-                  idx === 0 ? "text-yelau-yellow" :
+                  idx === 0 ? "text-primary" :
                   idx === 1 ? "text-gray-300" :
                   idx === 2 ? "text-amber-600" : "text-muted-foreground"
                 }`}>
                   {idx + 1}
                 </span>
-                <div className="w-7 h-7 rounded-full bg-yelau-yellow/20 flex items-center justify-center flex-shrink-0">
-                  <span className="text-xs font-bold text-yelau-yellow">
+                <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                  <span className="text-xs font-bold text-primary">
                     {(u.name ?? u.email).charAt(0).toUpperCase()}
                   </span>
                 </div>
@@ -184,7 +184,7 @@ export default async function ReportsPage() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-yelau-yellow" />
+            <BarChart3 className="w-4 h-4 text-primary" />
             Resumen de actividad
           </CardTitle>
         </CardHeader>

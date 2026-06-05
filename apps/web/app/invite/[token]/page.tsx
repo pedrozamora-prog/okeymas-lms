@@ -79,7 +79,7 @@ export default function InvitePage() {
   /* ── Estados ── */
   if (status === "loading") return (
     <div className="min-h-screen flex items-center justify-center bg-background">
-      <Loader2 className="w-8 h-8 animate-spin text-yelau-yellow" />
+      <Loader2 className="w-8 h-8 animate-spin text-primary" />
     </div>
   );
 
@@ -111,13 +111,13 @@ export default function InvitePage() {
 
       {/* Panel izquierdo decorativo */}
       <div className="hidden lg:flex lg:w-[45%] bg-[#080808] flex-col items-center justify-center px-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-yelau-yellow/8 via-transparent to-transparent pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-yelau-yellow/5 rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
         <div className="relative z-10 text-center space-y-6 max-w-xs">
           <img src="/fitacademy-logo.svg" alt="FitAcademy" className="h-12 w-auto mx-auto" />
           <div>
             <h2 className="text-2xl font-black text-white leading-tight">
-              Bienvenido a <span className="text-yelau-yellow">{invite?.orgName}</span>
+              Bienvenido a <span className="text-primary">{invite?.orgName}</span>
             </h2>
             <p className="text-[#666] text-sm mt-3 leading-relaxed">
               Activa tu cuenta y empieza tu formación profesional hoy mismo.
@@ -126,7 +126,7 @@ export default function InvitePage() {
           <div className="flex flex-col gap-3 text-left">
             {["Accede a tus cursos asignados", "Obtén certificados oficiales", "Sigue tu progreso en tiempo real"].map(t => (
               <div key={t} className="flex items-center gap-2.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-yelau-yellow flex-shrink-0" />
+                <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
                 <p className="text-sm text-[#888]">{t}</p>
               </div>
             ))}
@@ -145,9 +145,9 @@ export default function InvitePage() {
         <div className="w-full max-w-sm">
           {/* Badge org */}
           <div className="mb-6 flex items-center gap-2">
-            <div className="inline-flex items-center gap-2 bg-yelau-yellow/10 border border-yelau-yellow/20 rounded-full px-3 py-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-yelau-yellow" />
-              <span className="text-yelau-yellow text-[10px] font-semibold tracking-wider uppercase">
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-3 py-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+              <span className="text-primary text-[10px] font-semibold tracking-wider uppercase">
                 {invite?.orgName}
               </span>
             </div>
@@ -214,7 +214,7 @@ export default function InvitePage() {
             <Button
               type="submit"
               disabled={saving}
-              className="w-full h-11 bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2 mt-2"
+              className="w-full h-11 bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2 mt-2"
             >
               {saving
                 ? <Loader2 className="w-4 h-4 animate-spin" />
@@ -225,7 +225,7 @@ export default function InvitePage() {
 
           <p className="text-center text-xs text-muted-foreground mt-6">
             ¿Ya tienes cuenta?{" "}
-            <a href="/login" className="text-yelau-yellow hover:underline font-semibold">
+            <a href="/login" className="text-primary hover:underline font-semibold">
               Inicia sesión
             </a>
           </p>

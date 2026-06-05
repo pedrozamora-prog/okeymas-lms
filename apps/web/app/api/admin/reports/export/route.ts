@@ -193,7 +193,7 @@ async function generatePDF({ employees, courses, enrollments, now, dateLabel, us
   const { renderToBuffer, Document, Page, Text, View, StyleSheet } = await import("@react-pdf/renderer");
   const { createElement } = await import("react");
 
-  const C = { black: "#0C0C0C", yellow: "#FCE900", white: "#FFFFFF", gray: "#888888", light: "#F5F5F5", border: "#E5E7EB" };
+  const C = { black: "#0C0C0C", yellow: "#A855F7", white: "#FFFFFF", gray: "#888888", light: "#F5F5F5", border: "#E5E7EB" };
 
   const styles = StyleSheet.create({
     page:      { backgroundColor: C.white, padding: 40, fontFamily: "Helvetica" },

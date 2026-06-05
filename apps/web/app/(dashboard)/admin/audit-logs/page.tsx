@@ -37,7 +37,7 @@ const ACTION_META: Record<string, { label: string; color: string; icon: React.El
   COURSE_DELETED:       { label: "Curso eliminado",   color: "bg-red-500/10 text-red-400 border-red-500/20",        icon: Trash2     },
   ENROLLMENT_CREATED:   { label: "Inscripción",       color: "bg-blue-500/10 text-blue-400 border-blue-500/20",     icon: GraduationCap },
   ENROLLMENT_COMPLETED: { label: "Curso completado",  color: "bg-green-500/10 text-green-400 border-green-500/20",  icon: GraduationCap },
-  CERTIFICATE_ISSUED:   { label: "Certificado emitido", color: "bg-yelau-yellow/10 text-yelau-yellow border-yelau-yellow/20", icon: Award },
+  CERTIFICATE_ISSUED:   { label: "Certificado emitido", color: "bg-primary/10 text-primary border-primary/20", icon: Award },
   QUIZ_PASSED:          { label: "Quiz superado",     color: "bg-green-500/10 text-green-400 border-green-500/20",  icon: BookOpen   },
   QUIZ_FAILED:          { label: "Quiz fallado",      color: "bg-red-500/10 text-red-400 border-red-500/20",        icon: BookOpen   },
   SETTINGS_UPDATED:     { label: "Ajustes cambiados", color: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20", icon: Settings },
@@ -105,7 +105,7 @@ export default function AuditLogsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-black text-foreground tracking-tight flex items-center gap-2">
-          <Shield className="w-6 h-6 text-yelau-yellow" />
+          <Shield className="w-6 h-6 text-primary" />
           Logs de auditoría
         </h1>
         <p className="text-muted-foreground text-sm mt-1">
@@ -147,8 +147,8 @@ export default function AuditLogsPage() {
                 onClick={() => { setAction(g.value); setPage(1); }}
                 className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors border ${
                   action === g.value
-                    ? "bg-yelau-yellow text-yelau-black border-yelau-yellow"
-                    : "bg-muted/40 text-muted-foreground border-border hover:border-yelau-yellow/40"
+                    ? "bg-primary text-yelau-black border-primary"
+                    : "bg-muted/40 text-muted-foreground border-border hover:border-primary/40"
                 }`}
               >
                 {g.label}

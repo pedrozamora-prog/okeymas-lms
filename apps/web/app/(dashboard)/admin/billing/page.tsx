@@ -51,7 +51,7 @@ const PLANS = [
     monthly: 549,
     annual:  5490,
     users:   "400 empleados · 8 sedes",
-    color:   "border-yelau-yellow/50",
+    color:   "border-primary/50",
     features: [
       "Todo lo de Professional",
       "API pública con webhooks",
@@ -189,7 +189,7 @@ function BillingContent() {
                 className={cn(
                   "relative rounded-xl border-2 p-6 flex flex-col gap-4 transition-all",
                   plan.color,
-                  isCurrent && "bg-yelau-yellow/5",
+                  isCurrent && "bg-primary/5",
                   plan.key === "PROFESSIONAL" && "shadow-lg shadow-blue-500/10"
                 )}
               >
@@ -199,7 +199,7 @@ function BillingContent() {
                   </span>
                 )}
                 {isCurrent && (
-                  <Badge className="absolute top-4 right-4 bg-yelau-yellow text-yelau-black text-[10px]">
+                  <Badge className="absolute top-4 right-4 bg-primary text-yelau-black text-[10px]">
                     Plan actual
                   </Badge>
                 )}
@@ -236,7 +236,7 @@ function BillingContent() {
                     isCurrent
                       ? "bg-muted text-muted-foreground cursor-default"
                       : isUpgrade
-                        ? "bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90"
+                        ? "bg-primary text-yelau-black hover:bg-primary/90"
                         : "variant-outline"
                   )}
                   variant={isDowngrade ? "outline" : "default"}
@@ -278,7 +278,7 @@ function BillingContent() {
 
 export default function BillingPage() {
   return (
-    <Suspense fallback={<div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-yelau-yellow" /></div>}>
+    <Suspense fallback={<div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>}>
       <BillingContent />
     </Suspense>
   );

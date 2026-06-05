@@ -42,7 +42,7 @@ export function UpgradeBanner({ feature, requiredPlan, currentPlan, className, c
       </div>
       <Link
         href="/admin/settings?tab=plan"
-        className="inline-flex items-center gap-2 px-5 py-2.5 bg-yelau-yellow text-yelau-black font-bold rounded-lg text-sm hover:bg-yelau-yellow/90 transition-colors"
+        className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-yelau-black font-bold rounded-lg text-sm hover:bg-primary/90 transition-colors"
       >
         <Zap className="w-4 h-4" />
         Actualizar plan

@@ -31,8 +31,8 @@ const notifications = [
     icon:    Clock,
     label:   "Recordatorio 7 días antes",
     desc:    "Aviso cuando quedan 7 días para la fecha límite de un curso obligatorio",
-    color:   "text-yelau-yellow",
-    bg:      "bg-yelau-yellow/10",
+    color:   "text-primary",
+    bg:      "bg-primary/10",
   },
   {
     key:     "notifyDeadline3d" as const,

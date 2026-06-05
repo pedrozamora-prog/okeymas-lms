@@ -73,9 +73,9 @@ export function OfflineIndicator() {
     return (
       <div
         onClick={syncQueue}
-        className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-card border border-border text-muted-foreground text-xs font-medium px-4 py-2.5 rounded-full shadow-lg cursor-pointer hover:border-yelau-yellow/40 transition-colors"
+        className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-card border border-border text-muted-foreground text-xs font-medium px-4 py-2.5 rounded-full shadow-lg cursor-pointer hover:border-primary/40 transition-colors"
       >
-        <RefreshCw className={cn("w-3.5 h-3.5 flex-shrink-0", syncing && "animate-spin text-yelau-yellow")} />
+        <RefreshCw className={cn("w-3.5 h-3.5 flex-shrink-0", syncing && "animate-spin text-primary")} />
         {syncing ? "Sincronizando progreso…" : `${pending} progreso pendiente de sync`}
       </div>
     );

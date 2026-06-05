@@ -59,7 +59,7 @@ export default function CompetenciesPage() {
           </p>
         </div>
         {!adding && (
-          <Button className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2"
+          <Button className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2"
             onClick={() => setAdding(true)}>
             <Plus className="w-4 h-4" /> Nueva competencia
           </Button>
@@ -67,12 +67,12 @@ export default function CompetenciesPage() {
       </div>
 
       {adding && (
-        <Card className="border-yelau-yellow/30 bg-yelau-yellow/5">
+        <Card className="border-primary/30 bg-primary/5">
           <CardContent className="pt-4 space-y-3">
             <Input value={name} onChange={e => setName(e.target.value)} placeholder="Nombre de la competencia" />
             <Input value={desc} onChange={e => setDesc(e.target.value)} placeholder="Descripción (opcional)" />
             <div className="flex gap-2">
-              <Button size="sm" onClick={handleSave} className="bg-yelau-yellow text-yelau-black font-bold gap-1.5">
+              <Button size="sm" onClick={handleSave} className="bg-primary text-yelau-black font-bold gap-1.5">
                 <Save className="w-3.5 h-3.5" /> {editId ? "Actualizar" : "Crear"}
               </Button>
               <Button size="sm" variant="ghost" onClick={reset} className="gap-1.5">
@@ -99,11 +99,11 @@ export default function CompetenciesPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {competencies.map(c => (
-            <Card key={c.id} className="hover:border-yelau-yellow/30 transition-colors">
+            <Card key={c.id} className="hover:border-primary/30 transition-colors">
               <CardHeader className="pb-2">
                 <CardTitle className="flex items-center justify-between gap-2 text-sm">
                   <div className="flex items-center gap-2 min-w-0">
-                    <Target className="w-4 h-4 text-yelau-yellow flex-shrink-0" />
+                    <Target className="w-4 h-4 text-primary flex-shrink-0" />
                     <span className="truncate">{c.name}</span>
                   </div>
                   <div className="flex gap-1 flex-shrink-0">

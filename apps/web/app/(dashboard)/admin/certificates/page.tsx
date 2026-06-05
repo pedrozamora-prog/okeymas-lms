@@ -17,7 +17,7 @@ const typeLabel: Record<string, string> = {
 };
 const typeColor: Record<string, string> = {
   COMPLETION:   "border-blue-500/30 text-blue-400 bg-blue-500/10",
-  PROFESSIONAL: "border-yelau-yellow/30 text-yelau-yellow bg-yelau-yellow/10",
+  PROFESSIONAL: "border-primary/30 text-primary bg-primary/10",
 };
 
 export default async function AdminCertificatesPage() {
@@ -72,7 +72,7 @@ export default async function AdminCertificatesPage() {
         {[
           { label: "Total emitidos",   value: stats.total,        color: "text-foreground",   bg: "bg-muted" },
           { label: "Finalización",     value: stats.completion,   color: "text-blue-400",     bg: "bg-blue-500/10" },
-          { label: "Profesionales",    value: stats.professional, color: "text-yelau-yellow", bg: "bg-yelau-yellow/10" },
+          { label: "Profesionales",    value: stats.professional, color: "text-primary", bg: "bg-primary/10" },
           { label: "Expirados",        value: stats.expired,      color: "text-red-400",      bg: "bg-red-500/10" },
         ].map(s => (
           <Card key={s.label}>
@@ -105,14 +105,14 @@ export default async function AdminCertificatesPage() {
           {certificates.map(cert => {
             const isExpired = cert.expiresAt && new Date(cert.expiresAt) < new Date();
             return (
-              <Card key={cert.id} className={isExpired ? "opacity-60" : "hover:border-yelau-yellow/20 transition-colors"}>
+              <Card key={cert.id} className={isExpired ? "opacity-60" : "hover:border-primary/20 transition-colors"}>
                 <CardContent className="pt-3 pb-3">
                   <div className="flex items-center gap-4">
                     {/* Icon */}
                     <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                      cert.type === "PROFESSIONAL" ? "bg-yelau-yellow/10" : "bg-blue-500/10"
+                      cert.type === "PROFESSIONAL" ? "bg-primary/10" : "bg-blue-500/10"
                     }`}>
-                      <Award className={`w-4 h-4 ${cert.type === "PROFESSIONAL" ? "text-yelau-yellow" : "text-blue-400"}`} />
+                      <Award className={`w-4 h-4 ${cert.type === "PROFESSIONAL" ? "text-primary" : "text-blue-400"}`} />
                     </div>
 
                     {/* Info */}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
@@ -110,15 +111,7 @@ export function Sidebar({ userRole, userName, userEmail, orgLogoUrl, orgName }: 
           {orgLogoUrl ? (
             <img src={orgLogoUrl} alt={orgName ?? "Logo"} className="h-9 w-auto object-contain max-w-[160px]" />
           ) : (
-            <>
-              <img src="/formia-mark.svg" alt="" className="h-9 w-9 flex-shrink-0" />
-              <div className="min-w-0 leading-none">
-                <p className="text-[17px] font-black tracking-tight leading-none">
-                  <span className="text-yelau-yellow">For</span><span className="text-foreground">mia</span>
-                </p>
-                <p className="text-[8px] text-muted-foreground tracking-[2.5px] uppercase mt-1">Learning Platform</p>
-              </div>
-            </>
+            <Image src="/logo.png" alt="Formia" width={400} height={100} className="w-full h-auto object-contain object-left" priority />
           )}
         </Link>
       </div>
@@ -149,7 +142,7 @@ export function Sidebar({ userRole, userName, userEmail, orgLogoUrl, orgName }: 
           <NotificationBell />
         </div>
         <div className="flex items-center gap-3 px-2 mb-1">
-          <div className="w-8 h-8 rounded-full bg-yelau-yellow flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
             <span className="text-yelau-black font-bold text-sm">
               {userName.charAt(0).toUpperCase()}
             </span>
@@ -180,7 +173,7 @@ export function Sidebar({ userRole, userName, userEmail, orgLogoUrl, orgName }: 
                   className={cn(
                     "flex items-center gap-2.5 w-full px-3 py-2 text-sm transition-colors",
                     locale === loc.value
-                      ? "bg-yelau-yellow text-yelau-black font-medium"
+                      ? "bg-primary text-yelau-black font-medium"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted"
                   )}
                 >
@@ -210,7 +203,7 @@ export function Sidebar({ userRole, userName, userEmail, orgLogoUrl, orgName }: 
         <Link href="/dashboard" className="flex items-center gap-2">
           <img src="/Formia-mark.svg" alt="" className="h-8 w-8 flex-shrink-0" />
           <span className="text-[16px] font-black tracking-tight leading-none">
-            <span className="text-yelau-yellow">For</span><span className="text-foreground">mia</span>
+            <span className="text-primary">For</span><span className="text-foreground">mia</span>
           </span>
         </Link>
         <button
@@ -291,7 +284,7 @@ function SidebarLink({ item, pathname, index = 0, open = true, t }: {
         "min-h-[44px]",
         "hover:scale-[1.02] active:scale-[0.98]",
         isActive
-          ? "bg-yelau-yellow text-yelau-black shadow-sm shadow-yelau-yellow/30"
+          ? "bg-primary text-yelau-black shadow-sm shadow-primary/30"
           : "text-muted-foreground hover:text-foreground hover:bg-muted"
       )}
     >

@@ -79,7 +79,7 @@ export function SurveyEditor({ courseId, initialSurvey }: Props) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <ClipboardList className="w-4 h-4 text-yelau-yellow" />
+          <ClipboardList className="w-4 h-4 text-primary" />
           <h3 className="font-bold text-foreground">Encuesta post-curso</h3>
         </div>
         <div className="flex items-center gap-3">
@@ -89,7 +89,7 @@ export function SurveyEditor({ courseId, initialSurvey }: Props) {
               {isActive ? "Activa" : "Inactiva"}
             </label>
           </div>
-          <Button onClick={handleSave} disabled={saving} className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2 h-8">
+          <Button onClick={handleSave} disabled={saving} className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2 h-8">
             <Save className="w-3.5 h-3.5" />
             {saving ? "Guardando…" : "Guardar"}
           </Button>

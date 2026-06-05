@@ -129,7 +129,7 @@ export function SignatureCanvas({ onSign, disabled }: SignatureCanvasProps) {
           type="button"
           onClick={submit}
           disabled={isEmpty || disabled}
-          className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold"
+          className="bg-primary text-yelau-black hover:bg-primary/90 font-bold"
         >
           Firmar y finalizar curso
         </Button>

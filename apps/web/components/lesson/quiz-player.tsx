@@ -42,8 +42,8 @@ function MCQuestion({ q, answer, onAnswer }: { q:Question; answer:string; onAnsw
           const sel = answer === opt.id;
           return (
             <label key={opt.id} className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${
-              sel ? "border-yelau-yellow bg-yelau-yellow/10" : "border-border hover:border-muted-foreground/40 hover:bg-muted/30"}`}>
-              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${sel?"border-yelau-yellow bg-yelau-yellow":"border-border"}`}>
+              sel ? "border-primary bg-primary/10" : "border-border hover:border-muted-foreground/40 hover:bg-muted/30"}`}>
+              <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${sel?"border-primary bg-primary":"border-border"}`}>
                 {sel && <div className="w-1.5 h-1.5 rounded-full bg-yelau-black" />}
               </div>
               <input type="radio" name={q.id} value={opt.id} checked={sel} onChange={()=>onAnswer(opt.id)} className="sr-only" />
@@ -64,7 +64,7 @@ function TFQuestion({ q, answer, onAnswer }: { q:Question; answer:string; onAnsw
         return (
           <button key={opt.id} type="button" onClick={()=>onAnswer(opt.id)}
             className={`flex-1 py-4 rounded-xl font-bold text-base border-2 transition-all ${
-              sel ? "border-yelau-yellow bg-yelau-yellow text-yelau-black" : "border-border hover:border-yelau-yellow/40"}`}>
+              sel ? "border-primary bg-primary text-yelau-black" : "border-border hover:border-primary/40"}`}>
             {opt.text}
           </button>
         );
@@ -96,9 +96,9 @@ function OrderQuestion({ q, answer, onAnswer }: { q:Question; answer:string[]; o
           onDragStart={()=>onDragStart(i)}
           onDragOver={e=>e.preventDefault()}
           onDrop={()=>onDrop(i)}
-          className="flex items-center gap-3 p-3 rounded-lg border border-border bg-muted/30 cursor-grab active:cursor-grabbing hover:border-yelau-yellow/40 transition-colors">
+          className="flex items-center gap-3 p-3 rounded-lg border border-border bg-muted/30 cursor-grab active:cursor-grabbing hover:border-primary/40 transition-colors">
           <GripVertical className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-          <span className="text-yelau-yellow font-bold text-xs w-5">{i+1}.</span>
+          <span className="text-primary font-bold text-xs w-5">{i+1}.</span>
           <span className="text-sm text-foreground">{opts[id]}</span>
         </div>
       ))}
@@ -117,7 +117,7 @@ function FillBlankQuestion({ q, answer, onAnswer }: { q:Question; answer:string[
             const idx = blankIdx++;
             return (
               <input key={i} value={answer[idx]??""} onChange={e=>{const a=[...answer];a[idx]=e.target.value;onAnswer(a);}}
-                className="border-b-2 border-yelau-yellow bg-transparent w-28 text-center focus:outline-none text-foreground text-sm" />
+                className="border-b-2 border-primary bg-transparent w-28 text-center focus:outline-none text-foreground text-sm" />
             );
           }
           return <span key={i}>{part}</span>;
@@ -129,7 +129,7 @@ function FillBlankQuestion({ q, answer, onAnswer }: { q:Question; answer:string[
           {q.options.map((_,i)=>(
             <input key={i} value={answer[i]??""} onChange={e=>{const a=[...(answer.length?answer:Array(q.options.length).fill(""))];a[i]=e.target.value;onAnswer(a);}}
               placeholder={`Respuesta ${i+1}…`}
-              className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-muted/30 focus:outline-none focus:ring-1 focus:ring-yelau-yellow/50 text-foreground" />
+              className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-muted/30 focus:outline-none focus:ring-1 focus:ring-primary/50 text-foreground" />
           ))}
         </div>
       )}
@@ -142,7 +142,7 @@ function FreeTextQuestion({ q, answer, onAnswer }: { q:Question; answer:string; 
     <div className="space-y-2">
       <textarea value={answer} onChange={e=>onAnswer(e.target.value)} rows={5}
         placeholder="Escribe tu respuesta aquí…"
-        className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-muted/30 focus:outline-none focus:ring-1 focus:ring-yelau-yellow/50 text-foreground resize-none" />
+        className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-muted/30 focus:outline-none focus:ring-1 focus:ring-primary/50 text-foreground resize-none" />
       <p className="text-[10px] text-muted-foreground flex items-center gap-1">
         <span className="inline-block w-2 h-2 rounded-full bg-purple-400" />
         Esta pregunta será evaluada por IA
@@ -215,7 +215,7 @@ export function QuizPlayer({ lessonId, courseId, nextLessonId }: Props) {
     fetch(`/api/lessons/${lessonId}/quiz`).then(r=>r.json()).then(setQuiz);
   }
 
-  if (loading) return <div className="flex items-center justify-center py-16"><Loader2 className="w-7 h-7 animate-spin text-yelau-yellow" /></div>;
+  if (loading) return <div className="flex items-center justify-center py-16"><Loader2 className="w-7 h-7 animate-spin text-primary" /></div>;
   if (!quiz||quiz.questions.length===0) return (
     <div className="flex flex-col items-center justify-center py-16 gap-3 border border-dashed border-border rounded-lg">
       <HelpCircle className="w-10 h-10 text-muted-foreground/30" />
@@ -234,7 +234,7 @@ export function QuizPlayer({ lessonId, courseId, nextLessonId }: Props) {
       <div className="space-y-6">
         <div className={`rounded-2xl border-2 p-8 text-center space-y-4 ${scoreBg}`}>
           <div className="flex justify-center">
-            {result.passed ? <Trophy className="w-14 h-14 text-yelau-yellow" /> : <XCircle className="w-14 h-14 text-red-400" />}
+            {result.passed ? <Trophy className="w-14 h-14 text-primary" /> : <XCircle className="w-14 h-14 text-red-400" />}
           </div>
           <div>
             <p className={`text-5xl font-black ${scoreColor}`}>{result.score}%</p>
@@ -309,7 +309,7 @@ export function QuizPlayer({ lessonId, courseId, nextLessonId }: Props) {
           )}
           {(result.passed||quiz.attemptsLeft<=1)&&nextLessonId&&(
             <Button onClick={()=>router.push(`/dashboard/courses/${courseId}/lessons/${nextLessonId}`)}
-              className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2">
+              className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2">
               Siguiente lección <ChevronRight className="w-4 h-4" />
             </Button>
           )}
@@ -325,7 +325,7 @@ export function QuizPlayer({ lessonId, courseId, nextLessonId }: Props) {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <p className="text-sm font-semibold text-foreground flex items-center gap-2">
-            <HelpCircle className="w-4 h-4 text-yelau-yellow" />Quiz — {quiz.questions.length} preguntas
+            <HelpCircle className="w-4 h-4 text-primary" />Quiz — {quiz.questions.length} preguntas
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">Mínimo: {quiz.passingScore}% · {quiz.attemptsLeft} intento(s)</p>
         </div>
@@ -348,9 +348,9 @@ export function QuizPlayer({ lessonId, courseId, nextLessonId }: Props) {
         {quiz.questions.map((q,i)=>{
           const answered = isAnswered(q);
           return (
-            <div key={q.id} className={`rounded-xl border p-5 space-y-3 transition-colors ${answered?"border-yelau-yellow/30 bg-yelau-yellow/5":"border-border"}`}>
+            <div key={q.id} className={`rounded-xl border p-5 space-y-3 transition-colors ${answered?"border-primary/30 bg-primary/5":"border-border"}`}>
               <div className="flex items-start gap-2">
-                <span className="text-yelau-yellow font-bold text-sm flex-shrink-0">{i+1}.</span>
+                <span className="text-primary font-bold text-sm flex-shrink-0">{i+1}.</span>
                 <p className="text-sm font-semibold text-foreground flex-1">
                   {q.type==="FILL_BLANK" ? q.text.replace(/\[___\]/g,"___") : q.text}
                 </p>
@@ -378,7 +378,7 @@ export function QuizPlayer({ lessonId, courseId, nextLessonId }: Props) {
       )}
 
       <Button onClick={handleSubmit} disabled={submitting||answeredCount<quiz.questions.length}
-        className="w-full h-12 bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2 text-base">
+        className="w-full h-12 bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2 text-base">
         {submitting?<><Loader2 className="w-5 h-5 animate-spin"/>Evaluando…</>:<>Enviar respuestas <ChevronRight className="w-5 h-5"/></>}
       </Button>
     </div>

@@ -122,7 +122,7 @@ export function OrgManagerClient({ org }: { org: Org }) {
         ].map(s => (
           <Card key={s.label}>
             <CardContent className="pt-4 pb-4 flex items-center gap-3">
-              <s.icon className="w-5 h-5 text-yelau-yellow" />
+              <s.icon className="w-5 h-5 text-primary" />
               <div>
                 <p className="text-lg font-black text-foreground">{s.value}</p>
                 <p className="text-xs text-muted-foreground">{s.label}</p>
@@ -136,7 +136,7 @@ export function OrgManagerClient({ org }: { org: Org }) {
       <Card>
         <CardContent className="pt-5 pb-5 space-y-4">
           <h2 className="font-semibold text-foreground flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-yelau-yellow" /> Plan y estado
+            <Building2 className="w-4 h-4 text-primary" /> Plan y estado
           </h2>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
@@ -165,7 +165,7 @@ export function OrgManagerClient({ org }: { org: Org }) {
               Organización {isActive ? "activa" : "inactiva"}
             </label>
           </div>
-          <Button onClick={handleSave} disabled={saving} className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold">
+          <Button onClick={handleSave} disabled={saving} className="bg-primary text-yelau-black hover:bg-primary/90 font-bold">
             {saving ? "Guardando…" : "Guardar cambios"}
           </Button>
         </CardContent>
@@ -175,7 +175,7 @@ export function OrgManagerClient({ org }: { org: Org }) {
       <Card>
         <CardContent className="pt-5 pb-5 space-y-4">
           <h2 className="font-semibold text-foreground flex items-center gap-2">
-            <Key className="w-4 h-4 text-yelau-yellow" /> API Key
+            <Key className="w-4 h-4 text-primary" /> API Key
           </h2>
           <p className="text-xs text-muted-foreground">
             Permite a la organización conectar sistemas externos (RRHH, Factorial, BambooHR).
@@ -205,7 +205,7 @@ export function OrgManagerClient({ org }: { org: Org }) {
       <Card>
         <CardContent className="pt-5 pb-5 space-y-4">
           <h2 className="font-semibold text-foreground flex items-center gap-2">
-            <Webhook className="w-4 h-4 text-yelau-yellow" /> Webhooks
+            <Webhook className="w-4 h-4 text-primary" /> Webhooks
           </h2>
           <p className="text-xs text-muted-foreground">
             Notificaciones automáticas a sistemas externos cuando ocurren eventos.

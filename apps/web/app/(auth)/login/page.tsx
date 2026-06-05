@@ -96,28 +96,28 @@ function LoginContent() {
       <div className="hidden lg:flex lg:w-[55%] relative bg-[#080808] flex-col overflow-hidden">
         <CursorRipple />
 
-        <div className="absolute inset-0 bg-gradient-to-br from-yelau-yellow/8 via-transparent to-transparent pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-yelau-yellow/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col justify-between h-full px-10 py-8">
 
           {/* Logo */}
           <div className="flex-shrink-0">
-            <img src="/Formia-logo.svg" alt="Formia" className="h-12 w-auto object-contain" />
+            <img src="/logo-light.png" alt="Formia" className="h-28 w-auto object-contain object-left" />
           </div>
 
           {/* Centro */}
           <div className="max-w-lg">
-            <div className="inline-flex items-center gap-2 bg-yelau-yellow/10 border border-yelau-yellow/20 rounded-full px-3 py-1 mb-4 w-fit">
-              <span className="w-1.5 h-1.5 rounded-full bg-yelau-yellow animate-pulse" />
-              <span className="text-yelau-yellow text-[10px] font-semibold tracking-wider uppercase">
+            <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-3 py-1 mb-4 w-fit">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="text-primary text-[10px] font-semibold tracking-wider uppercase">
                 Plataforma de formación profesional
               </span>
             </div>
 
             <h1 className="text-3xl font-black text-white leading-tight tracking-tight mb-3">
               Forma a tu equipo.{" "}
-              <span className="text-yelau-yellow">Certifica</span>{" "}
+              <span className="text-primary">Certifica</span>{" "}
               su excelencia.
             </h1>
             <p className="text-[#666] text-sm leading-relaxed mb-6">
@@ -130,9 +130,9 @@ function LoginContent() {
               {features.map((f) => {
                 const Icon = f.icon;
                 return (
-                  <div key={f.title} className="flex items-start gap-2.5 p-3 rounded-lg bg-white/3 border border-white/5 hover:border-yelau-yellow/20 transition-colors">
-                    <div className="w-7 h-7 rounded-md bg-yelau-yellow/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Icon className="w-3.5 h-3.5 text-yelau-yellow" />
+                  <div key={f.title} className="flex items-start gap-2.5 p-3 rounded-lg bg-white/3 border border-white/5 hover:border-primary/20 transition-colors">
+                    <div className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Icon className="w-3.5 h-3.5 text-primary" />
                     </div>
                     <div>
                       <p className="text-xs font-bold text-white leading-tight">{f.title}</p>
@@ -152,7 +152,7 @@ function LoginContent() {
               { value: "PDF",  label: "Certificados" },
             ].map(s => (
               <div key={s.label}>
-                <p className="text-sm font-black text-yelau-yellow">{s.value}</p>
+                <p className="text-sm font-black text-primary">{s.value}</p>
                 <p className="text-[10px] text-[#555] uppercase tracking-wider">{s.label}</p>
               </div>
             ))}
@@ -166,7 +166,7 @@ function LoginContent() {
 
         {/* Logo mobile */}
         <div className="lg:hidden mb-8">
-          <img src="/Formia-logo-dark.svg" alt="Formia" className="h-10 w-auto object-contain" />
+          <img src="/logo.png" alt="Formia" className="h-12 w-auto object-contain object-left" />
         </div>
 
         <div className="w-full max-w-sm">
@@ -214,7 +214,7 @@ function LoginContent() {
                   onChange={e => setPassword(e.target.value)} required autoComplete="current-password" className="h-11" />
               </div>
               <Button type="submit" disabled={loading}
-                className="w-full h-11 bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold text-sm mt-2 gap-2">
+                className="w-full h-11 bg-primary text-yelau-black hover:bg-primary/90 font-bold text-sm mt-2 gap-2">
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Entrar <ChevronRight className="w-4 h-4" /></>}
               </Button>
             </form>
@@ -232,7 +232,7 @@ function LoginContent() {
                 <p className="text-[10px] text-muted-foreground">El administrador te habrá dado este identificador.</p>
               </div>
               <Button type="submit" disabled={loading}
-                className="w-full h-11 bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold text-sm gap-2">
+                className="w-full h-11 bg-primary text-yelau-black hover:bg-primary/90 font-bold text-sm gap-2">
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><KeyRound className="w-4 h-4" />Entrar con SSO</>}
               </Button>
             </form>
@@ -240,7 +240,7 @@ function LoginContent() {
 
           <p className="text-center text-xs text-muted-foreground mt-6">
             ¿No tienes cuenta?{" "}
-            <Link href="/register" className="text-yelau-yellow hover:underline font-semibold">
+            <Link href="/register" className="text-primary hover:underline font-semibold">
               Regístrate
             </Link>
           </p>

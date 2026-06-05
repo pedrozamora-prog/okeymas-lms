@@ -26,7 +26,7 @@ export function CourseCard({ course, enrolled, progress }: CourseCardProps) {
   return (
     <div className="@container">
       <TiltCard>
-      <Card className="flex flex-col h-full hover:border-yelau-yellow/50 transition-colors group">
+      <Card className="flex flex-col h-full hover:border-primary/50 transition-colors group">
         {/* Thumbnail */}
         <div className="h-36 rounded-t-xl relative overflow-hidden bg-gradient-to-br from-muted to-muted/50">
           {course.thumbnailUrl ? (
@@ -38,11 +38,11 @@ export function CourseCard({ course, enrolled, progress }: CourseCardProps) {
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <BookOpen className="w-10 h-10 text-muted-foreground/30 group-hover:text-yelau-yellow/50 transition-colors" />
+              <BookOpen className="w-10 h-10 text-muted-foreground/30 group-hover:text-primary/50 transition-colors" />
             </div>
           )}
           {course.isRequired && (
-            <Badge className="absolute top-3 left-3 bg-yelau-yellow text-yelau-black text-[10px] font-bold">
+            <Badge className="absolute top-3 left-3 bg-primary text-yelau-black text-[10px] font-bold">
               Obligatorio
             </Badge>
           )}

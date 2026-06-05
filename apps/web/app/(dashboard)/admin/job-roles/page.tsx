@@ -84,7 +84,7 @@ export default function JobRolesPage() {
           </p>
         </div>
         {!adding && (
-          <Button className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2"
+          <Button className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2"
             onClick={() => setAdding(true)}>
             <Plus className="w-4 h-4" /> Nuevo puesto
           </Button>
@@ -92,13 +92,13 @@ export default function JobRolesPage() {
       </div>
 
       {adding && (
-        <Card className="border-yelau-yellow/30 bg-yelau-yellow/5">
+        <Card className="border-primary/30 bg-primary/5">
           <CardContent className="pt-4 space-y-3">
             <Input value={name} onChange={e => setName(e.target.value)} placeholder="Ej: Recepcionista, Monitor de Sala…" />
             <Input value={desc} onChange={e => setDesc(e.target.value)} placeholder="Descripción (opcional)" />
             <div className="flex gap-2">
               <Button size="sm" onClick={handleCreate}
-                className="bg-yelau-yellow text-yelau-black font-bold">Crear puesto</Button>
+                className="bg-primary text-yelau-black font-bold">Crear puesto</Button>
               <Button size="sm" variant="ghost" onClick={() => setAdding(false)}>Cancelar</Button>
             </div>
           </CardContent>
@@ -135,7 +135,7 @@ export default function JobRolesPage() {
                     ? <ChevronDown  className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                     : <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                   }
-                  <Users className="w-4 h-4 text-yelau-yellow flex-shrink-0" />
+                  <Users className="w-4 h-4 text-primary flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-foreground">{role.name}</p>
                     {role.description && (
@@ -175,8 +175,8 @@ export default function JobRolesPage() {
                               className={cn(
                                 "flex items-center gap-2 px-3 py-2 rounded-lg border text-xs transition-colors",
                                 isSelected
-                                  ? "border-yelau-yellow bg-yelau-yellow/10 text-yelau-yellow font-medium"
-                                  : "border-border text-muted-foreground hover:border-yelau-yellow/40"
+                                  ? "border-primary bg-primary/10 text-primary font-medium"
+                                  : "border-border text-muted-foreground hover:border-primary/40"
                               )}
                             >
                               <Target className="w-3 h-3 flex-shrink-0" />
@@ -191,7 +191,7 @@ export default function JobRolesPage() {
                       size="sm"
                       onClick={() => saveRoleComps(role.id)}
                       disabled={saving === role.id}
-                      className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold"
+                      className="bg-primary text-yelau-black hover:bg-primary/90 font-bold"
                     >
                       {saving === role.id ? "Guardando…" : "Guardar competencias"}
                     </Button>

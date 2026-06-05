@@ -84,7 +84,7 @@ export function SsoSettingsForm({ orgSlug }: Props) {
         <div className="flex items-center gap-2">
           {enabled && <Badge className="text-[10px] bg-green-500/20 text-green-400 border-green-500/30">Activo</Badge>}
           <button type="button" onClick={() => setEnabled(v => !v)}
-            className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${enabled ? "bg-yelau-yellow" : "bg-muted-foreground/30"}`}>
+            className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${enabled ? "bg-primary" : "bg-muted-foreground/30"}`}>
             <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${enabled ? "translate-x-5" : "translate-x-0"}`} />
           </button>
         </div>
@@ -143,7 +143,7 @@ export function SsoSettingsForm({ orgSlug }: Props) {
           <Label className="text-xs">Certificado del IdP (PEM, sin cabeceras)</Label>
           <textarea value={cert} onChange={e => setCert(e.target.value)} rows={5}
             placeholder="MIICpDCCAYwCCQDU..."
-            className="w-full text-xs border border-border rounded-lg px-3 py-2 bg-muted/30 text-foreground font-mono focus:outline-none focus:ring-1 focus:ring-yelau-yellow/50 resize-none" />
+            className="w-full text-xs border border-border rounded-lg px-3 py-2 bg-muted/30 text-foreground font-mono focus:outline-none focus:ring-1 focus:ring-primary/50 resize-none" />
           <p className="text-[10px] text-muted-foreground">
             Pega solo el contenido del certificado, sin -----BEGIN CERTIFICATE----- ni -----END CERTIFICATE-----
           </p>
@@ -151,7 +151,7 @@ export function SsoSettingsForm({ orgSlug }: Props) {
       </div>
 
       <Button onClick={handleSave} disabled={saving}
-        className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2">
+        className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2">
         {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
         Guardar configuración SSO
       </Button>

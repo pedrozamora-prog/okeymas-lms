@@ -59,14 +59,14 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
 
       {/* Hero */}
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="h-48 bg-gradient-to-br from-yelau-yellow/20 via-muted to-muted flex items-center justify-center">
-          <BookOpen className="w-16 h-16 text-yelau-yellow/40" />
+        <div className="h-48 bg-gradient-to-br from-primary/20 via-muted to-muted flex items-center justify-center">
+          <BookOpen className="w-16 h-16 text-primary/40" />
         </div>
         <div className="p-6 space-y-4">
           <div className="flex flex-wrap items-start gap-3">
             <h1 className="text-xl font-black text-foreground flex-1">{course.title}</h1>
             {course.isRequired && (
-              <Badge className="bg-yelau-yellow text-yelau-black font-bold flex-shrink-0">Obligatorio</Badge>
+              <Badge className="bg-primary text-yelau-black font-bold flex-shrink-0">Obligatorio</Badge>
             )}
           </div>
 

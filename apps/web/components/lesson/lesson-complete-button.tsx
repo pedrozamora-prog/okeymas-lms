@@ -77,7 +77,7 @@ export function LessonCompleteButton({ lessonId, courseId, courseTitle, isComple
   if (completed && !showSignature) {
     return nextLessonId ? (
       <Button
-        className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2"
+        className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2"
         onClick={() => router.push(`/dashboard/courses/${courseId}/lessons/${nextLessonId}`)}
       >
         Siguiente lección
@@ -94,7 +94,7 @@ export function LessonCompleteButton({ lessonId, courseId, courseTitle, isComple
   return (
     <>
       <Button
-        className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2"
+        className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2"
         onClick={markComplete}
         disabled={loading}
       >

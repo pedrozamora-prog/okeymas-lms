@@ -100,7 +100,7 @@ export default function OnboardingPage() {
         {step < 4 && (
           <div className="h-1 bg-[#1a1a1a] rounded-full overflow-hidden">
             <div
-              className="h-full bg-yelau-yellow transition-all duration-500 rounded-full"
+              className="h-full bg-primary transition-all duration-500 rounded-full"
               style={{ width: `${pct}%` }}
             />
           </div>
@@ -116,16 +116,16 @@ export default function OnboardingPage() {
               return (
                 <div key={s.id} className="flex items-center gap-1.5">
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    done   ? "bg-yelau-yellow" :
-                    active ? "bg-yelau-yellow/20 border border-yelau-yellow" :
+                    done   ? "bg-primary" :
+                    active ? "bg-primary/20 border border-primary" :
                              "bg-[#1a1a1a]"
                   }`}>
                     {done
                       ? <CheckCircle2 className="w-3 h-3 text-[#0C0C0C]" />
-                      : <Icon className={`w-2.5 h-2.5 ${active ? "text-yelau-yellow" : "text-[#444]"}`} />
+                      : <Icon className={`w-2.5 h-2.5 ${active ? "text-primary" : "text-[#444]"}`} />
                     }
                   </div>
-                  <span className={`text-[11px] font-medium ${active ? "text-yelau-yellow" : done ? "text-[#666]" : "text-[#444]"}`}>
+                  <span className={`text-[11px] font-medium ${active ? "text-primary" : done ? "text-[#666]" : "text-[#444]"}`}>
                     {s.label}
                   </span>
                 </div>
@@ -144,7 +144,7 @@ export default function OnboardingPage() {
             <div className="space-y-6">
               <div>
                 <h1 className="text-2xl font-black text-white">
-                  Bienvenido a <span className="text-yelau-yellow">Formia</span>
+                  Bienvenido a <span className="text-primary">Formia</span>
                 </h1>
                 <p className="text-[#666] mt-2 text-sm">
                   Configura tu plataforma en 3 pasos. Puedes cambiar todo esto más tarde desde Configuración.
@@ -160,7 +160,7 @@ export default function OnboardingPage() {
                     value={orgName}
                     onChange={e => setOrgName(e.target.value)}
                     placeholder="Ej: Okeymas Fitness Club"
-                    className="bg-[#1a1a1a] border-[#2a2a2a] text-white h-11 focus-visible:border-yelau-yellow focus-visible:ring-0"
+                    className="bg-[#1a1a1a] border-[#2a2a2a] text-white h-11 focus-visible:border-primary focus-visible:ring-0"
                     autoFocus
                   />
                 </div>
@@ -174,7 +174,7 @@ export default function OnboardingPage() {
                       value={logoUrl}
                       onChange={e => setLogoUrl(e.target.value)}
                       placeholder="https://tudominio.com/logo.png"
-                      className="bg-[#1a1a1a] border-[#2a2a2a] text-white h-11 focus-visible:border-yelau-yellow focus-visible:ring-0 flex-1"
+                      className="bg-[#1a1a1a] border-[#2a2a2a] text-white h-11 focus-visible:border-primary focus-visible:ring-0 flex-1"
                     />
                     <div className="w-11 h-11 rounded-lg border border-[#2a2a2a] bg-[#1a1a1a] flex items-center justify-center flex-shrink-0 overflow-hidden">
                       {logoUrl
@@ -191,7 +191,7 @@ export default function OnboardingPage() {
 
               <Button
                 onClick={() => setStep(2)}
-                className="w-full h-12 bg-yelau-yellow text-[#0C0C0C] hover:bg-yelau-yellow/90 font-bold gap-2 text-base"
+                className="w-full h-12 bg-primary text-[#0C0C0C] hover:bg-primary/90 font-bold gap-2 text-base"
               >
                 Continuar <ChevronRight className="w-5 h-5" />
               </Button>
@@ -203,7 +203,7 @@ export default function OnboardingPage() {
             <div className="space-y-6">
               <div>
                 <h1 className="text-2xl font-black text-white">
-                  Invita a tu <span className="text-yelau-yellow">equipo</span>
+                  Invita a tu <span className="text-primary">equipo</span>
                 </h1>
                 <p className="text-[#666] mt-2 text-sm">
                   Añade los emails de tus empleados y recibirán una invitación para activar su cuenta.
@@ -219,7 +219,7 @@ export default function OnboardingPage() {
                       value={email}
                       onChange={e => updateEmail(i, e.target.value)}
                       placeholder={`empleado${i + 1}@empresa.com`}
-                      className="bg-[#1a1a1a] border-[#2a2a2a] text-white h-10 focus-visible:border-yelau-yellow focus-visible:ring-0 flex-1"
+                      className="bg-[#1a1a1a] border-[#2a2a2a] text-white h-10 focus-visible:border-primary focus-visible:ring-0 flex-1"
                     />
                     {emails.length > 1 && (
                       <button
@@ -235,7 +235,7 @@ export default function OnboardingPage() {
                 {emails.length < 10 && (
                   <button
                     onClick={addEmail}
-                    className="flex items-center gap-1.5 text-xs text-[#555] hover:text-yelau-yellow transition-colors py-1"
+                    className="flex items-center gap-1.5 text-xs text-[#555] hover:text-primary transition-colors py-1"
                   >
                     <Plus className="w-3.5 h-3.5" /> Añadir otro
                   </button>
@@ -243,9 +243,9 @@ export default function OnboardingPage() {
               </div>
 
               {validEmails.length > 0 && (
-                <div className="flex items-center gap-2 bg-yelau-yellow/10 border border-yelau-yellow/20 rounded-lg px-4 py-2.5">
-                  <Users className="w-4 h-4 text-yelau-yellow flex-shrink-0" />
-                  <p className="text-sm text-yelau-yellow">
+                <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-lg px-4 py-2.5">
+                  <Users className="w-4 h-4 text-primary flex-shrink-0" />
+                  <p className="text-sm text-primary">
                     Se enviarán <strong>{validEmails.length}</strong> invitación{validEmails.length > 1 ? "es" : ""}
                   </p>
                 </div>
@@ -261,7 +261,7 @@ export default function OnboardingPage() {
                 </Button>
                 <Button
                   onClick={() => setStep(3)}
-                  className="flex-1 h-12 bg-yelau-yellow text-[#0C0C0C] hover:bg-yelau-yellow/90 font-bold gap-2"
+                  className="flex-1 h-12 bg-primary text-[#0C0C0C] hover:bg-primary/90 font-bold gap-2"
                 >
                   {validEmails.length > 0 ? "Continuar" : "Saltar por ahora"}
                   <ChevronRight className="w-5 h-5" />
@@ -275,7 +275,7 @@ export default function OnboardingPage() {
             <div className="space-y-6">
               <div>
                 <h1 className="text-2xl font-black text-white">
-                  Configura tu <span className="text-yelau-yellow">email</span>
+                  Configura tu <span className="text-primary">email</span>
                 </h1>
                 <p className="text-[#666] mt-2 text-sm">
                   Personaliza el remitente de los emails automáticos. Sin configurar, los emails saldrán
@@ -291,7 +291,7 @@ export default function OnboardingPage() {
                       value={fromName}
                       onChange={e => setFromName(e.target.value)}
                       placeholder="Mi Gimnasio"
-                      className="bg-[#1a1a1a] border-[#2a2a2a] text-white h-10 focus-visible:border-yelau-yellow focus-visible:ring-0"
+                      className="bg-[#1a1a1a] border-[#2a2a2a] text-white h-10 focus-visible:border-primary focus-visible:ring-0"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -301,7 +301,7 @@ export default function OnboardingPage() {
                       value={fromAddress}
                       onChange={e => setFromAddress(e.target.value)}
                       placeholder="formacion@tudominio.com"
-                      className="bg-[#1a1a1a] border-[#2a2a2a] text-white h-10 focus-visible:border-yelau-yellow focus-visible:ring-0"
+                      className="bg-[#1a1a1a] border-[#2a2a2a] text-white h-10 focus-visible:border-primary focus-visible:ring-0"
                     />
                   </div>
                 </div>
@@ -315,7 +315,7 @@ export default function OnboardingPage() {
                     value={replyTo}
                     onChange={e => setReplyTo(e.target.value)}
                     placeholder="rrhh@tudominio.com"
-                    className="bg-[#1a1a1a] border-[#2a2a2a] text-white h-10 focus-visible:border-yelau-yellow focus-visible:ring-0 max-w-xs"
+                    className="bg-[#1a1a1a] border-[#2a2a2a] text-white h-10 focus-visible:border-primary focus-visible:ring-0 max-w-xs"
                   />
                 </div>
 
@@ -329,7 +329,7 @@ export default function OnboardingPage() {
                       value={apiKey}
                       onChange={e => setApiKey(e.target.value)}
                       placeholder="re_xxxxxxxxxxxx"
-                      className="bg-[#1a1a1a] border-[#2a2a2a] text-white h-10 pr-10 font-mono text-sm focus-visible:border-yelau-yellow focus-visible:ring-0"
+                      className="bg-[#1a1a1a] border-[#2a2a2a] text-white h-10 pr-10 font-mono text-sm focus-visible:border-primary focus-visible:ring-0"
                     />
                     <button
                       type="button"
@@ -356,7 +356,7 @@ export default function OnboardingPage() {
                 <Button
                   onClick={handleFinish}
                   disabled={saving}
-                  className="flex-1 h-12 bg-yelau-yellow text-[#0C0C0C] hover:bg-yelau-yellow/90 font-bold gap-2"
+                  className="flex-1 h-12 bg-primary text-[#0C0C0C] hover:bg-primary/90 font-bold gap-2"
                 >
                   {saving
                     ? <><Loader2 className="w-4 h-4 animate-spin" />Guardando…</>
@@ -375,7 +375,7 @@ export default function OnboardingPage() {
               {/* Animación */}
               <div className="flex justify-center">
                 <div className="relative">
-                  <div className="w-24 h-24 rounded-2xl bg-yelau-yellow flex items-center justify-center shadow-2xl shadow-yelau-yellow/30">
+                  <div className="w-24 h-24 rounded-2xl bg-primary flex items-center justify-center shadow-2xl shadow-primary/30">
                     <Rocket className="w-12 h-12 text-[#0C0C0C]" />
                   </div>
                   <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
@@ -386,7 +386,7 @@ export default function OnboardingPage() {
 
               <div>
                 <h1 className="text-3xl font-black text-white leading-tight">
-                  ¡Tu <span className="text-yelau-yellow">Formia</span><br />está listo!
+                  ¡Tu <span className="text-primary">Formia</span><br />está listo!
                 </h1>
                 <p className="text-[#666] mt-3 text-sm max-w-sm mx-auto">
                   La plataforma está configurada. Empieza creando tu primer curso o explora el panel de administración.
@@ -416,7 +416,7 @@ export default function OnboardingPage() {
               <div className="flex flex-col gap-3 max-w-sm mx-auto">
                 <Button
                   onClick={() => router.push("/admin/courses/new")}
-                  className="w-full h-12 bg-yelau-yellow text-[#0C0C0C] hover:bg-yelau-yellow/90 font-bold gap-2"
+                  className="w-full h-12 bg-primary text-[#0C0C0C] hover:bg-primary/90 font-bold gap-2"
                 >
                   <Rocket className="w-5 h-5" /> Crear mi primer curso
                 </Button>

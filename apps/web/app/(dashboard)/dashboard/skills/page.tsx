@@ -83,7 +83,7 @@ export default async function SkillsPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               { label: t("dashboard.completed"), value: mastered,   color: "text-green-400",    icon: CheckCircle2 },
-              { label: t("dashboard.inProgress"),value: inProgress, color: "text-yelau-yellow", icon: BookOpen     },
+              { label: t("dashboard.inProgress"),value: inProgress, color: "text-primary", icon: BookOpen     },
               { label: "Sin empezar",             value: notStarted, color: "text-red-400",      icon: AlertCircle  },
               { label: "Puntuación",              value: `${globalScore}%`, color: "text-blue-400", icon: Target   },
             ].map(({ label, value, color, icon: Icon }) => (
@@ -101,7 +101,7 @@ export default async function SkillsPage() {
             <CardContent className="pt-4 pb-4 space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-semibold text-foreground">Progreso global</span>
-                <span className="text-yelau-yellow font-black">{globalScore}%</span>
+                <span className="text-primary font-black">{globalScore}%</span>
               </div>
               <Progress value={globalScore} className="h-3" />
               <p className="text-xs text-muted-foreground">
@@ -128,17 +128,17 @@ export default async function SkillsPage() {
                     return (
                       <Card key={rc.competency.id} className={
                         status.pct === 100 ? "border-green-500/30 bg-green-500/5" :
-                        status.pct > 0     ? "border-yelau-yellow/30" : "border-red-500/20"
+                        status.pct > 0     ? "border-primary/30" : "border-red-500/20"
                       }>
                         <CardHeader className="pb-2">
                           <CardTitle className="flex items-center justify-between gap-2 text-sm">
                             <div className="flex items-center gap-2">
-                              <Target className="w-4 h-4 text-yelau-yellow flex-shrink-0" />
+                              <Target className="w-4 h-4 text-primary flex-shrink-0" />
                               <span>{rc.competency.name}</span>
                             </div>
                             <span className={`text-sm font-black ${
                               status.pct === 100 ? "text-green-400" :
-                              status.pct > 0     ? "text-yelau-yellow" : "text-red-400"
+                              status.pct > 0     ? "text-primary" : "text-red-400"
                             }`}>{status.pct}%</span>
                           </CardTitle>
                         </CardHeader>
@@ -158,7 +158,7 @@ export default async function SkillsPage() {
                                   href={`/dashboard/courses/${course.id}`}
                                   className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors group"
                                 >
-                                  <BookOpen className="w-3 h-3 flex-shrink-0 group-hover:text-yelau-yellow" />
+                                  <BookOpen className="w-3 h-3 flex-shrink-0 group-hover:text-primary" />
                                   <span className="truncate">{course.title}</span>
                                 </Link>
                               ))}

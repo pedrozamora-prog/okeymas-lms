@@ -60,9 +60,9 @@ export function InteractiveOverlay({ point, onAnswer, onSkip }: InteractiveOverl
     <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/75 backdrop-blur-sm animate-in fade-in slide-in-from-bottom-4 duration-300">
       <div className="w-full max-w-lg mx-4 bg-card rounded-2xl border border-border shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="bg-yelau-yellow/10 border-b border-border px-5 py-3 flex items-center gap-2">
-          <HelpCircle className="w-4 h-4 text-yelau-yellow flex-shrink-0" />
-          <p className="text-xs font-semibold text-yelau-yellow uppercase tracking-wider">
+        <div className="bg-primary/10 border-b border-border px-5 py-3 flex items-center gap-2">
+          <HelpCircle className="w-4 h-4 text-primary flex-shrink-0" />
+          <p className="text-xs font-semibold text-primary uppercase tracking-wider">
             Pregunta del vídeo
           </p>
           {countdown !== null && (
@@ -94,8 +94,8 @@ export function InteractiveOverlay({ point, onAnswer, onSkip }: InteractiveOverl
                   "disabled:cursor-default",
                   showCorrect && "border-green-500 bg-green-500/10 text-green-400 font-medium",
                   showWrong   && "border-red-500 bg-red-500/10 text-red-400",
-                  !revealed && "border-border hover:border-yelau-yellow/60 hover:bg-yelau-yellow/5 cursor-pointer",
-                  !revealed && isSelected && "border-yelau-yellow bg-yelau-yellow/10",
+                  !revealed && "border-border hover:border-primary/60 hover:bg-primary/5 cursor-pointer",
+                  !revealed && isSelected && "border-primary bg-primary/10",
                 )}
               >
                 <div className="flex items-center justify-between gap-3">

@@ -34,7 +34,7 @@ function RatingInput({ value, onChange }: { value: number | null; onChange: (v: 
           onClick={() => onChange(n)}
           className={cn(
             "transition-transform hover:scale-110",
-            n <= (value ?? 0) ? "text-yelau-yellow" : "text-muted-foreground/30"
+            n <= (value ?? 0) ? "text-primary" : "text-muted-foreground/30"
           )}
         >
           <Star className="w-7 h-7" fill={n <= (value ?? 0) ? "currentColor" : "none"} />
@@ -56,8 +56,8 @@ function NpsInput({ value, onChange }: { value: number | null; onChange: (v: num
             className={cn(
               "w-9 h-9 rounded-lg text-sm font-bold border transition-all",
               value === i
-                ? "bg-yelau-yellow text-yelau-black border-yelau-yellow"
-                : "border-border hover:border-yelau-yellow/50 text-muted-foreground"
+                ? "bg-primary text-yelau-black border-primary"
+                : "border-border hover:border-primary/50 text-muted-foreground"
             )}
           >
             {i}
@@ -104,7 +104,7 @@ export function CourseSurveyModal({ open, onClose, courseId, surveyId, questions
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <ClipboardList className="w-4 h-4 text-yelau-yellow" />
+            <ClipboardList className="w-4 h-4 text-primary" />
             Encuesta de satisfacción
           </DialogTitle>
         </DialogHeader>
@@ -120,7 +120,7 @@ export function CourseSurveyModal({ open, onClose, courseId, surveyId, questions
                 Tu feedback nos ayuda a mejorar la formación.
               </p>
             </div>
-            <Button onClick={onClose} className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold">
+            <Button onClick={onClose} className="bg-primary text-yelau-black hover:bg-primary/90 font-bold">
               Cerrar
             </Button>
           </div>
@@ -166,7 +166,7 @@ export function CourseSurveyModal({ open, onClose, courseId, surveyId, questions
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold flex-1 gap-2"
+                className="bg-primary text-yelau-black hover:bg-primary/90 font-bold flex-1 gap-2"
               >
                 <Send className="w-4 h-4" />
                 Enviar valoración

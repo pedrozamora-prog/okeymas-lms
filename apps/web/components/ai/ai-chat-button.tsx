@@ -65,7 +65,7 @@ export function AiChatButton() {
       )} style={{ maxHeight: "70dvh" }}>
         {/* Header */}
         <div className="flex items-center gap-3 px-4 py-3 border-b border-border flex-shrink-0">
-          <div className="w-8 h-8 rounded-lg bg-yelau-yellow flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
             <Sparkles className="w-4 h-4 text-yelau-black" />
           </div>
           <div className="flex-1 min-w-0">
@@ -82,14 +82,14 @@ export function AiChatButton() {
           {messages.map((m, i) => (
             <div key={i} className={cn("flex gap-2", m.role === "user" ? "justify-end" : "justify-start")}>
               {m.role === "assistant" && (
-                <div className="w-6 h-6 rounded-md bg-yelau-yellow flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-6 h-6 rounded-md bg-primary flex items-center justify-center flex-shrink-0 mt-0.5">
                   <Bot className="w-3.5 h-3.5 text-yelau-black" />
                 </div>
               )}
               <div className={cn(
                 "max-w-[80%] px-3 py-2 rounded-xl text-sm leading-relaxed whitespace-pre-wrap",
                 m.role === "user"
-                  ? "bg-yelau-yellow text-yelau-black font-medium rounded-br-sm"
+                  ? "bg-primary text-yelau-black font-medium rounded-br-sm"
                   : "bg-muted text-foreground rounded-bl-sm"
               )}>
                 {m.text}
@@ -98,7 +98,7 @@ export function AiChatButton() {
           ))}
           {loading && (
             <div className="flex gap-2 justify-start">
-              <div className="w-6 h-6 rounded-md bg-yelau-yellow flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="w-6 h-6 rounded-md bg-primary flex items-center justify-center flex-shrink-0 mt-0.5">
                 <Bot className="w-3.5 h-3.5 text-yelau-black" />
               </div>
               <div className="bg-muted px-3 py-2 rounded-xl rounded-bl-sm flex items-center gap-1.5">
@@ -121,13 +121,13 @@ export function AiChatButton() {
               onKeyDown={onKeyDown}
               placeholder="Escribe tu pregunta..."
               rows={1}
-              className="flex-1 resize-none bg-muted text-sm text-foreground placeholder:text-muted-foreground rounded-xl px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-yelau-yellow/50 min-h-[40px] max-h-24"
+              className="flex-1 resize-none bg-muted text-sm text-foreground placeholder:text-muted-foreground rounded-xl px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-primary/50 min-h-[40px] max-h-24"
               style={{ fieldSizing: "content" } as React.CSSProperties}
             />
             <button
               onClick={send}
               disabled={!input.trim() || loading}
-              className="w-9 h-9 rounded-xl bg-yelau-yellow flex items-center justify-center flex-shrink-0 disabled:opacity-40 hover:bg-yelau-yellow/90 transition-colors"
+              className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 disabled:opacity-40 hover:bg-primary/90 transition-colors"
             >
               {loading ? <Loader2 className="w-4 h-4 text-yelau-black animate-spin" /> : <Send className="w-4 h-4 text-yelau-black" />}
             </button>
@@ -143,7 +143,7 @@ export function AiChatButton() {
           "flex items-center justify-center transition-all duration-300",
           open
             ? "bg-muted text-muted-foreground rotate-0"
-            : "bg-yelau-yellow text-yelau-black hover:scale-110 hover:shadow-yelau-yellow/30 hover:shadow-xl"
+            : "bg-primary text-yelau-black hover:scale-110 hover:shadow-primary/30 hover:shadow-xl"
         )}
         aria-label="Asistente IA"
       >

@@ -87,7 +87,7 @@ export function VideoHeatmap({ lessonId, duration: propDuration }: VideoHeatmapP
         ].map(({ icon: Icon, label, value }) => (
           <Card key={label}>
             <CardContent className="pt-4 pb-4 flex flex-col items-center text-center gap-1">
-              <Icon className="w-4 h-4 text-yelau-yellow" />
+              <Icon className="w-4 h-4 text-primary" />
               <p className="text-lg font-black text-foreground">{value}</p>
               <p className="text-[10px] text-muted-foreground">{label}</p>
             </CardContent>
@@ -112,7 +112,7 @@ export function VideoHeatmap({ lessonId, duration: propDuration }: VideoHeatmapP
                 style={{
                   height: `${Math.max(4, pct)}%`,
                   background: pct > 70
-                    ? "hsl(var(--yelau-yellow, 54 97% 57%))"
+                    ? "hsl(var(--primary, 270 91% 65%))"
                     : pct > 40
                     ? "#fb923c"
                     : "#ef4444",
@@ -146,7 +146,7 @@ export function VideoHeatmap({ lessonId, duration: propDuration }: VideoHeatmapP
       {/* Leyenda */}
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
         <span className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-sm bg-yelau-yellow/70 inline-block" /> Alto engagement (&gt;70%)
+          <span className="w-3 h-3 rounded-sm bg-primary/70 inline-block" /> Alto engagement (&gt;70%)
         </span>
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-sm bg-orange-400/70 inline-block" /> Medio (40-70%)

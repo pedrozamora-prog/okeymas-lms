@@ -242,7 +242,7 @@ export function InviteUserModal({ open, onClose, onSent }: Props) {
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-lg font-black">
-            <UserPlus className="w-5 h-5 text-yelau-yellow" />
+            <UserPlus className="w-5 h-5 text-primary" />
             Invitar usuarios
           </DialogTitle>
           <DialogDescription>
@@ -292,8 +292,8 @@ export function InviteUserModal({ open, onClose, onSent }: Props) {
                 <div className="grid grid-cols-2 gap-2">
                   {ROLES.map(r => (
                     <button key={r.value} type="button" onClick={() => setRole(r.value)}
-                      className={`text-left p-3 rounded-lg border transition-colors ${role === r.value ? "border-yelau-yellow bg-yelau-yellow/10" : "border-border hover:border-muted-foreground/40"}`}>
-                      <p className={`text-xs font-bold ${role === r.value ? "text-yelau-yellow" : "text-foreground"}`}>{r.label}</p>
+                      className={`text-left p-3 rounded-lg border transition-colors ${role === r.value ? "border-primary bg-primary/10" : "border-border hover:border-muted-foreground/40"}`}>
+                      <p className={`text-xs font-bold ${role === r.value ? "text-primary" : "text-foreground"}`}>{r.label}</p>
                       <p className="text-[10px] text-muted-foreground mt-0.5">{r.desc}</p>
                     </button>
                   ))}
@@ -306,7 +306,7 @@ export function InviteUserModal({ open, onClose, onSent }: Props) {
                 <div className="flex flex-wrap gap-2">
                   {DEPARTMENTS.map(d => (
                     <button key={d.value} type="button" onClick={() => setDepartment(d.value)} className="focus:outline-none">
-                      <Badge variant="outline" className={`cursor-pointer transition-colors text-xs px-3 py-1 ${department === d.value ? "border-yelau-yellow bg-yelau-yellow/10 text-yelau-yellow" : "hover:border-muted-foreground/40"}`}>
+                      <Badge variant="outline" className={`cursor-pointer transition-colors text-xs px-3 py-1 ${department === d.value ? "border-primary bg-primary/10 text-primary" : "hover:border-muted-foreground/40"}`}>
                         {d.label}
                       </Badge>
                     </button>
@@ -315,7 +315,7 @@ export function InviteUserModal({ open, onClose, onSent }: Props) {
               </div>
 
               <div className="flex gap-3 pt-2">
-                <Button type="submit" disabled={loading} className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2 flex-1">
+                <Button type="submit" disabled={loading} className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2 flex-1">
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                   {loading ? "Enviando…" : "Enviar invitación"}
                 </Button>
@@ -335,7 +335,7 @@ export function InviteUserModal({ open, onClose, onSent }: Props) {
                 onDrop={handleDrop}
                 onClick={() => fileRef.current?.click()}
                 className={`relative border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-colors ${
-                  dragging ? "border-yelau-yellow bg-yelau-yellow/5" : "border-border hover:border-yelau-yellow/50 hover:bg-muted/30"
+                  dragging ? "border-primary bg-primary/5" : "border-border hover:border-primary/50 hover:bg-muted/30"
                 }`}
               >
                 <input
@@ -347,7 +347,7 @@ export function InviteUserModal({ open, onClose, onSent }: Props) {
                 />
                 {parsing ? (
                   <div className="flex flex-col items-center gap-3">
-                    <Loader2 className="w-10 h-10 text-yelau-yellow animate-spin" />
+                    <Loader2 className="w-10 h-10 text-primary animate-spin" />
                     <p className="text-sm font-medium text-foreground">Analizando archivo…</p>
                   </div>
                 ) : (
@@ -443,7 +443,7 @@ export function InviteUserModal({ open, onClose, onSent }: Props) {
                     type="button"
                     disabled={loading || validCount === 0}
                     onClick={sendImport}
-                    className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2 flex-1"
+                    className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2 flex-1"
                   >
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                     {loading ? "Enviando…" : `Enviar ${validCount} invitación${validCount !== 1 ? "es" : ""}`}

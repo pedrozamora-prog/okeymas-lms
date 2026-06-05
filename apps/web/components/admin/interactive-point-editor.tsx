@@ -109,7 +109,7 @@ export function InteractivePointEditor({ lessonId }: { lessonId: string }) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <HelpCircle className="w-3.5 h-3.5 text-yelau-yellow" />
+          <HelpCircle className="w-3.5 h-3.5 text-primary" />
           <span className="text-xs font-semibold text-foreground">Preguntas interactivas</span>
           {points.length > 0 && <Badge variant="secondary" className="text-[10px]">{points.length}</Badge>}
         </div>
@@ -148,7 +148,7 @@ export function InteractivePointEditor({ lessonId }: { lessonId: string }) {
 
       {/* Formulario para añadir */}
       {adding && (
-        <div className="p-4 rounded-xl border border-yelau-yellow/30 bg-yelau-yellow/5 space-y-3">
+        <div className="p-4 rounded-xl border border-primary/30 bg-primary/5 space-y-3">
           {/* Timestamp */}
           <div className="flex items-center gap-3">
             <div className="flex-1">

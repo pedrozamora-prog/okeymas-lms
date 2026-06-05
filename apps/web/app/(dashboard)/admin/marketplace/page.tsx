@@ -92,8 +92,8 @@ export default function MarketplacePage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-yelau-yellow/10 flex items-center justify-center">
-            <Store className="w-5 h-5 text-yelau-yellow" />
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Store className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h1 className="text-2xl font-black text-foreground">Marketplace de cursos</h1>
@@ -119,7 +119,7 @@ export default function MarketplacePage() {
           <Button
             size="sm"
             variant={category === null ? "default" : "outline"}
-            className={cn("h-9", category === null && "bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90")}
+            className={cn("h-9", category === null && "bg-primary text-yelau-black hover:bg-primary/90")}
             onClick={() => setCategory(null)}
           >
             Todos
@@ -129,7 +129,7 @@ export default function MarketplacePage() {
               key={cat}
               size="sm"
               variant={category === cat ? "default" : "outline"}
-              className={cn("h-9", category === cat && "bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90")}
+              className={cn("h-9", category === cat && "bg-primary text-yelau-black hover:bg-primary/90")}
               onClick={() => setCategory(cat === category ? null : cat)}
             >
               {cat}
@@ -165,7 +165,7 @@ export default function MarketplacePage() {
             <Card
               key={course.id}
               className={cn(
-                "transition-all hover:border-yelau-yellow/30 hover:shadow-sm flex flex-col",
+                "transition-all hover:border-primary/30 hover:shadow-sm flex flex-col",
                 course.alreadyImported && "opacity-75"
               )}
             >
@@ -208,7 +208,7 @@ export default function MarketplacePage() {
                   onClick={() => handleImport(course.id, course.title)}
                   className={cn("w-full gap-2", course.alreadyImported
                     ? "bg-green-500/10 text-green-600 border border-green-500/20 hover:bg-green-500/10 cursor-default"
-                    : "bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold"
+                    : "bg-primary text-yelau-black hover:bg-primary/90 font-bold"
                   )}
                 >
                   {importing === course.id ? (

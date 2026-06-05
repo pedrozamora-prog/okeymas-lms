@@ -84,7 +84,7 @@ export function AlertsClient({ orgId }: { orgId: string }) {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-black text-foreground flex items-center gap-2">
-            <AlertTriangle className="w-6 h-6 text-yelau-yellow" />
+            <AlertTriangle className="w-6 h-6 text-primary" />
             Alertas de riesgo
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
@@ -149,7 +149,7 @@ export function AlertsClient({ orgId }: { orgId: string }) {
             onClick={() => setFilter(f.key)}
             className={`text-xs px-3 py-1.5 rounded-full border transition-colors font-medium ${
               filter === f.key
-                ? "bg-yelau-yellow text-yelau-black border-yelau-yellow"
+                ? "bg-primary text-yelau-black border-primary"
                 : "border-border text-muted-foreground hover:border-muted-foreground/50 hover:text-foreground"
             }`}
           >
@@ -161,7 +161,7 @@ export function AlertsClient({ orgId }: { orgId: string }) {
       {/* Lista de alertas */}
       {loading ? (
         <div className="flex justify-center py-16">
-          <Loader2 className="w-7 h-7 animate-spin text-yelau-yellow" />
+          <Loader2 className="w-7 h-7 animate-spin text-primary" />
         </div>
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3 border border-dashed border-border rounded-xl">

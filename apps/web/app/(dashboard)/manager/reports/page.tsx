@@ -20,7 +20,7 @@ export default async function ManagerReportsPage() {
     <div className="space-y-6 max-w-2xl">
       <div>
         <h1 className="text-2xl font-black text-foreground flex items-center gap-2">
-          <BarChart3 className="w-6 h-6 text-yelau-yellow" />
+          <BarChart3 className="w-6 h-6 text-primary" />
           Informes de mi equipo
         </h1>
         <p className="text-muted-foreground text-sm mt-1">

@@ -92,7 +92,7 @@ export function EmailIntegrationsForm({
 
           {/* Estado del proveedor */}
           <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 border border-border">
-            <div className={`w-2 h-2 rounded-full flex-shrink-0 ${usingPlatform ? "bg-yelau-yellow" : "bg-green-500"}`} />
+            <div className={`w-2 h-2 rounded-full flex-shrink-0 ${usingPlatform ? "bg-primary" : "bg-green-500"}`} />
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-foreground">
                 {usingPlatform ? "Usando cuenta de Formia" : "Usando tu cuenta Resend"}
@@ -104,7 +104,7 @@ export function EmailIntegrationsForm({
               </p>
             </div>
             <Badge variant="outline" className={usingPlatform
-              ? "text-[10px] border-yelau-yellow/30 text-yelau-yellow bg-yelau-yellow/10"
+              ? "text-[10px] border-primary/30 text-primary bg-primary/10"
               : "text-[10px] border-green-500/30 text-green-400 bg-green-500/10"
             }>
               {usingPlatform ? "Compartido" : "Propio"}
@@ -190,7 +190,7 @@ export function EmailIntegrationsForm({
             <Button
               type="submit"
               disabled={saving}
-              className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2"
+              className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2"
             >
               {saving
                 ? <Loader2 className="w-4 h-4 animate-spin" />

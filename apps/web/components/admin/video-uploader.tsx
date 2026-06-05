@@ -105,8 +105,8 @@ export function VideoUploader({ onUploadComplete, currentUid }: VideoUploaderPro
         className={cn(
           "relative border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer",
           dragOver
-            ? "border-yelau-yellow bg-yelau-yellow/5"
-            : "border-border hover:border-yelau-yellow/50 hover:bg-muted/30",
+            ? "border-primary bg-primary/5"
+            : "border-border hover:border-primary/50 hover:bg-muted/30",
           uploading && "pointer-events-none opacity-60"
         )}
         onDragOver={e => { e.preventDefault(); setDragOver(true); }}
@@ -124,7 +124,7 @@ export function VideoUploader({ onUploadComplete, currentUid }: VideoUploaderPro
 
         {uploading ? (
           <div className="space-y-3">
-            <Loader2 className="w-8 h-8 mx-auto text-yelau-yellow animate-spin" />
+            <Loader2 className="w-8 h-8 mx-auto text-primary animate-spin" />
             <p className="text-sm font-medium text-foreground">Subiendo vídeo... {progress}%</p>
           </div>
         ) : (

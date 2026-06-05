@@ -150,14 +150,14 @@ export default function LearningPathsPage() {
     setEdits(e => ({ ...e, [path.id]: getCourseList(path) }));
   }
 
-  if (loading) return <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-yelau-yellow" /></div>;
+  if (loading) return <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>;
   if (planError) return <UpgradeBanner feature="Rutas de aprendizaje" requiredPlan={planError.requiredPlan} currentPlan={planError.currentPlan} />;
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-black text-foreground tracking-tight flex items-center gap-2">
-          <GitBranch className="w-6 h-6 text-yelau-yellow" />
+          <GitBranch className="w-6 h-6 text-primary" />
           Rutas de aprendizaje
         </h1>
         <p className="text-muted-foreground text-sm mt-1">Crea itinerarios con lógica condicional — si suspende, redirige a un módulo remedial.</p>
@@ -167,7 +167,7 @@ export default function LearningPathsPage() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <Plus className="w-4 h-4 text-yelau-yellow" />Nueva ruta
+            <Plus className="w-4 h-4 text-primary" />Nueva ruta
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -176,7 +176,7 @@ export default function LearningPathsPage() {
             <Input placeholder="Descripción (opcional)…" value={newDesc} onChange={e => setNewDesc(e.target.value)} />
           </div>
           <Button onClick={createPath} disabled={creating} size="sm"
-            className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2">
+            className="bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2">
             {creating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
             Crear ruta
           </Button>
@@ -196,8 +196,8 @@ export default function LearningPathsPage() {
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-yelau-yellow/10 flex items-center justify-center flex-shrink-0">
-                    <GraduationCap className="w-4 h-4 text-yelau-yellow" />
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <GraduationCap className="w-4 h-4 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-foreground text-sm truncate">{path.title}</p>
@@ -214,7 +214,7 @@ export default function LearningPathsPage() {
                   </button>
                   {isDirty && (
                     <Button size="sm" onClick={() => savePath(path)} disabled={saving === path.id}
-                      className="h-7 text-xs bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-1">
+                      className="h-7 text-xs bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-1">
                       {saving === path.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
                       Guardar
                     </Button>
@@ -236,7 +236,7 @@ export default function LearningPathsPage() {
                 {/* Añadir curso */}
                 <div className="flex gap-2">
                   <select
-                    className="flex-1 text-xs border border-border rounded-lg px-3 py-2 bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-yelau-yellow/50"
+                    className="flex-1 text-xs border border-border rounded-lg px-3 py-2 bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary/50"
                     defaultValue=""
                     onChange={e => { if (e.target.value) addCourse(path, e.target.value); e.target.value = ""; }}
                   >
@@ -269,7 +269,7 @@ export default function LearningPathsPage() {
                               </button>
                             </div>
 
-                            <div className="w-6 h-6 rounded-full bg-yelau-yellow flex items-center justify-center flex-shrink-0 text-[10px] font-black text-yelau-black">
+                            <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0 text-[10px] font-black text-yelau-black">
                               {idx + 1}
                             </div>
 
@@ -284,7 +284,7 @@ export default function LearningPathsPage() {
                                 <select
                                   value={pc.onFailGoTo ?? ""}
                                   onChange={e => setOnFail(path, pc.courseId, e.target.value)}
-                                  className="flex-1 text-[10px] border border-border rounded px-2 py-1 bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-yelau-yellow/30"
+                                  className="flex-1 text-[10px] border border-border rounded px-2 py-1 bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-primary/30"
                                 >
                                   <option value="">— Sin redirección (bloquear hasta aprobar) —</option>
                                   {otherCourses.map(c => (
@@ -325,7 +325,7 @@ export default function LearningPathsPage() {
 
                 {isDirty && (
                   <Button onClick={() => savePath(path)} disabled={saving === path.id} size="sm"
-                    className="w-full bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold gap-2">
+                    className="w-full bg-primary text-yelau-black hover:bg-primary/90 font-bold gap-2">
                     {saving === path.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                     Guardar cambios
                   </Button>

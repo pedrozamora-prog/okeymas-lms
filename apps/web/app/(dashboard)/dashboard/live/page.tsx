@@ -64,7 +64,7 @@ export default async function LivePage() {
       {/* Próximas clases */}
       <section className="space-y-4">
         <h2 className="text-base font-semibold text-foreground flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-yelau-yellow" />
+          <Calendar className="w-4 h-4 text-primary" />
           Próximas clases
         </h2>
 
@@ -83,7 +83,7 @@ export default async function LivePage() {
               const startsSoon = minsUntil > 0 && minsUntil <= 15;
 
               return (
-                <Card key={cls.id} className={live ? "border-yelau-yellow/60 shadow-[0_0_20px_rgba(252,233,0,0.1)]" : ""}>
+                <Card key={cls.id} className={live ? "border-primary/60 shadow-[0_0_20px_rgba(252,233,0,0.1)]" : ""}>
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between gap-3">
                       <CardTitle className="text-sm font-semibold leading-snug">{cls.title}</CardTitle>
@@ -92,7 +92,7 @@ export default async function LivePage() {
                           <Radio className="w-3 h-3 mr-1" /> EN DIRECTO
                         </Badge>
                       ) : startsSoon ? (
-                        <Badge className="bg-yelau-yellow text-yelau-black flex-shrink-0">
+                        <Badge className="bg-primary text-yelau-black flex-shrink-0">
                           Empieza en {minsUntil}min
                         </Badge>
                       ) : (
@@ -114,7 +114,7 @@ export default async function LivePage() {
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-yelau-yellow flex items-center justify-center flex-shrink-0">
+                      <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                         <span className="text-yelau-black font-bold text-[10px]">
                           {cls.instructor.name.charAt(0)}
                         </span>

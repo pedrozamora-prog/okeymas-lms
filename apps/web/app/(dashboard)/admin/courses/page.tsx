@@ -55,7 +55,7 @@ export default async function AdminCoursesPage() {
             {stats.published} publicados · {stats.draft} borradores · {stats.total} total
           </p>
         </div>
-        <Button asChild className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold">
+        <Button asChild className="bg-primary text-yelau-black hover:bg-primary/90 font-bold">
           <Link href="/admin/courses/new">
             <Plus className="w-4 h-4" />
             Nuevo curso
@@ -73,7 +73,7 @@ export default async function AdminCoursesPage() {
             <p className="font-semibold text-foreground">No hay cursos todavía</p>
             <p className="text-sm text-muted-foreground mt-1">Crea tu primer curso para empezar.</p>
           </div>
-          <Button asChild className="bg-yelau-yellow text-yelau-black hover:bg-yelau-yellow/90 font-bold">
+          <Button asChild className="bg-primary text-yelau-black hover:bg-primary/90 font-bold">
             <Link href="/admin/courses/new">
               <Plus className="w-4 h-4" />
               Crear primer curso
@@ -86,14 +86,14 @@ export default async function AdminCoursesPage() {
             const totalLessons = course.modules.flatMap(m => m.lessons).length;
             return (
               <Card key={course.id} className={cn(
-                "transition-colors hover:border-yelau-yellow/30",
+                "transition-colors hover:border-primary/30",
                 course.status === "ARCHIVED" && "opacity-60"
               )}>
                 <CardContent className="pt-4 pb-4">
                   <div className="flex items-center gap-4">
                     {/* Icon */}
-                    <div className="w-10 h-10 rounded-lg bg-yelau-yellow/10 flex items-center justify-center flex-shrink-0">
-                      <BookOpen className="w-5 h-5 text-yelau-yellow" />
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <BookOpen className="w-5 h-5 text-primary" />
                     </div>
 
                     {/* Info */}
