@@ -143,7 +143,7 @@ async function handleCoursePurchase(session: Stripe.Checkout.Session) {
       data: {
         email:          buyerEmail,
         name:           buyerName || buyerEmail.split("@")[0],
-        password:       hashed,
+        hashedPassword: hashed,
         role:           "EMPLOYEE",
         organizationId,
         isActive:       true,
