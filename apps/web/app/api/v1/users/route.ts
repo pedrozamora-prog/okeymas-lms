@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  await applyEnrollmentRules(user.id, org.id, user.role as Role, user.departmentId);
+  await applyEnrollmentRules(user.id, org.id, user.role as Role, departmentId);
 
   return NextResponse.json({
     data: { ...user, department: user.department?.name ?? null },
