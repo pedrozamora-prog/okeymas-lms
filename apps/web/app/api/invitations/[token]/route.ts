@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { Department } from "@prisma/client";
 import { applyEnrollmentRules } from "@/lib/auto-enroll";
 
 // GET — verificar que el token es válido (para pre-rellenar el form)
@@ -61,7 +60,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ token: 
       email:          invitation.email,
       hashedPassword,
       role:           invitation.role,
-      department:     invitation.department as Department | null ?? null,
+      departmentId:   invitation.departmentId ?? null,
       organizationId: invitation.organizationId,
     },
   });
@@ -73,7 +72,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ token: 
   });
 
   // Auto-inscribir según reglas
-  await applyEnrollmentRules(newUser.id, newUser.organizationId, newUser.role, newUser.department);
+  await applyEnrollmentRules(newUser.id, newUser.organizationId, newUser.role, newUser.departmentId);
 
   return NextResponse.json({ ok: true });
 }

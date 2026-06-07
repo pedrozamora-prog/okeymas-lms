@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -9,22 +9,29 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FileSpreadsheet, FileText, Download, Filter } from "lucide-react";
 import { toast } from "sonner";
 
-const DEPTS = [
-  { value: "all",           label: "Todos los departamentos" },
-  { value: "ADMINISTRACION",label: "Administración" },
-  { value: "RECEPCION",     label: "Recepción" },
-  { value: "LIMPIEZA",      label: "Limpieza" },
-  { value: "MONITOR",       label: "Monitor" },
-  { value: "DEPORTIVO",     label: "Deportivo" },
-];
-
+interface DeptOption { id: string; name: string }
 interface Props { fixedDept?: string }
 
 export function ReportExport({ fixedDept }: Props = {}) {
-  const [dept, setDept]   = useState(fixedDept ?? "all");
-  const [from, setFrom]   = useState("");
-  const [to, setTo]       = useState("");
+  const [dept, setDept]       = useState(fixedDept ?? "all");
+  const [from, setFrom]       = useState("");
+  const [to, setTo]           = useState("");
   const [loading, setLoading] = useState<"excel" | "pdf" | null>(null);
+  const [depts, setDepts]     = useState<DeptOption[]>([]);
+  const [fixedDeptName, setFixedDeptName] = useState<string>("");
+
+  useEffect(() => {
+    fetch("/api/admin/departments")
+      .then(r => r.json())
+      .then((data: DeptOption[]) => {
+        setDepts(data);
+        if (fixedDept) {
+          const found = data.find((d: DeptOption) => d.id === fixedDept);
+          setFixedDeptName(found?.name ?? fixedDept);
+        }
+      })
+      .catch(() => {});
+  }, [fixedDept]);
 
   function buildUrl(format: "excel" | "pdf") {
     const params = new URLSearchParams({ format });
@@ -69,7 +76,7 @@ export function ReportExport({ fixedDept }: Props = {}) {
             <Label className="text-xs">Departamento</Label>
             {fixedDept ? (
               <div className="h-10 px-3 flex items-center rounded-md border border-border bg-muted text-sm text-foreground">
-                {DEPTS.find(d => d.value === fixedDept)?.label ?? fixedDept}
+                {fixedDeptName || fixedDept}
               </div>
             ) : (
               <Select value={dept} onValueChange={setDept}>
@@ -77,8 +84,9 @@ export function ReportExport({ fixedDept }: Props = {}) {
                   <SelectValue placeholder="Todos" />
                 </SelectTrigger>
                 <SelectContent>
-                  {DEPTS.map(d => (
-                    <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>
+                  <SelectItem value="all">Todos los departamentos</SelectItem>
+                  {depts.map(d => (
+                    <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

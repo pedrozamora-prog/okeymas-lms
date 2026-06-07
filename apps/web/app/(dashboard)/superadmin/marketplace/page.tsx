@@ -25,7 +25,7 @@ interface SuperCourse {
   lessonCount: number;
 }
 
-const CATEGORIES = ["Seguridad", "Atención cliente", "Fitness", "Operaciones", "Compliance"];
+const CATEGORIES = ["Seguridad", "Atención cliente", "Fitness", "Operaciones", "Compliance", "Ventas"];
 
 export default function SuperAdminMarketplacePage() {
   const [courses, setCourses]   = useState<SuperCourse[]>([]);

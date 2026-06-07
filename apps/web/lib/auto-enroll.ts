@@ -1,8 +1,8 @@
 import { prisma } from "@/lib/prisma";
-import { Role, Department } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { sendNewEnrollmentEmail } from "@/lib/email";
 
-export async function applyEnrollmentRules(userId: string, organizationId: string, role: Role, department?: Department | null) {
+export async function applyEnrollmentRules(userId: string, organizationId: string, role: Role, departmentId?: string | null) {
   const [rules, org, user] = await Promise.all([
     prisma.enrollmentRule.findMany({
       where: {
@@ -10,7 +10,7 @@ export async function applyEnrollmentRules(userId: string, organizationId: strin
         isActive: true,
         AND: [
           { OR: [{ triggerRole: role }, { triggerRole: null }] },
-          { OR: [{ triggerDept: department ?? undefined }, { triggerDept: null }] },
+          { OR: [{ triggerDeptId: departmentId ?? undefined }, { triggerDeptId: null }] },
         ],
       },
       include: { course: { select: { title: true } } },

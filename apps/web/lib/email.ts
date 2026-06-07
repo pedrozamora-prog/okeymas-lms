@@ -338,3 +338,45 @@ export async function sendComplianceReportEmail(
     ...extra,
   });
 }
+
+export async function sendCoursePurchaseWelcomeEmail(
+  to: string,
+  buyerName: string,
+  courseTitle: string,
+  loginUrl: string,
+  tempPassword: string | null,
+  orgName: string,
+) {
+  const resend = getResend();
+  if (!resend) return;
+
+  const credentialsBlock = tempPassword
+    ? `<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:20px;margin:20px 0">
+        <p style="margin:0 0 8px;font-size:13px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:.05em">Tus credenciales de acceso</p>
+        <p style="margin:0 0 4px;font-size:14px;color:#374151">Email: <strong>${to}</strong></p>
+        <p style="margin:0;font-size:14px;color:#374151">Contraseña temporal: <strong>${tempPassword}</strong></p>
+        <p style="margin:12px 0 0;font-size:12px;color:#9ca3af">Cámbiala en tu primer acceso desde la configuración de perfil.</p>
+      </div>`
+    : `<p style="margin:16px 0;font-size:14px;color:#6b7280">Accede con tu email y contraseña habituales.</p>`;
+
+  await resend.emails.send({
+    from: `${PLATFORM_FROM_NAME} <${PLATFORM_FROM_ADDRESS}>`,
+    to,
+    subject: `¡Tu acceso al curso está listo! ${courseTitle}`,
+    html: baseTemplate(`
+      <h2 style="margin:0 0 8px;font-size:22px;color:#0C0C0C">¡Pago confirmado! 🎉</h2>
+      <p style="margin:0 0 20px;color:#6b7280;font-size:15px">Hola${buyerName ? `, ${buyerName}` : ""}. Tu compra se ha procesado correctamente.</p>
+      <div style="background:#fafafa;border:1px solid #e5e7eb;border-left:4px solid #A855F7;border-radius:8px;padding:20px">
+        <p style="margin:0;font-size:17px;font-weight:700;color:#0C0C0C">${courseTitle}</p>
+        <p style="margin:6px 0 0;font-size:13px;color:#6b7280">Organización: ${orgName}</p>
+      </div>
+      ${credentialsBlock}
+      <a href="${loginUrl}"
+         style="display:inline-block;background:#A855F7;color:#ffffff;font-weight:700;font-size:14px;
+                padding:12px 28px;border-radius:8px;text-decoration:none;margin-top:8px">
+        Empezar el curso →
+      </a>
+      <p style="margin:24px 0 0;font-size:12px;color:#9ca3af">Si no has realizado esta compra, contacta con nosotros respondiendo a este email.</p>
+    `, orgName),
+  });
+}

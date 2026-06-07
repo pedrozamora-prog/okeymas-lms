@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getOrgFromApiKey } from "@/lib/api-auth";
 import { applyEnrollmentRules } from "@/lib/auto-enroll";
 import bcrypt from "bcryptjs";
-import { Department, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 
 // GET /api/v1/users — lista de empleados
 export async function GET(req: NextRequest) {
@@ -17,22 +17,39 @@ export async function GET(req: NextRequest) {
   const dept = searchParams.get("department");
   const role = searchParams.get("role");
 
+  // dept param can be a department ID or name
+  let departmentId: string | undefined;
+  if (dept) {
+    const deptRecord = await prisma.department.findFirst({
+      where: {
+        organizationId: org.id,
+        OR: [{ id: dept }, { name: { equals: dept, mode: "insensitive" } }],
+      },
+      select: { id: true },
+    });
+    departmentId = deptRecord?.id;
+  }
+
   const users = await prisma.user.findMany({
     where: {
       organizationId: org.id,
       isActive: true,
-      ...(dept && { department: dept as Department }),
+      ...(departmentId ? { departmentId } : {}),
       ...(role && { role: role as Role }),
     },
     select: {
       id: true, name: true, email: true, role: true,
-      department: true, createdAt: true,
+      department: { select: { name: true } },
+      createdAt: true,
       _count: { select: { enrollments: true } },
     },
     orderBy: { createdAt: "desc" },
   });
 
-  return NextResponse.json({ data: users, total: users.length });
+  return NextResponse.json({
+    data: users.map(u => ({ ...u, department: u.department?.name ?? null })),
+    total: users.length,
+  });
 }
 
 // POST /api/v1/users — crear empleado (sincronización RRHH)
@@ -40,7 +57,6 @@ export async function POST(req: NextRequest) {
   const org = await getOrgFromApiKey(req);
   if (!org) return NextResponse.json({ error: "API key inválida" }, { status: 401 });
 
-  // Verificar límite del plan
   const count = await prisma.user.count({ where: { organizationId: org.id } });
   if (count >= org.maxUsers) {
     return NextResponse.json({
@@ -56,6 +72,19 @@ export async function POST(req: NextRequest) {
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) return NextResponse.json({ error: "Email ya registrado" }, { status: 409 });
 
+  // Resolve department by ID or name
+  let departmentId: string | null = null;
+  if (department) {
+    const deptRecord = await prisma.department.findFirst({
+      where: {
+        organizationId: org.id,
+        OR: [{ id: department }, { name: { equals: department, mode: "insensitive" } }],
+      },
+      select: { id: true },
+    });
+    departmentId = deptRecord?.id ?? null;
+  }
+
   const hashedPassword = password
     ? await bcrypt.hash(password, 12)
     : await bcrypt.hash(Math.random().toString(36), 12);
@@ -66,14 +95,20 @@ export async function POST(req: NextRequest) {
       email: email.trim().toLowerCase(),
       phone: phone?.trim() || null,
       hashedPassword,
-      department: (department as Department) || null,
-      role:       (role as Role) || "EMPLOYEE",
+      departmentId,
+      role: (role as Role) || "EMPLOYEE",
       organizationId: org.id,
     },
-    select: { id: true, name: true, email: true, role: true, department: true, createdAt: true },
+    select: {
+      id: true, name: true, email: true, role: true,
+      department: { select: { name: true } },
+      createdAt: true,
+    },
   });
 
-  await applyEnrollmentRules(user.id, org.id, user.role as Role, user.department as Department);
+  await applyEnrollmentRules(user.id, org.id, user.role as Role, user.departmentId);
 
-  return NextResponse.json({ data: user }, { status: 201 });
+  return NextResponse.json({
+    data: { ...user, department: user.department?.name ?? null },
+  }, { status: 201 });
 }

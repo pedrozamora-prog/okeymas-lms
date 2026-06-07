@@ -4,16 +4,17 @@ import { useState } from "react";
 import { Anton } from "next/font/google";
 import Link from "next/link";
 import Image from "next/image";
+import { Users, Building2, Palette, Plug, ShieldCheck, UserCheck } from "lucide-react";
 
 const anton = Anton({ weight: "400", subsets: ["latin"], variable: "--font-anton" });
 
 const BENEFITS = [
-  { icon: "👥", text: "Miembros ilimitados en todas tus sedes" },
-  { icon: "🏢", text: "Gestión multi-sede desde un solo panel" },
-  { icon: "🎨", text: "White label completo con tu marca" },
-  { icon: "🔌", text: "API & Webhooks para integrar cualquier sistema" },
-  { icon: "🔐", text: "SSO / SAML para acceso corporativo" },
-  { icon: "🧑‍💼", text: "Manager dedicado de onboarding y soporte" },
+  { icon: Users, text: "Miembros ilimitados en todas tus sedes" },
+  { icon: Building2, text: "Gestión multi-sede desde un solo panel" },
+  { icon: Palette, text: "White label completo con tu marca" },
+  { icon: Plug, text: "API & Webhooks para integrar cualquier sistema" },
+  { icon: ShieldCheck, text: "SSO / SAML para acceso corporativo" },
+  { icon: UserCheck, text: "Manager dedicado de onboarding y soporte" },
 ];
 
 export default function ContactPage() {
@@ -75,8 +76,8 @@ export default function ContactPage() {
             <div className="flex flex-col gap-3">
               {BENEFITS.map(b => (
                 <div key={b.text} className="flex items-center gap-3">
-                  <span className="w-9 h-9 rounded-xl bg-[#A855F715] border border-[#A855F730] flex items-center justify-center flex-shrink-0 text-base">
-                    {b.icon}
+                  <span className="w-9 h-9 rounded-xl bg-[#A855F715] border border-[#A855F730] flex items-center justify-center flex-shrink-0">
+                    <b.icon className="w-4 h-4 text-[#A855F7]" />
                   </span>
                   <span className="text-sm text-white/65">{b.text}</span>
                 </div>

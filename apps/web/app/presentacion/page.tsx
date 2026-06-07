@@ -92,7 +92,7 @@ export default function PresentacionPage() {
             <li><strong>Quiz avanzado</strong> — nota mínima configurable, múltiples intentos y rutas adaptativas según el resultado (branching)</li>
             <li><strong>Clase en directo</strong> — sesiones programadas con instructor, grabadas automáticamente</li>
           </ul>
-          <p>Cada curso puede asignarse a <strong>uno o varios departamentos</strong> (Administración, Recepción, Servicio de Limpieza, Monitor, Deporocio), de modo que cada empleado solo ve los cursos relevantes para su rol.</p>
+          <p>Cada curso puede asignarse a <strong>uno o varios departamentos</strong> (Administración, Recepción, Servicio de Limpieza, Monitor, Deportivo), de modo que cada empleado solo ve los cursos relevantes para su rol.</p>
           <div className="highlight">
             Argumento clave: un monitor no verá los cursos de administración y viceversa. La experiencia de cada empleado está personalizada desde el primer día.
           </div>
@@ -197,6 +197,24 @@ export default function PresentacionPage() {
           </ul>
           <div className="highlight">
             Argumento clave: los estudios demuestran que la gamificación aumenta la tasa de finalización de cursos corporativos entre un 40% y un 60%.
+          </div>
+        </div>
+
+        <div className="modulo">
+          <div className="modulo-header">
+            <span className="modulo-tag">SEGURIDAD LABORAL</span>
+            <h3>Módulo PRL — Prevención de Riesgos Laborales</h3>
+          </div>
+          <p>La plataforma incluye un <strong>módulo específico de cumplimiento normativo</strong> alineado con la Ley 31/1995 de Prevención de Riesgos Laborales (LPRL):</p>
+          <ul>
+            <li><strong>Panel de cumplimiento PRL</strong> — matriz empleado × curso PRL con estado en tiempo real: en regla, próximo a vencer (&lt;30 días), vencido o sin realizar</li>
+            <li><strong>Clasificación por nivel de riesgo</strong> — cada curso PRL se categoriza como Básico, Específico o Directivo según el puesto</li>
+            <li><strong>Alertas automáticas de renovación</strong> — emails a los empleados y responsables cuando un certificado está próximo a caducar o ha caducado</li>
+            <li><strong>Acta de cumplimiento exportable</strong> — documento PDF con firma para presentar ante inspecciones de trabajo</li>
+            <li><strong>Seguimiento de caducidad</strong> — los certificados PRL tienen fecha de validez configurable; la plataforma avisa automáticamente 30 días antes</li>
+          </ul>
+          <div className="highlight">
+            Argumento clave: el incumplimiento de la LPRL acarrea sanciones entre €2.046 y €40.985 por infracción (art. 40 LISOS). Formia convierte el cumplimiento normativo en un proceso automático y documentado, eliminando el riesgo legal para la empresa.
           </div>
         </div>
 
@@ -402,10 +420,10 @@ export default function PresentacionPage() {
         {/* Planes */}
         <div style={{display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:"16px", marginBottom:"32px"}}>
           {[
-            { nombre:"Starter", precio:"149", desc:"1 sede · hasta 50 empleados", color:"#f9fafb", border:"#e5e7eb", features:["Cursos, módulos y lecciones","Quiz avanzado con nota mínima y múltiples intentos","Certificados con firma digital y QR verificable","Invitaciones por email","App móvil (PWA)","Notificaciones automáticas","Soporte por email"] },
-            { nombre:"Professional", precio:"299", desc:"Hasta 3 sedes · hasta 150 empleados", color:"#f9fafb", border:"#e5e7eb", features:["Todo lo del Starter","Itinerarios de aprendizaje ramificados","Alta masiva por Excel/CSV","IA generadora de contenido","Rol de mánager + vista equipo","Informes Excel/PDF","Email con dominio propio"] },
-            { nombre:"Chain", precio:"499", desc:"Hasta 8 sedes · hasta 400 empleados", color:"#0C0C0C", border:"#A855F7", features:["Todo lo del Professional","API pública + Webhooks","White label / marca propia","Audit logs completos y exportables","Encuestas post-curso","SCORM import","Soporte prioritario","Reunión mensual de KPIs"] },
-            { nombre:"Enterprise", precio:"A medida", desc:"Sedes ilimitadas · empleados ilimitados", color:"#f9fafb", border:"#e5e7eb", features:["Todo lo del Chain","Integraciones con RRHH / ERP","SSO / SAML corporativo","SLA garantizado 99,9%","Formación al equipo admin","Roadmap priorizado con dirección"] },
+            { nombre:"Inicio", precio:"159", desc:"1 sede · hasta 200 empleados", color:"#f9fafb", border:"#e5e7eb", features:["Cursos, módulos y lecciones","Quiz avanzado con branching adaptativo","Certificados con firma digital y QR verificable","Auto-inscripción por departamento","App móvil (PWA)","Notificaciones automáticas","Soporte por email"] },
+            { nombre:"Profesional", precio:"319", desc:"Hasta 3 sedes · hasta 1.000 empleados", color:"#f9fafb", border:"#e5e7eb", features:["Todo lo del Inicio","Itinerarios de aprendizaje ramificados","Alta masiva por Excel/CSV","Módulo PRL / Seguridad laboral","IA generadora de contenido","Rol de mánager + vista equipo","Informes Excel/PDF","Email con dominio propio"] },
+            { nombre:"Éxito", precio:"549", desc:"Hasta 8 sedes · empleados ilimitados", color:"#0C0C0C", border:"#A855F7", features:["Todo lo del Profesional","API pública + Webhooks","White label / marca propia","SSO / SAML corporativo","Audit logs completos y exportables","Alertas de riesgo automatizadas","Soporte prioritario","Reunión mensual de KPIs"] },
+            { nombre:"Enterprise", precio:"A medida", desc:"Sedes ilimitadas · empleados ilimitados", color:"#f9fafb", border:"#e5e7eb", features:["Todo lo del Éxito","Integraciones con RRHH / ERP","SLA garantizado 99,9%","Formación al equipo admin","Infraestructura dedicada","Roadmap priorizado con dirección"] },
           ].map((plan) => (
             <div key={plan.nombre} style={{background:plan.color, border:`2px solid ${plan.border}`, borderRadius:"16px", padding:"24px", display:"flex", flexDirection:"column", gap:"12px"}}>
               <div style={{fontWeight:900, fontSize:"15px", color: plan.color === "#0C0C0C" ? "#A855F7" : "#0C0C0C", letterSpacing:"1px"}}>{plan.nombre}</div>
@@ -434,7 +452,7 @@ export default function PresentacionPage() {
           <div>
             <p style={{fontWeight:700, fontSize:"15px", color:"#0C0C0C", margin:0}}>Descuento por pago anual — 20% menos</p>
             <p style={{fontSize:"13px", color:"#6b7280", margin:"4px 0 0"}}>
-              Plan Chain anual: <strong style={{color:"#0C0C0C"}}>€4.790/año</strong> (vs. €5.988 mensual). Ahorro de <strong>€1.198</strong>.
+              Plan Éxito anual: <strong style={{color:"#0C0C0C"}}>€5.270/año</strong> (vs. €6.588 mensual). Ahorro de <strong>€1.318</strong>.
             </p>
           </div>
         </div>
@@ -442,7 +460,7 @@ export default function PresentacionPage() {
         {/* Comparativa */}
         <div className="highlight">
           <strong>Comparativa de mercado:</strong> iSpring Learn cobra ~2,50€/usuario/mes con mínimo 100 usuarios (mínimo €250/mes) sin especialización en fitness.
-          Formia ofrece el mismo precio con IA, cumplimiento y soporte específico para gimnasios — sin coste extra por crecer.
+          Formia ofrece un precio equivalente incluyendo IA, módulo PRL, SSO/SAML y soporte específico para gimnasios — sin coste extra por crecer.
         </div>
       </section>
 

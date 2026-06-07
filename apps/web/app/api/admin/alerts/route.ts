@@ -70,7 +70,7 @@ export async function GET(req: Request) {
   // Obtener todos los empleados activos con sus inscripciones en cursos requeridos
   const employees = await prisma.user.findMany({
     where: { organizationId: user.organizationId, isActive: true, role: "EMPLOYEE" },
-    select: { id: true, name: true, email: true, department: true },
+    select: { id: true, name: true, email: true, department: { select: { name: true } } },
   });
 
   const requiredCourses = await prisma.course.findMany({
@@ -157,7 +157,7 @@ export async function GET(req: Request) {
       userId:       emp.id,
       userName:     emp.name,
       userEmail:    emp.email,
-      department:   emp.department,
+      department:   emp.department?.name ?? null,
       courseId:     course.id,
       courseTitle:  course.title,
       enrollmentId: enrollment.id,

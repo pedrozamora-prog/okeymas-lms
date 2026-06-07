@@ -141,6 +141,10 @@
     "myTeam": "A minha equipa",
     "progress": "pts para",
     "competencies": "Competências",
-    "jobRoles": "Funções de trabalho"
+    "jobRoles": "Funções de trabalho",
+    "prl": "Segurança no trabalho",
+    "auditLogs": "Registo de atividade",
+    "learningPaths": "Planos de formação",
+    "marketplace": "Marketplace"
   }
 }

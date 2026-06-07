@@ -15,7 +15,10 @@ export async function GET() {
 
   const rules = await prisma.enrollmentRule.findMany({
     where: { organizationId: user.organizationId },
-    include: { course: { select: { id: true, title: true } } },
+    include: {
+      course:      { select: { id: true, title: true } },
+      triggerDept: { select: { id: true, name: true } },
+    },
     orderBy: { createdAt: "desc" },
   });
 
@@ -29,7 +32,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const { courseId, triggerRole, triggerDept, daysToComplete, enrollExisting } = await req.json();
+  const { courseId, triggerRole, triggerDeptId, daysToComplete, enrollExisting } = await req.json();
   if (!courseId) return NextResponse.json({ error: "Curso requerido" }, { status: 400 });
 
   const rule = await prisma.enrollmentRule.create({
@@ -37,10 +40,13 @@ export async function POST(req: NextRequest) {
       courseId,
       organizationId: user.organizationId,
       triggerRole:    triggerRole || null,
-      triggerDept:    triggerDept || null,
+      triggerDeptId:  triggerDeptId || null,
       daysToComplete: daysToComplete ? Number(daysToComplete) : null,
     },
-    include: { course: { select: { id: true, title: true } } },
+    include: {
+      course:      { select: { id: true, title: true } },
+      triggerDept: { select: { id: true, name: true } },
+    },
   });
 
   // Si se pide inscribir a los existentes que cumplan el filtro
@@ -49,8 +55,8 @@ export async function POST(req: NextRequest) {
       organizationId: user.organizationId,
       isActive: true,
     };
-    if (triggerRole) where.role = triggerRole;
-    if (triggerDept) where.department = triggerDept;
+    if (triggerRole)   where.role         = triggerRole;
+    if (triggerDeptId) where.departmentId = triggerDeptId;
 
     const targetUsers = await prisma.user.findMany({
       where,

@@ -23,10 +23,6 @@ const RISK_CONFIG: Record<RiskLevel, {
   WATCH:    { label: "Vigilar", color: "text-blue-400",   bg: "bg-blue-500/10",   border: "border-blue-500/30",   icon: Eye           },
 };
 
-const DEPT_LABELS: Record<string, string> = {
-  ADMINISTRACION: "Administración", RECEPCION: "Recepción",
-  LIMPIEZA: "Limpieza", MONITOR: "Monitor", DEPORTIVO: "Deportivo",
-};
 
 type FilterLevel = "ALL" | RiskLevel;
 
@@ -205,7 +201,7 @@ export function AlertsClient({ orgId }: { orgId: string }) {
                     <div>
                       <p className="text-sm font-bold text-foreground">{alert.userName}</p>
                       <p className="text-xs text-muted-foreground">{alert.userEmail}
-                        {alert.department && ` · ${DEPT_LABELS[alert.department] ?? alert.department}`}
+                        {alert.department && ` · ${alert.department}`}
                       </p>
                     </div>
                     <Button

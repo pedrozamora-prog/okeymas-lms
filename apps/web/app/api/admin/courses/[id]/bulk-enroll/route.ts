@@ -2,7 +2,6 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { sendNewEnrollmentEmail, OrgEmailConfig } from "@/lib/email";
-import { Department } from "@prisma/client";
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -121,16 +120,16 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
   const { id: courseId } = await params;
   const { searchParams } = new URL(req.url);
-  const departments = searchParams.getAll("dept") as Department[];
+  const departments = searchParams.getAll("dept");
 
   const [allUsers, enrolled] = await Promise.all([
     prisma.user.findMany({
       where: {
         organizationId: admin.organizationId,
         isActive: true,
-        ...(departments.length > 0 ? { department: { in: departments } } : {}),
+        ...(departments.length > 0 ? { departmentId: { in: departments } } : {}),
       },
-      select: { id: true, name: true, email: true, department: true },
+      select: { id: true, name: true, email: true, department: { select: { name: true } } },
       orderBy: { name: "asc" },
     }),
     prisma.enrollment.findMany({

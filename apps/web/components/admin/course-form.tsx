@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,16 +15,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Save, Sparkles, Award, Users, ImagePlus, X } from "lucide-react";
+import { Loader2, Save, Sparkles, Award, Users, ImagePlus, X, ShoppingCart } from "lucide-react";
 import { useRef } from "react";
 
-const DEPARTMENTS = [
-  { value: "ADMINISTRACION", label: "Administración" },
-  { value: "RECEPCION",      label: "Recepción" },
-  { value: "LIMPIEZA",       label: "Servicio de Limpieza" },
-  { value: "MONITOR",        label: "Monitor" },
-  { value: "DEPORTIVO",      label: "Deporocio" },
-];
+interface DeptOption { id: string; name: string; }
 
 interface CourseFormProps {
   initial?: {
@@ -43,6 +37,11 @@ interface CourseFormProps {
     certSignerName: string | null;
     certSignerTitle: string | null;
     signatureEnabled: boolean;
+    isPrl: boolean;
+    prlRiskLevel: string | null;
+    isPublic: boolean;
+    price: number | null;
+    currency: string;
   };
 }
 
@@ -62,12 +61,27 @@ export function CourseForm({ initial }: CourseFormProps) {
   const [imgLoading, setImgLoading]       = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [departments, setDepts]           = useState<string[]>(initial?.departments ?? []);
+  const [deptOptions, setDeptOptions]     = useState<DeptOption[]>([]);
+
+  useEffect(() => {
+    fetch("/api/admin/departments")
+      .then(r => r.json())
+      .then(data => setDeptOptions(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, []);
   const [certEnabled, setCertEnabled]     = useState(initial?.certificateEnabled ?? false);
   const [certType, setCertType]           = useState(initial?.certificateType ?? "COMPLETION");
   const [certValidity, setCertValidity]   = useState(String(initial?.certificateValidityDays ?? ""));
   const [signerName, setSignerName]       = useState(initial?.certSignerName ?? "");
   const [signerTitle, setSignerTitle]     = useState(initial?.certSignerTitle ?? "");
   const [sigEnabled, setSigEnabled]       = useState(initial?.signatureEnabled ?? false);
+  const [isPrl, setIsPrl]               = useState(initial?.isPrl ?? false);
+  const [prlRiskLevel, setPrlRiskLevel] = useState(initial?.prlRiskLevel ?? "BASICO");
+  const [isPublic, setIsPublic]         = useState(initial?.isPublic ?? false);
+  // price stored in euros as string, converted to cents on submit
+  const [priceEur, setPriceEur]         = useState(
+    initial?.price ? String((initial.price / 100).toFixed(2)) : ""
+  );
 
   async function generateDescription() {
     if (!title.trim()) { toast.error("Escribe primero el título del curso"); return; }
@@ -161,6 +175,11 @@ export function CourseForm({ initial }: CourseFormProps) {
           certSignerName:  signerName  || null,
           certSignerTitle: signerTitle || null,
           signatureEnabled: sigEnabled,
+          isPrl,
+          prlRiskLevel: isPrl ? prlRiskLevel : null,
+          isPublic,
+          price:    isPublic && priceEur ? Math.round(parseFloat(priceEur) * 100) : null,
+          currency: "eur",
         }),
       });
 
@@ -369,11 +388,13 @@ export function CourseForm({ initial }: CourseFormProps) {
             Selecciona a qué departamentos va dirigido este curso. Si no marcas ninguno, será visible para todos.
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            {DEPARTMENTS.map(d => {
-              const checked = departments.includes(d.value);
+            {deptOptions.length === 0 ? (
+              <p className="text-xs text-muted-foreground col-span-full">Cargando departamentos…</p>
+            ) : deptOptions.map(d => {
+              const checked = departments.includes(d.id);
               return (
                 <label
-                  key={d.value}
+                  key={d.id}
                   className={`flex items-center gap-2.5 p-3 rounded-lg border cursor-pointer transition-colors ${
                     checked
                       ? "border-primary bg-primary/10 text-foreground"
@@ -386,11 +407,11 @@ export function CourseForm({ initial }: CourseFormProps) {
                     checked={checked}
                     onChange={() =>
                       setDepts(prev =>
-                        checked ? prev.filter(v => v !== d.value) : [...prev, d.value]
+                        checked ? prev.filter(v => v !== d.id) : [...prev, d.id]
                       )
                     }
                   />
-                  <span className="text-sm font-medium">{d.label}</span>
+                  <span className="text-sm font-medium">{d.name}</span>
                 </label>
               );
             })}
@@ -446,6 +467,85 @@ export function CourseForm({ initial }: CourseFormProps) {
               <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
                 sigEnabled ? "translate-x-5" : "translate-x-0"
               }`} />
+            </button>
+          </div>
+
+          {/* Toggle PRL */}
+          <div className={`flex items-start justify-between p-4 rounded-lg border-2 transition-colors ${isPrl ? "border-orange-400 bg-orange-50/50" : "border-border bg-muted/30"}`}>
+            <div className="min-w-0 pr-4">
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold text-foreground">Formación PRL — Prevención de Riesgos Laborales</p>
+                {isPrl && <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-orange-100 text-orange-700 border border-orange-200">Obligatorio por ley</span>}
+              </div>
+              <p className="text-xs text-muted-foreground mt-0.5">Marca este curso como formación obligatoria según la Ley 31/1995. Aparecerá en el dashboard de cumplimiento PRL.</p>
+              {isPrl && (
+                <div className="mt-3 flex items-center gap-2">
+                  <p className="text-xs font-medium text-foreground whitespace-nowrap">Nivel de riesgo:</p>
+                  {["BASICO", "ESPECIFICO", "DIRECTIVO"].map(level => (
+                    <button
+                      key={level}
+                      type="button"
+                      onClick={() => setPrlRiskLevel(level)}
+                      className={`text-[11px] px-3 py-1 rounded-full border font-medium transition-colors ${
+                        prlRiskLevel === level
+                          ? "bg-orange-500 border-orange-500 text-white"
+                          : "border-border text-muted-foreground hover:border-orange-300"
+                      }`}
+                    >
+                      {level.charAt(0) + level.slice(1).toLowerCase()}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsPrl(v => !v)}
+              className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 mt-0.5 ${isPrl ? "bg-orange-500" : "bg-muted-foreground/30"}`}
+            >
+              <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${isPrl ? "translate-x-5" : "translate-x-0"}`} />
+            </button>
+          </div>
+
+          {/* Toggle venta pública B2C */}
+          <div className={`flex items-start justify-between p-4 rounded-lg border-2 transition-colors ${isPublic ? "border-[#A855F7] bg-[#A855F7]/5" : "border-border bg-muted/30"}`}>
+            <div className="min-w-0 pr-4">
+              <div className="flex items-center gap-2">
+                <ShoppingCart className="w-4 h-4 text-[#A855F7]" />
+                <p className="text-sm font-semibold text-foreground">Vender al público</p>
+                {isPublic && <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#A855F7]/20 text-[#A855F7] border border-[#A855F7]/30">B2C activo</span>}
+              </div>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                El curso aparecerá en el catálogo público <strong>/cursos</strong> y cualquier persona podrá comprarlo con tarjeta.
+              </p>
+              {isPublic && (
+                <div className="mt-3 space-y-1.5">
+                  <p className="text-xs font-medium text-foreground">Precio de venta (€)</p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">€</span>
+                    <input
+                      type="number"
+                      min="1"
+                      step="0.01"
+                      placeholder="29.00"
+                      value={priceEur}
+                      onChange={e => setPriceEur(e.target.value)}
+                      className="w-28 bg-background border border-border rounded-md px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    />
+                    <span className="text-xs text-muted-foreground">IVA no incluido</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    El comprador recibirá credenciales de acceso automáticamente tras el pago.
+                  </p>
+                </div>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsPublic(v => !v)}
+              className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 mt-0.5 ${isPublic ? "bg-[#A855F7]" : "bg-muted-foreground/30"}`}
+            >
+              <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${isPublic ? "translate-x-5" : "translate-x-0"}`} />
             </button>
           </div>
 

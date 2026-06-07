@@ -1,14 +1,13 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { Department } from "@prisma/client";
 import { applyEnrollmentRules } from "@/lib/auto-enroll";
 import { createAuditLog } from "@/lib/audit";
 
 export async function POST(req: Request) {
-  const { name, email, phone, password, department } = await req.json();
+  const { name, email, phone, password, departmentId } = await req.json();
 
-  if (!name || !email || !password || !department) {
+  if (!name || !email || !password) {
     return NextResponse.json({ error: "Faltan campos obligatorios" }, { status: 400 });
   }
 
@@ -24,7 +23,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "No hay ninguna organización configurada" }, { status: 500 });
   }
 
-  // Verificar límite del plan
   if (org._count.users >= org.maxUsers) {
     return NextResponse.json({
       error: `Límite de usuarios alcanzado (${org.maxUsers} en plan ${org.plan}). Contacta con soporte para ampliar tu plan.`
@@ -35,16 +33,16 @@ export async function POST(req: Request) {
 
   const user = await prisma.user.create({
     data: {
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      phone: phone?.trim() || null,
+      name:           name.trim(),
+      email:          email.trim().toLowerCase(),
+      phone:          phone?.trim() || null,
       hashedPassword,
-      department: department as Department,
+      departmentId:   departmentId || null,
       organizationId: org.id,
     },
   });
 
-  await applyEnrollmentRules(user.id, org.id, user.role, user.department);
+  await applyEnrollmentRules(user.id, org.id, user.role, user.departmentId);
 
   await createAuditLog({
     action: "USER_CREATED",

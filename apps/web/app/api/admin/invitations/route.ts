@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { sendInvitationEmail } from "@/lib/email";
-import { Role, Department } from "@prisma/client";
+import { Role } from "@prisma/client";
 
 const ROLE_LABELS: Record<string, string> = {
   SUPER_ADMIN:  "Super Admin",
@@ -58,8 +58,8 @@ export async function POST(req: Request) {
 
   for (const item of items) {
     const { email } = item;
-    const itemRole  = item.role as Role ?? "EMPLOYEE";
-    const itemDept  = item.department as Department | undefined;
+    const itemRole    = item.role as Role ?? "EMPLOYEE";
+    const itemDeptId  = item.department || undefined; // department field now carries departmentId
 
     // ¿Ya es usuario de esta org?
     const existingUser = await prisma.user.findFirst({
@@ -73,8 +73,8 @@ export async function POST(req: Request) {
     // Upsert invitación
     const invitation = await prisma.invitation.upsert({
       where:  { email_organizationId: { email, organizationId: user.organizationId } },
-      update: { role: itemRole, department: itemDept ?? null, invitedById: user.id, expiresAt, acceptedAt: null },
-      create: { email, role: itemRole, department: itemDept ?? null, organizationId: user.organizationId, invitedById: user.id, expiresAt },
+      update: { role: itemRole, departmentId: itemDeptId ?? null, invitedById: user.id, expiresAt, acceptedAt: null },
+      create: { email, role: itemRole, departmentId: itemDeptId ?? null, organizationId: user.organizationId, invitedById: user.id, expiresAt },
     });
 
     const inviteUrl = `${appUrl}/invite/${invitation.token}`;

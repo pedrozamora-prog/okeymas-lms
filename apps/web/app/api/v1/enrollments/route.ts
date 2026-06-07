@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
       ...(status   && { status: status as never }),
     },
     include: {
-      user:   { select: { id: true, name: true, email: true, department: true } },
+      user:   { select: { id: true, name: true, email: true, department: { select: { name: true } } } },
       course: { select: { id: true, title: true, isRequired: true } },
     },
     orderBy: { enrolledAt: "desc" },

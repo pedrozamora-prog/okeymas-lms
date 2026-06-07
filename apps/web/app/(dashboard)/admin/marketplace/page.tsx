@@ -30,6 +30,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Fitness":         "border-green-400/40 text-green-500 bg-green-500/10",
   "Operaciones":     "border-orange-400/40 text-orange-500 bg-orange-500/10",
   "Compliance":      "border-purple-400/40 text-purple-500 bg-purple-500/10",
+  "Ventas":          "border-yellow-400/40 text-yellow-600 bg-yellow-500/10",
 };
 
 export default function MarketplacePage() {

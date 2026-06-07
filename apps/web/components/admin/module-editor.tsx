@@ -19,11 +19,13 @@ import { InteractivePointEditor }   from "@/components/admin/interactive-point-e
 import { Badge } from "@/components/ui/badge";
 import {
   Plus, Trash2, ChevronDown, ChevronRight, Loader2,
-  Video, FileText, HelpCircle, Radio, Layers, Pencil, Save, X, Sparkles,
+  Video, FileText, HelpCircle, Radio, Layers, Pencil, Save, X, Sparkles, BookOpen, ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 
-type LessonType = "VIDEO" | "PDF" | "QUIZ" | "LIVE_CLASS" | "SCORM";
+type LessonType = "VIDEO" | "PDF" | "QUIZ" | "LIVE_CLASS" | "SCORM" | "CONTENT";
 
 interface Lesson {
   id: string;
@@ -50,9 +52,10 @@ const lessonTypeIcon: Record<LessonType, React.ReactNode> = {
   QUIZ:       <HelpCircle className="w-3.5 h-3.5" />,
   LIVE_CLASS: <Radio      className="w-3.5 h-3.5" />,
   SCORM:      <Layers     className="w-3.5 h-3.5" />,
+  CONTENT:    <BookOpen   className="w-3.5 h-3.5" />,
 };
 const lessonTypeLabel: Record<LessonType, string> = {
-  VIDEO: "Vídeo", PDF: "PDF", QUIZ: "Quiz", LIVE_CLASS: "Directo", SCORM: "SCORM",
+  VIDEO: "Vídeo", PDF: "PDF", QUIZ: "Quiz", LIVE_CLASS: "Directo", SCORM: "SCORM", CONTENT: "Contenido",
 };
 
 export function ModuleEditor({ courseId, initialModules }: { courseId: string; initialModules: Module[] }) {
@@ -215,6 +218,61 @@ export function ModuleEditor({ courseId, initialModules }: { courseId: string; i
           Añadir módulo
         </Button>
       )}
+    </div>
+  );
+}
+
+// ── Sub-component: lesson row ────────────────────────────────────────────────
+
+function LessonRow({ lesson, index, onEdit, onDelete }: {
+  lesson: Lesson; index: number;
+  onEdit: () => void; onDelete: () => void;
+}) {
+  const params   = useParams();
+  const courseId = params.id as string;
+
+  return (
+    <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-muted/30 border border-border/50 hover:border-primary/20 transition-colors">
+      <span className="text-xs text-muted-foreground w-4 flex-shrink-0">{index + 1}</span>
+      <span className={cn(
+        "flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded font-medium flex-shrink-0",
+        lesson.type === "VIDEO"      && "bg-blue-500/10 text-blue-400",
+        lesson.type === "PDF"        && "bg-orange-500/10 text-orange-400",
+        lesson.type === "QUIZ"       && "bg-purple-500/10 text-purple-400",
+        lesson.type === "LIVE_CLASS" && "bg-red-500/10 text-red-400",
+        lesson.type === "SCORM"      && "bg-cyan-500/10 text-cyan-400",
+        lesson.type === "CONTENT"    && "bg-primary/10 text-primary",
+      )}>
+        {lessonTypeIcon[lesson.type]}
+        {lessonTypeLabel[lesson.type]}
+      </span>
+      <span className="flex-1 text-sm text-foreground truncate">{lesson.title}</span>
+      {lesson.duration && (
+        <span className="text-xs text-muted-foreground flex-shrink-0">{lesson.duration}min</span>
+      )}
+      {lesson.type === "CONTENT" && (
+        <Link
+          href={`/admin/courses/${courseId}/lessons/${lesson.id}`}
+          className="p-1 rounded hover:bg-primary/10 text-primary transition-colors flex-shrink-0"
+          title="Editar contenido"
+        >
+          <ExternalLink className="w-3 h-3" />
+        </Link>
+      )}
+      <button
+        onClick={onEdit}
+        className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+        title="Editar lección"
+      >
+        <Pencil className="w-3 h-3" />
+      </button>
+      <button
+        onClick={onDelete}
+        className="p-1 rounded hover:bg-red-500/10 hover:text-red-400 text-muted-foreground transition-colors flex-shrink-0"
+        title="Eliminar lección"
+      >
+        <Trash2 className="w-3 h-3" />
+      </button>
     </div>
   );
 }
@@ -390,38 +448,12 @@ function ModuleCard({ mod, idx, expanded, onToggle, onDelete, onAddLesson, onDel
                   onCancel={() => setEditingLessonId(null)}
                 />
               ) : (
-                <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-muted/30 border border-border/50 hover:border-primary/20 transition-colors">
-                  <span className="text-xs text-muted-foreground w-4 flex-shrink-0">{li + 1}</span>
-                  <span className={cn(
-                    "flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded font-medium flex-shrink-0",
-                    lesson.type === "VIDEO"      && "bg-blue-500/10 text-blue-400",
-                    lesson.type === "PDF"        && "bg-orange-500/10 text-orange-400",
-                    lesson.type === "QUIZ"       && "bg-purple-500/10 text-purple-400",
-                    lesson.type === "LIVE_CLASS" && "bg-red-500/10 text-red-400",
-                    lesson.type === "SCORM"      && "bg-cyan-500/10 text-cyan-400",
-                  )}>
-                    {lessonTypeIcon[lesson.type]}
-                    {lessonTypeLabel[lesson.type]}
-                  </span>
-                  <span className="flex-1 text-sm text-foreground truncate">{lesson.title}</span>
-                  {lesson.duration && (
-                    <span className="text-xs text-muted-foreground flex-shrink-0">{lesson.duration}min</span>
-                  )}
-                  <button
-                    onClick={() => setEditingLessonId(lesson.id)}
-                    className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
-                    title="Editar lección"
-                  >
-                    <Pencil className="w-3 h-3" />
-                  </button>
-                  <button
-                    onClick={() => onDeleteLesson(lesson.id)}
-                    className="p-1 rounded hover:bg-red-500/10 hover:text-red-400 text-muted-foreground transition-colors flex-shrink-0"
-                    title="Eliminar lección"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </button>
-                </div>
+                <LessonRow
+                  lesson={lesson}
+                  index={li}
+                  onEdit={() => setEditingLessonId(lesson.id)}
+                  onDelete={() => onDeleteLesson(lesson.id)}
+                />
               )}
             </div>
           ))}
@@ -453,6 +485,7 @@ function ModuleCard({ mod, idx, expanded, onToggle, onDelete, onAddLesson, onDel
                       <SelectItem value="QUIZ">Quiz</SelectItem>
                       <SelectItem value="LIVE_CLASS">Directo</SelectItem>
                       <SelectItem value="SCORM">SCORM</SelectItem>
+                      <SelectItem value="CONTENT">Contenido rico ✨</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -758,6 +791,7 @@ function LessonEditForm({ lesson, moduleTitle, onSave, onCancel }: {
               <SelectItem value="QUIZ">Quiz</SelectItem>
               <SelectItem value="LIVE_CLASS">Directo</SelectItem>
               <SelectItem value="SCORM">SCORM</SelectItem>
+              <SelectItem value="CONTENT">Contenido rico ✨</SelectItem>
             </SelectContent>
           </Select>
         </div>

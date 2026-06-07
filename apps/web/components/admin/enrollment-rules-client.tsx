@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -18,20 +18,15 @@ const ROLES = [
   { value: "BRANCH_ADMIN", label: "Admin de sede" },
 ];
 
-const DEPTS = [
-  { value: "ADMINISTRACION", label: "Administración" },
-  { value: "RECEPCION",      label: "Recepción" },
-  { value: "LIMPIEZA",       label: "Limpieza" },
-  { value: "MONITOR",        label: "Monitor" },
-  { value: "DEPORTIVO",      label: "Deportivo" },
-];
+interface DeptOption { id: string; name: string; }
 
 interface Rule {
   id: string;
   courseId: string;
   course: { id: string; title: string };
   triggerRole: string | null;
-  triggerDept: string | null;
+  triggerDeptId: string | null;
+  triggerDept: { id: string; name: string } | null;
   daysToComplete: number | null;
   isActive: boolean;
   createdAt: string;
@@ -47,11 +42,19 @@ export function EnrollmentRulesClient({ initialRules, courses }: Props) {
   const [rules, setRules] = useState<Rule[]>(initialRules);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [deptOptions, setDeptOptions] = useState<DeptOption[]>([]);
+
+  useEffect(() => {
+    fetch("/api/admin/departments")
+      .then(r => r.json())
+      .then(data => setDeptOptions(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, []);
 
   // Form state
   const [courseId, setCourseId]           = useState("");
   const [triggerRole, setTriggerRole]     = useState("all");
-  const [triggerDept, setTriggerDept]     = useState("all");
+  const [triggerDeptId, setTriggerDeptId] = useState("all");
   const [daysToComplete, setDays]         = useState("");
   const [enrollExisting, setExisting]     = useState(false);
 
@@ -65,8 +68,8 @@ export function EnrollmentRulesClient({ initialRules, courses }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           courseId,
-          triggerRole:    triggerRole === "all" ? null : triggerRole,
-          triggerDept:    triggerDept === "all" ? null : triggerDept,
+          triggerRole:    triggerRole    === "all" ? null : triggerRole,
+          triggerDeptId:  triggerDeptId  === "all" ? null : triggerDeptId,
           daysToComplete: daysToComplete || null,
           enrollExisting,
         }),
@@ -74,7 +77,7 @@ export function EnrollmentRulesClient({ initialRules, courses }: Props) {
       if (!res.ok) throw new Error((await res.json()).error);
       toast.success("Regla creada correctamente");
       setOpen(false);
-      setCourseId(""); setTriggerRole("all"); setTriggerDept("all"); setDays(""); setExisting(false);
+      setCourseId(""); setTriggerRole("all"); setTriggerDeptId("all"); setDays(""); setExisting(false);
       router.refresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Error al crear la regla");
@@ -162,11 +165,11 @@ export function EnrollmentRulesClient({ initialRules, courses }: Props) {
                 </div>
                 <div className="space-y-1.5">
                   <Label>Departamento</Label>
-                  <Select value={triggerDept} onValueChange={setTriggerDept}>
+                  <Select value={triggerDeptId} onValueChange={setTriggerDeptId}>
                     <SelectTrigger><SelectValue placeholder="Todos" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">Todos los depts.</SelectItem>
-                      {DEPTS.map(d => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
+                      {deptOptions.map(d => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
@@ -225,9 +228,7 @@ export function EnrollmentRulesClient({ initialRules, courses }: Props) {
                       ? ROLES.find(r => r.value === rule.triggerRole)?.label
                       : "Todos los roles"}
                     {" · "}
-                    {rule.triggerDept
-                      ? DEPTS.find(d => d.value === rule.triggerDept)?.label
-                      : "Todos los departamentos"}
+                    {rule.triggerDept?.name ?? "Todos los departamentos"}
                   </span>
                   {rule.daysToComplete && (
                     <Badge variant="outline" className="text-[10px]">{rule.daysToComplete}d para completar</Badge>

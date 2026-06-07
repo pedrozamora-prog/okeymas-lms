@@ -5,13 +5,6 @@ import { TeamClient } from "./team-client";
 
 export const metadata = { title: "Mi equipo" };
 
-const DEPT_LABELS: Record<string, string> = {
-  ADMINISTRACION: "Administración",
-  RECEPCION:      "Recepción",
-  LIMPIEZA:       "Limpieza",
-  MONITOR:        "Monitor",
-  DEPORTIVO:      "Deportivo",
-};
 
 export default async function ManagerTeamPage() {
   const session = await auth();
@@ -20,7 +13,7 @@ export default async function ManagerTeamPage() {
 
   const manager = await prisma.user.findUnique({
     where:  { id: user.id },
-    select: { department: true, name: true },
+    select: { departmentId: true, name: true, department: { select: { name: true } } },
   });
 
   const now = new Date();
@@ -30,9 +23,10 @@ export default async function ManagerTeamPage() {
       organizationId: user.organizationId,
       isActive:       true,
       role:           "EMPLOYEE",
-      ...(manager?.department ? { department: manager.department } : {}),
+      ...(manager?.departmentId ? { departmentId: manager.departmentId } : {}),
     },
     include: {
+      department: { select: { name: true } },
       enrollments: {
         include: { course: { select: { id: true, title: true, isRequired: true } } },
         orderBy:  { enrolledAt: "desc" },
@@ -83,7 +77,7 @@ export default async function ManagerTeamPage() {
       id:             m.id,
       name:           m.name,
       email:          m.email,
-      department:     m.department ?? null,
+      department:     m.department?.name ?? null,
       total, completed, overdue, pct,
       certs:          m.certificates.length,
       points:         m.points?.total ?? 0,
@@ -109,9 +103,7 @@ export default async function ManagerTeamPage() {
     <TeamClient
       members={members}
       stats={stats}
-      deptLabel={manager?.department
-        ? DEPT_LABELS[manager.department] ?? manager.department
-        : "Todos los departamentos"}
+      deptLabel={manager?.department?.name ?? "Todos los departamentos"}
     />
   );
 }

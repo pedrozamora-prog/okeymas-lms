@@ -5,14 +5,6 @@ import { sendComplianceReportEmail, ComplianceReportData, OrgEmailConfig } from 
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
-const DEPT_LABELS: Record<string, string> = {
-  ADMINISTRACION: "Administración",
-  RECEPCION:      "Recepción",
-  LIMPIEZA:       "Limpieza",
-  MONITOR:        "Monitor",
-  DEPORTIVO:      "Deportivo",
-};
-
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   const user = session?.user as { id: string; role: string; organizationId: string; email?: string } | undefined;
@@ -31,7 +23,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     }),
     prisma.user.findMany({
       where:  { organizationId: id, isActive: true, role: "EMPLOYEE" },
-      select: { id: true, name: true, department: true },
+      select: { id: true, name: true, department: { select: { name: true } } },
     }),
     prisma.course.findMany({
       where:  { organizationId: id, isRequired: true, status: "PUBLISHED" },
@@ -55,13 +47,24 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
   const empMap    = new Map(employees.map(e => [e.id, e.name]));
   const courseMap = new Map(requiredCourses.map(c => [c.id, c.title]));
 
-  const departments = Object.entries(DEPT_LABELS).map(([key, label]) => {
-    const deptEmps    = employees.filter(e => e.department === key);
-    const deptEnrolls = enrollments.filter(e => deptEmps.some(emp => emp.id === e.userId));
-    const deptDone    = deptEnrolls.filter(e => e.status === "COMPLETED").length;
-    const deptTotal   = deptEmps.length * requiredCourses.length;
-    return { name: label, total: deptEmps.length, completed: deptDone, pct: deptTotal > 0 ? Math.round((deptDone / deptTotal) * 100) : 100 };
-  }).filter(d => d.total > 0);
+  const deptMap: Record<string, { total: number; completed: number }> = {};
+  for (const emp of employees) {
+    const deptName = emp.department?.name ?? "Sin departamento";
+    if (!deptMap[deptName]) deptMap[deptName] = { total: 0, completed: 0 };
+    deptMap[deptName].total++;
+  }
+  for (const enroll of enrollments) {
+    if (enroll.status !== "COMPLETED") continue;
+    const emp = employees.find(e => e.id === enroll.userId);
+    const deptName = emp?.department?.name ?? "Sin departamento";
+    if (deptMap[deptName]) deptMap[deptName].completed++;
+  }
+  const departments = Object.entries(deptMap).map(([name, s]) => ({
+    name,
+    total:     s.total,
+    completed: s.completed,
+    pct:       s.total > 0 ? Math.round((s.completed / (s.total * requiredCourses.length)) * 100) : 100,
+  })).filter(d => d.total > 0);
 
   const atRisk = enrollments
     .filter(e => { if (e.status === "COMPLETED" || !e.deadline) return false; const d = Math.ceil((new Date(e.deadline).getTime() - now.getTime()) / 86400000); return d >= 0 && d <= 3; })

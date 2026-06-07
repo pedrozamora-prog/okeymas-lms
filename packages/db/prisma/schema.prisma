@@ -37,6 +37,7 @@ enum LessonType {
   QUIZ
   LIVE_CLASS
   SCORM
+  CONTENT
 }
 
 enum EnrollmentStatus {
@@ -58,6 +59,8 @@ enum NotificationType {
   MANDATORY_OVERDUE
   COURSE_COMPLETED
   NEW_COMMENT
+  PRL_EXPIRY_WARNING
+  PRL_EXPIRED
 }
 
 enum SurveyQuestionType {
@@ -114,14 +117,6 @@ enum AuditAction {
   INVITATION_SENT
   API_KEY_GENERATED
   ROLE_CHANGED
-}
-
-enum Department {
-  ADMINISTRACION
-  RECEPCION
-  LIMPIEZA
-  MONITOR
-  DEPORTIVO
 }
 
 // ─── ORGANIZATION (SUCURSAL / GYM) ───────────────────────────────────────────
@@ -184,19 +179,43 @@ model Organization {
   notifyWhatsappDeadline Boolean @default(true)
   notifyWhatsappEnroll   Boolean @default(true)
 
+  // HRIS Integration
+  hrisProvider      String?  // FACTORIAL | PERSONIO | BIZNEO | BAMBOOHR | GENERIC
+  hrisSyncEnabled   Boolean  @default(false)
+  hrisSyncLogs      HrisSyncLog[]
+
   users           User[]
   courses         Course[]
   liveClasses     LiveClass[]
   enrollmentRules EnrollmentRule[]
   webhooks        Webhook[]
+  coursePurchases CoursePurchase[]
   invitations     Invitation[]
   competencies    Competency[]
   jobRoles        JobRole[]
   auditLogs       AuditLog[]
   learningPaths   LearningPath[]
   ssoConfig       OrgSsoConfig?
+  departments     Department[]
 
   @@map("organizations")
+}
+
+// ─── DEPARTMENT ──────────────────────────────────────────────────────────────
+
+model Department {
+  id             String       @id @default(cuid())
+  name           String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  users          User[]
+  invitations    Invitation[]
+  enrollmentRules EnrollmentRule[]
+  courses        Course[]
+  createdAt      DateTime     @default(now())
+
+  @@unique([organizationId, name])
+  @@map("departments")
 }
 
 // ─── USER ────────────────────────────────────────────────────────────────────
@@ -209,7 +228,8 @@ model User {
   hashedPassword String?
   image          String?
   role           Role       @default(EMPLOYEE)
-  department     Department?
+  departmentId   String?
+  department     Department? @relation(fields: [departmentId], references: [id])
   phone           String?
   locale          String     @default("es")
   whatsappPhone   String?
@@ -251,7 +271,8 @@ model Invitation {
   email          String
   token          String      @unique @default(cuid())
   role           Role        @default(EMPLOYEE)
-  department     Department?
+  departmentId   String?
+  department     Department? @relation(fields: [departmentId], references: [id])
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
   invitedById    String
@@ -332,11 +353,20 @@ model Course {
 
   signatureEnabled Boolean @default(false)
 
+  // PRL — Prevención de Riesgos Laborales
+  isPrl        Boolean @default(false)
+  prlRiskLevel String? // "BASICO" | "ESPECIFICO" | "DIRECTIVO"
+
   // Marketplace
   isMarketplace        Boolean @default(false)
   marketplaceCategory  String?
   marketplaceShortDesc String?
   importedFromId       String? // original marketplace courseId if this is a clone
+
+  // B2C — venta pública a socios/clientes finales
+  isPublic  Boolean @default(false)
+  price     Int?    // precio en céntimos (ej: 2900 = 29,00 €). null = gratis
+  currency  String  @default("eur")
 
   modules          Module[]
   enrollments      Enrollment[]
@@ -346,8 +376,28 @@ model Course {
   survey           CourseSurvey?
   competencies     CourseCompetency[]
   signatures       CourseSignature[]
+  purchases        CoursePurchase[]
 
   @@map("courses")
+}
+
+model CoursePurchase {
+  id             String   @id @default(cuid())
+  courseId       String
+  course         Course   @relation(fields: [courseId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  buyerEmail     String
+  buyerName      String?
+  userId         String?  // user created/found after payment
+  stripeSessionId String  @unique
+  amountPaid     Int      // in cents
+  currency       String   @default("eur")
+  status         String   @default("PENDING") // PENDING | COMPLETED | REFUNDED
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("course_purchases")
 }
 
 model Module {
@@ -378,6 +428,8 @@ model Lesson {
   isRequired  Boolean    @default(true)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+
+  content     Json?    // Block-based rich content (authoring tool)
 
   moduleId String
   module   Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
@@ -611,7 +663,8 @@ model UserBadge {
 model EnrollmentRule {
   id             String      @id @default(cuid())
   triggerRole    Role?
-  triggerDept    Department?
+  triggerDeptId  String?
+  triggerDept    Department? @relation(fields: [triggerDeptId], references: [id])
   daysToComplete Int?
   isActive       Boolean     @default(true)
   createdAt      DateTime    @default(now())
@@ -924,4 +977,22 @@ model AuditLog {
   @@index([organizationId, createdAt])
   @@index([userId, createdAt])
   @@map("audit_logs")
+}
+
+// ─── HRIS SYNC LOG ───────────────────────────────────────────────────────────
+
+model HrisSyncLog {
+  id             String   @id @default(cuid())
+  event          String   // employee.created | employee.updated | employee.terminated
+  email          String
+  status         String   // success | error | skipped
+  message        String?
+  payload        Json?
+  createdAt      DateTime @default(now())
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, createdAt])
+  @@map("hris_sync_logs")
 }

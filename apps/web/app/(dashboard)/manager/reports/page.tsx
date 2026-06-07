@@ -13,7 +13,7 @@ export default async function ManagerReportsPage() {
 
   const manager = await prisma.user.findUnique({
     where: { id: user.id },
-    select: { department: true },
+    select: { departmentId: true },
   });
 
   return (
@@ -28,7 +28,7 @@ export default async function ManagerReportsPage() {
         </p>
       </div>
 
-      <ReportExport fixedDept={manager?.department ?? undefined} />
+      <ReportExport fixedDept={manager?.departmentId ?? undefined} />
     </div>
   );
 }

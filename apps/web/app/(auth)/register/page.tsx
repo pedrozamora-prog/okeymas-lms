@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -8,17 +8,17 @@ import { Input } from "@/components/ui/input";
 import { CursorRipple } from "@/components/ui/cursor-ripple";
 import { Loader2, BookOpen, Award, Video, Users, ChevronRight } from "lucide-react";
 
-const DEPARTMENTS = [
-  { value: "ADMINISTRACION", label: "Administración" },
-  { value: "RECEPCION",      label: "Recepción" },
-  { value: "LIMPIEZA",       label: "Servicio de Limpieza" },
-  { value: "MONITOR",        label: "Monitor" },
-  { value: "DEPORTIVO",      label: "Deporocio" },
-];
-
 export default function RegisterPage() {
   const router = useRouter();
-  const [form, setForm] = useState({ name: "", phone: "", email: "", password: "", department: "" });
+  const [form, setForm] = useState({ name: "", phone: "", email: "", password: "", departmentId: "" });
+  const [departments, setDepartments] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    fetch("/api/public/departments")
+      .then(r => r.json())
+      .then(data => setDepartments(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, []);
   const [error, setError]   = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -28,7 +28,7 @@ export default function RegisterPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.department) { setError("Selecciona un departamento"); return; }
+    if (!form.departmentId) { setError("Selecciona un departamento"); return; }
     setLoading(true);
     setError("");
 
@@ -188,14 +188,14 @@ export default function RegisterPage() {
               </label>
               <select
                 id="department"
-                value={form.department}
-                onChange={e => set("department", e.target.value)}
+                value={form.departmentId}
+                onChange={e => set("departmentId", e.target.value)}
                 required
                 className="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 text-foreground"
               >
                 <option value="" disabled>Selecciona tu departamento…</option>
-                {DEPARTMENTS.map(d => (
-                  <option key={d.value} value={d.value}>{d.label}</option>
+                {departments.map(d => (
+                  <option key={d.id} value={d.id}>{d.name}</option>
                 ))}
               </select>
             </div>

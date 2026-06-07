@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock, FileText, HelpCircle, Radio } from "lucide-react";
 import { LessonCompleteButton } from "@/components/lesson/lesson-complete-button";
 import { LessonComments } from "@/components/lessons/lesson-comments";
+import { BlockRenderer } from "@/components/lesson/block-renderer";
+import { Block } from "@/lib/blocks";
 
 export default async function LessonPage({
   params,
@@ -51,9 +53,10 @@ export default async function LessonPage({
     QUIZ:       <HelpCircle className="w-4 h-4" />,
     LIVE_CLASS: <Radio className="w-4 h-4" />,
     SCORM:      null,
+    CONTENT:    <FileText className="w-4 h-4" />,
   };
   const typeLabel: Record<string, string> = {
-    VIDEO: "Vídeo", PDF: "PDF", QUIZ: "Quiz", LIVE_CLASS: "Directo", SCORM: "SCORM",
+    VIDEO: "Vídeo", PDF: "PDF", QUIZ: "Quiz", LIVE_CLASS: "Directo", SCORM: "SCORM", CONTENT: "Contenido",
   };
 
   return (
@@ -134,7 +137,11 @@ export default async function LessonPage({
         </div>
       )}
 
-      {lesson.description && (
+      {lesson.type === "CONTENT" && lesson.content && (
+        <BlockRenderer blocks={lesson.content as Block[]} />
+      )}
+
+      {lesson.type !== "CONTENT" && lesson.description && (
         <div className="prose prose-sm prose-invert max-w-none">
           <p className="text-sm text-muted-foreground leading-relaxed">{lesson.description}</p>
         </div>

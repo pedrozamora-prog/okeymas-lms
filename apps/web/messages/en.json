@@ -141,6 +141,10 @@
     "myTeam": "My team",
     "progress": "pts to",
     "competencies": "Competencies",
-    "jobRoles": "Job roles"
+    "jobRoles": "Job roles",
+    "prl": "Health & Safety",
+    "auditLogs": "Activity log",
+    "learningPaths": "Training plans",
+    "marketplace": "Marketplace"
   }
 }

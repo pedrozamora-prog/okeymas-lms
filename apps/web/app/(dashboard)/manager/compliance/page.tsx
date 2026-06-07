@@ -15,7 +15,7 @@ export default async function ManagerCompliancePage() {
 
   const manager = await prisma.user.findUnique({
     where: { id: user.id },
-    select: { department: true },
+    select: { departmentId: true },
   });
 
   const requiredCourses = await prisma.course.findMany({
@@ -29,7 +29,7 @@ export default async function ManagerCompliancePage() {
       organizationId: user.organizationId,
       isActive:       true,
       role:           "EMPLOYEE",
-      ...(manager?.department ? { department: manager.department } : {}),
+      ...(manager?.departmentId ? { departmentId: manager.departmentId } : {}),
     },
     select: { id: true, name: true, email: true },
     orderBy: { name: "asc" },

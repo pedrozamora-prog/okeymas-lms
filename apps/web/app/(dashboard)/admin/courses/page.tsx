@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, BookOpen, Users, Layers, Pencil, BarChart2, Eye } from "lucide-react";
+import { Plus, BookOpen, Users, Layers, Pencil, BarChart2, Eye, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BulkEnrollButton } from "./courses-client";
 
@@ -103,6 +103,15 @@ export default async function AdminCoursesPage() {
                         {course.isRequired && (
                           <Badge variant="outline" className="text-[10px] border-amber-400 text-amber-700 bg-amber-50 flex-shrink-0">
                             Obligatorio
+                          </Badge>
+                        )}
+                        {course.isPublic && (
+                          <Badge variant="outline" className="text-[10px] border-purple-400 text-purple-700 bg-purple-50 flex-shrink-0 gap-1 flex items-center">
+                            <ShoppingCart className="w-2.5 h-2.5" />
+                            {course.price
+                              ? `En venta · ${new Intl.NumberFormat("es-ES", { style: "currency", currency: course.currency ?? "EUR", minimumFractionDigits: 0 }).format(course.price / 100)}`
+                              : "En venta"
+                            }
                           </Badge>
                         )}
                       </div>

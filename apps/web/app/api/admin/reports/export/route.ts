@@ -16,13 +16,6 @@ const XLSX = require("xlsx") as {
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
-const DEPT_LABELS: Record<string, string> = {
-  ADMINISTRACION: "Administración",
-  RECEPCION:      "Recepción",
-  LIMPIEZA:       "Limpieza",
-  MONITOR:        "Monitor",
-  DEPORTIVO:      "Deportivo",
-};
 
 const STATUS_LABELS: Record<string, string> = {
   ENROLLED:    "Inscrito",
@@ -46,7 +39,7 @@ export async function GET(req: NextRequest) {
 
   // ── Filtros ──────────────────────────────────────────────────────────────
   const userWhere: Record<string, unknown> = { organizationId: user.organizationId, isActive: true };
-  if (dept) userWhere.department = dept;
+  if (dept) userWhere.departmentId = dept;
 
   const enrollWhere: Record<string, unknown> = {};
   if (from) enrollWhere.gte = new Date(from);
@@ -57,8 +50,8 @@ export async function GET(req: NextRequest) {
   const [employees, courses, enrollments] = await Promise.all([
     prisma.user.findMany({
       where: userWhere,
-      select: { id: true, name: true, email: true, department: true, createdAt: true },
-      orderBy: [{ department: "asc" }, { name: "asc" }],
+      select: { id: true, name: true, email: true, department: { select: { name: true } }, createdAt: true },
+      orderBy: { name: "asc" },
     }),
     prisma.course.findMany({
       where: { organizationId: user.organizationId, status: "PUBLISHED" },
@@ -71,7 +64,7 @@ export async function GET(req: NextRequest) {
         ...enrolledAtFilter,
       },
       include: {
-        user:   { select: { id: true, name: true, email: true, department: true } },
+        user:   { select: { id: true, name: true, email: true, department: { select: { name: true } } } },
         course: { select: { id: true, title: true, isRequired: true } },
       },
     }),
@@ -103,7 +96,7 @@ function generateExcel({ employees, courses, enrollments, now, dateLabel, user }
   ];
 
   for (const emp of employees) {
-    const deptLabel = DEPT_LABELS[emp.department ?? ""] ?? emp.department ?? "—";
+    const deptLabel = emp.department?.name ?? "—";
     const statuses = courses.map((course: any) => {
       const enroll = enrollMap.get(`${emp.id}:${course.id}`);
       if (!enroll) return "Sin inscribir";
@@ -134,7 +127,7 @@ function generateExcel({ employees, courses, enrollments, now, dateLabel, user }
     detailRows.push([
       enroll.user.name,
       enroll.user.email,
-      DEPT_LABELS[enroll.user.department ?? ""] ?? "—",
+      enroll.user.department?.name ?? "—",
       enroll.course.title,
       enroll.course.isRequired ? "Sí" : "No",
       STATUS_LABELS[enroll.status] ?? enroll.status,
@@ -155,7 +148,7 @@ function generateExcel({ employees, courses, enrollments, now, dateLabel, user }
   // ── Hoja 3: Resumen por departamento ──
   const deptStats: Record<string, { total: number; completed: number; overdue: number }> = {};
   for (const enroll of enrollments) {
-    const dept = enroll.user.department ?? "SIN_DEPT";
+    const dept = enroll.user.department?.name ?? "Sin departamento";
     if (!deptStats[dept]) deptStats[dept] = { total: 0, completed: 0, overdue: 0 };
     deptStats[dept].total++;
     if (enroll.status === "COMPLETED") deptStats[dept].completed++;
@@ -165,7 +158,7 @@ function generateExcel({ employees, courses, enrollments, now, dateLabel, user }
   const deptRows = [
     ["Departamento", "Total inscripciones", "Completadas", "Vencidas", "Tasa de finalización"],
     ...Object.entries(deptStats).map(([dept, s]) => [
-      DEPT_LABELS[dept] ?? dept,
+      dept,
       s.total,
       s.completed,
       s.overdue,
@@ -216,7 +209,7 @@ async function generatePDF({ employees, courses, enrollments, now, dateLabel, us
   // Resumen por departamento
   const deptStats: Record<string, { total: number; completed: number }> = {};
   for (const enroll of enrollments) {
-    const dept = enroll.user.department ?? "—";
+    const dept = enroll.user.department?.name ?? "Sin departamento";
     if (!deptStats[dept]) deptStats[dept] = { total: 0, completed: 0 };
     deptStats[dept].total++;
     if (enroll.status === "COMPLETED") deptStats[dept].completed++;
@@ -243,7 +236,7 @@ async function generatePDF({ employees, courses, enrollments, now, dateLabel, us
       ),
       ...Object.entries(deptStats).map(([dept, s]) =>
         createElement(View, { style: styles.tableRow, key: dept },
-          createElement(Text, { style: [styles.td, { flex: 2 }] }, DEPT_LABELS[dept] ?? dept),
+          createElement(Text, { style: [styles.td, { flex: 2 }] }, dept),
           createElement(Text, { style: [styles.td, { flex: 1 }] }, String(s.total)),
           createElement(Text, { style: [styles.td, { flex: 1 }] }, String(s.completed)),
           createElement(Text, { style: [styles.td, { flex: 1 }, s.total > 0 && Math.round((s.completed / s.total) * 100) >= 80 ? styles.statusDone : styles.statusPending] },
@@ -267,7 +260,7 @@ async function generatePDF({ employees, courses, enrollments, now, dateLabel, us
           enroll.status === "EXPIRED"   ? styles.statusOverdue : styles.statusPending;
         return createElement(View, { style: styles.tableRow, key: i },
           createElement(Text, { style: [styles.td, { flex: 2 }] }, enroll.user.name),
-          createElement(Text, { style: [styles.td, { flex: 1.5 }] }, DEPT_LABELS[enroll.user.department ?? ""] ?? "—"),
+          createElement(Text, { style: [styles.td, { flex: 1.5 }] }, enroll.user.department?.name ?? "—"),
           createElement(Text, { style: [styles.td, { flex: 2 }] }, enroll.course.title),
           createElement(Text, { style: [styles.td, { flex: 1 }, statusStyle] }, STATUS_LABELS[enroll.status] ?? enroll.status),
           createElement(Text, { style: [styles.td, { flex: 1 }] },

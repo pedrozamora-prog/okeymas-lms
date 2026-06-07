@@ -2,6 +2,21 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth();
+  const user = session?.user as { id: string; role: string } | undefined;
+  if (!user || !["SUPER_ADMIN", "BRANCH_ADMIN", "INSTRUCTOR"].includes(user.role)) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 403 });
+  }
+  const { id } = await params;
+  const lesson = await prisma.lesson.findUnique({
+    where:   { id },
+    include: { module: { include: { course: { select: { title: true } } } } },
+  });
+  if (!lesson) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
+  return NextResponse.json(lesson);
+}
+
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   const user = session?.user as { id: string; role: string } | undefined;
@@ -23,6 +38,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       ...(body.duration !== undefined && { duration: body.duration ? Number(body.duration) : null }),
       ...(body.isRequired !== undefined && { isRequired: body.isRequired }),
       ...(body.order !== undefined && { order: body.order }),
+      ...(body.content !== undefined && { content: body.content }),
     },
   });
 

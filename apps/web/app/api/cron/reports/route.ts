@@ -6,14 +6,6 @@ import { sendComplianceReportEmail, ComplianceReportData, OrgEmailConfig } from 
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
-const DEPT_LABELS: Record<string, string> = {
-  ADMINISTRACION: "Administración",
-  RECEPCION:      "Recepción",
-  LIMPIEZA:       "Limpieza",
-  MONITOR:        "Monitor",
-  DEPORTIVO:      "Deportivo",
-};
-
 // Vercel Cron llama a esta ruta cada día a las 7:00 AM
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
@@ -56,7 +48,7 @@ export async function GET(req: NextRequest) {
     const [employees, requiredCourses] = await Promise.all([
       prisma.user.findMany({
         where:   { organizationId: org.id, isActive: true, role: "EMPLOYEE" },
-        select:  { id: true, name: true, department: true },
+        select:  { id: true, name: true, department: { select: { name: true } } },
       }),
       prisma.course.findMany({
         where:   { organizationId: org.id, isRequired: true, status: "PUBLISHED" },
@@ -90,18 +82,24 @@ export async function GET(req: NextRequest) {
     });
 
     // Por departamento
-    const departments = Object.entries(DEPT_LABELS).map(([key, label]) => {
-      const deptEmps    = employees.filter(e => e.department === key);
-      const deptEnrolls = enrollments.filter(e => deptEmps.some(emp => emp.id === e.userId));
-      const deptDone    = deptEnrolls.filter(e => e.status === "COMPLETED").length;
-      const deptTotal   = deptEmps.length * requiredCourses.length;
-      return {
-        name:      label,
-        total:     deptEmps.length,
-        completed: deptDone,
-        pct:       deptTotal > 0 ? Math.round((deptDone / deptTotal) * 100) : 100,
-      };
-    }).filter(d => d.total > 0);
+    const deptMap: Record<string, { total: number; completed: number }> = {};
+    for (const emp of employees) {
+      const deptName = emp.department?.name ?? "Sin departamento";
+      if (!deptMap[deptName]) deptMap[deptName] = { total: 0, completed: 0 };
+      deptMap[deptName].total++;
+    }
+    for (const enroll of enrollments) {
+      if (enroll.status !== "COMPLETED") continue;
+      const emp = employees.find(e => e.id === enroll.userId);
+      const deptName = emp?.department?.name ?? "Sin departamento";
+      if (deptMap[deptName]) deptMap[deptName].completed++;
+    }
+    const departments = Object.entries(deptMap).map(([name, s]) => ({
+      name,
+      total:     s.total,
+      completed: s.completed,
+      pct:       s.total > 0 ? Math.round((s.completed / (s.total * requiredCourses.length)) * 100) : 100,
+    })).filter(d => d.total > 0);
 
     // En riesgo con nombre
     const empMap = new Map(employees.map(e => [e.id, e.name]));

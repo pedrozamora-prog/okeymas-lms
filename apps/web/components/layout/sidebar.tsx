@@ -23,6 +23,7 @@ import {
   X,
   LibraryBig,
   ShieldCheck,
+  HardHat,
   Zap,
   Building2,
   AlertTriangle,
@@ -34,6 +35,7 @@ import {
   GitBranch,
   Store,
   CreditCard,
+  Plug,
 } from "lucide-react";
 
 interface NavItem {
@@ -58,6 +60,7 @@ const adminItems: NavItem[] = [
   { href: "/admin/courses",          labelKey: "admin.manageCourses", labelFallback: "Gestión cursos",    icon: LibraryBig,      roles: ["SUPER_ADMIN", "BRANCH_ADMIN", "INSTRUCTOR"] },
   { href: "/admin/certificates",     labelKey: "nav.certificates",    labelFallback: "Certificados",      icon: Award,           roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/compliance",       labelKey: "admin.compliance",    labelFallback: "Cumplimiento",      icon: ShieldCheck,     roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/prl",              labelKey: "admin.prl",           labelFallback: "PRL / Seguridad",   icon: HardHat,         roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/alerts",           labelKey: "admin.riskAlerts",    labelFallback: "Alertas de riesgo", icon: AlertTriangle,   roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/enrollment-rules", labelKey: "admin.autoEnroll",    labelFallback: "Auto-inscripción",  icon: Zap,             roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/users",            labelKey: "admin.users",         labelFallback: "Usuarios",          icon: Users,           roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
@@ -65,12 +68,15 @@ const adminItems: NavItem[] = [
   { href: "/admin/competencies",     labelKey: "admin.competencies",  labelFallback: "Competencias",      icon: Target,          roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/job-roles",        labelKey: "admin.jobRoles",      labelFallback: "Puestos de trabajo",icon: Briefcase,       roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/learning-paths",   labelKey: "admin.learningPaths", labelFallback: "Rutas de aprendizaje", icon: GitBranch,   roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/departments",        labelKey: "",                    labelFallback: "Departamentos",     icon: Building2,       roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/integrations",      labelKey: "",                    labelFallback: "Integraciones HRIS",icon: Plug,            roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/marketplace",       labelKey: "admin.marketplace",   labelFallback: "Marketplace",       icon: Store,           roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/billing",           labelKey: "",                    labelFallback: "Facturación",        icon: CreditCard,      roles: ["SUPER_ADMIN"] },
   { href: "/admin/audit-logs",       labelKey: "admin.auditLogs",     labelFallback: "Logs de auditoría", icon: ScrollText,      roles: ["SUPER_ADMIN"] },
   { href: "/admin/settings",         labelKey: "admin.settings",      labelFallback: "Configuración",     icon: Settings,        roles: ["SUPER_ADMIN"] },
-  { href: "/superadmin",             labelKey: "",                    labelFallback: "Super Admin",       icon: Building2,       roles: ["SUPER_ADMIN"] },
-  { href: "/superadmin/marketplace", labelKey: "",                   labelFallback: "Gestión marketplace",icon: Store,           roles: ["SUPER_ADMIN"] },
+  { href: "/__divider_formia__",     labelKey: "",                    labelFallback: "──── Formia ────",  icon: Building2,       roles: ["SUPER_ADMIN"] },
+  { href: "/superadmin",             labelKey: "",                    labelFallback: "Organizaciones",    icon: Building2,       roles: ["SUPER_ADMIN"] },
+  { href: "/superadmin/marketplace", labelKey: "",                   labelFallback: "Publicar al marketplace", icon: Store,      roles: ["SUPER_ADMIN"] },
   { href: "/manager/team",           labelKey: "admin.myTeam",        labelFallback: "Mi equipo",         icon: Users,           roles: ["MANAGER"] },
   { href: "/manager/compliance",     labelKey: "admin.compliance",    labelFallback: "Cumplimiento",      icon: ShieldCheck,     roles: ["MANAGER"] },
   { href: "/manager/reports",        labelKey: "admin.reports",       labelFallback: "Informes",          icon: BarChart3,       roles: ["MANAGER"] },
@@ -264,6 +270,16 @@ function SidebarLink({ item, pathname, index = 0, open = true, t }: {
   open?: boolean;
   t: (key: string) => string;
 }) {
+  if (item.href.startsWith("/__divider_")) {
+    return (
+      <div className="pt-4 pb-1 px-3">
+        <p className="text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-widest">
+          {item.labelFallback}
+        </p>
+      </div>
+    );
+  }
+
   const isActive =
     pathname === item.href ||
     (item.href !== "/dashboard" && pathname.startsWith(item.href));

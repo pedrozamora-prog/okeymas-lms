@@ -23,7 +23,7 @@ export default async function CompliancePage() {
   // Empleados activos
   const employees = await prisma.user.findMany({
     where: { organizationId: user.organizationId, isActive: true, role: "EMPLOYEE" },
-    select: { id: true, name: true, email: true, department: true, createdAt: true },
+    select: { id: true, name: true, email: true, department: { select: { name: true } }, createdAt: true },
     orderBy: { name: "asc" },
   });
 

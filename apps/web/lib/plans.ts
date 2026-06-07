@@ -28,7 +28,7 @@ export const PLAN_CONFIG: Record<string, PlanConfig> = {
     maxUsers:   50,
     maxCourses: 5,
     features: {
-      marketplace:      false,
+      marketplace:      true,
       sso:              false,
       branchingPaths:   false,
       digitalSignature: false,

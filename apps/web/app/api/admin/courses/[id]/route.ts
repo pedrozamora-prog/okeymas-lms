@@ -20,30 +20,53 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const check = await authorize(id, user.id, user.role, user.organizationId);
   if (check.error) return NextResponse.json({ error: check.error }, { status: check.status });
 
-  const body = await req.json();
+  let body: Record<string, unknown>;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "JSON inválido" }, { status: 400 });
+  }
+
   const { title, description, thumbnailUrl, status, isRequired, daysToComplete, order,
           departments,
           certificateEnabled, certificateType, certificateValidityDays,
-          certSignerName, certSignerTitle } = body;
+          certSignerName, certSignerTitle, signatureEnabled,
+          isPrl, prlRiskLevel,
+          isPublic, price, currency } = body as Record<string, unknown>;
 
-  const updated = await prisma.course.update({
-    where: { id },
-    data: {
-      ...(title !== undefined && { title: title.trim() }),
-      ...(description !== undefined && { description: description?.trim() || null }),
-      ...(thumbnailUrl !== undefined && { thumbnailUrl: thumbnailUrl?.trim() || null }),
-      ...(status !== undefined && { status }),
-      ...(isRequired !== undefined && { isRequired }),
-      ...(daysToComplete !== undefined && { daysToComplete: daysToComplete ?? null }),
-      ...(order !== undefined && { order }),
-      ...(departments !== undefined && { departments }),
-      ...(certificateEnabled !== undefined && { certificateEnabled }),
-      ...(certificateType !== undefined && { certificateType }),
-      ...(certificateValidityDays !== undefined && { certificateValidityDays: certificateValidityDays ?? null }),
-      ...(certSignerName  !== undefined && { certSignerName:  certSignerName  ?? null }),
-      ...(certSignerTitle !== undefined && { certSignerTitle: certSignerTitle ?? null }),
-    },
-  });
+  let updated;
+  try {
+    updated = await prisma.course.update({
+      where: { id },
+      data: {
+        ...(title !== undefined && { title: (title as string).trim() }),
+        ...(description !== undefined && { description: (description as string)?.trim() || null }),
+        ...(thumbnailUrl !== undefined && { thumbnailUrl: (thumbnailUrl as string)?.trim() || null }),
+        ...(status !== undefined && { status: status as string }),
+        ...(isRequired !== undefined && { isRequired: isRequired as boolean }),
+        ...(daysToComplete !== undefined && { daysToComplete: (daysToComplete as number) ?? null }),
+        ...(order !== undefined && { order: order as number }),
+        ...(departments !== undefined && {
+          departments: { set: (departments as string[]).map(id => ({ id })) },
+        }),
+        ...(certificateEnabled !== undefined && { certificateEnabled: certificateEnabled as boolean }),
+        ...(certificateType !== undefined && { certificateType: certificateType as string }),
+        ...(certificateValidityDays !== undefined && { certificateValidityDays: (certificateValidityDays as number) ?? null }),
+        ...(certSignerName  !== undefined && { certSignerName:  (certSignerName  as string) ?? null }),
+        ...(certSignerTitle !== undefined && { certSignerTitle: (certSignerTitle as string) ?? null }),
+        ...(signatureEnabled !== undefined && { signatureEnabled: signatureEnabled as boolean }),
+        ...(isPrl !== undefined && { isPrl: isPrl as boolean }),
+        ...(prlRiskLevel !== undefined && { prlRiskLevel: (prlRiskLevel as string) ?? null }),
+        ...(isPublic !== undefined && { isPublic: isPublic as boolean }),
+        ...(price !== undefined && { price: (price as number) ?? null }),
+        ...(currency !== undefined && { currency: (currency as string) ?? "eur" }),
+      },
+    });
+  } catch (err) {
+    console.error("[PATCH /api/admin/courses]", err);
+    const msg = err instanceof Error ? err.message : "Error al guardar el curso";
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 
   const auditAction = status === "PUBLISHED" ? "COURSE_PUBLISHED"
     : status === "ARCHIVED" ? "COURSE_ARCHIVED"

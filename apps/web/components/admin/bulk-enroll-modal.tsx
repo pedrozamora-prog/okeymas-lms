@@ -15,21 +15,15 @@ import {
 } from "lucide-react";
 
 /* ── Constantes ── */
-const DEPARTMENTS = [
-  { value: "ADMINISTRACION", label: "Administración", emoji: "🗂️" },
-  { value: "RECEPCION",      label: "Recepción",      emoji: "🛎️" },
-  { value: "LIMPIEZA",       label: "Limpieza",       emoji: "🧹" },
-  { value: "MONITOR",        label: "Monitor",        emoji: "🏋️" },
-  { value: "DEPORTIVO",      label: "Deportivo",      emoji: "⚽" },
-];
+interface DeptOption { id: string; name: string; }
 
 /* ── Tipos ── */
 interface UserPreview {
-  id:         string;
-  name:       string;
-  email:      string;
-  department: string | null;
-  enrolled:   boolean;
+  id:           string;
+  name:         string;
+  email:        string;
+  departmentId: string | null;
+  enrolled:     boolean;
 }
 interface Props {
   open:       boolean;
@@ -45,11 +39,19 @@ export function BulkEnrollModal({ open, onClose, onEnrolled, courseId, courseTit
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [deadline,      setDeadline]      = useState("");
   const [notify,        setNotify]        = useState(true);
+  const [deptOptions,   setDeptOptions]   = useState<DeptOption[]>([]);
 
   const [users,         setUsers]         = useState<UserPreview[]>([]);
   const [loadingUsers,  setLoadingUsers]  = useState(false);
   const [search,        setSearch]        = useState("");
   const [enrolling,     setEnrolling]     = useState(false);
+
+  useEffect(() => {
+    fetch("/api/admin/departments")
+      .then(r => r.json())
+      .then(data => setDeptOptions(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, []);
 
   /* ── Cargar preview de usuarios cuando cambian los filtros ── */
   const loadUsers = useCallback(async () => {
@@ -203,27 +205,29 @@ export function BulkEnrollModal({ open, onClose, onEnrolled, courseId, courseTit
                 Selecciona uno o varios departamentos. Se inscribirán todos sus empleados activos.
               </p>
               <div className="grid grid-cols-1 gap-2">
-                {DEPARTMENTS.map(dept => {
-                  const deptUsers  = users.filter(u => u.department === dept.value);
+                {deptOptions.length === 0 && (
+                  <p className="text-xs text-muted-foreground">Cargando departamentos…</p>
+                )}
+                {deptOptions.map(dept => {
+                  const deptUsers  = users.filter(u => u.departmentId === dept.id);
                   const newCount   = deptUsers.filter(u => !u.enrolled).length;
                   const doneCount  = deptUsers.filter(u => u.enrolled).length;
-                  const selected   = selectedDepts.includes(dept.value);
+                  const selected   = selectedDepts.includes(dept.id);
 
                   return (
                     <button
-                      key={dept.value}
+                      key={dept.id}
                       type="button"
-                      onClick={() => toggleDept(dept.value)}
+                      onClick={() => toggleDept(dept.id)}
                       className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all text-left ${
                         selected
                           ? "border-primary bg-primary/5"
                           : "border-border hover:border-muted-foreground/40"
                       }`}
                     >
-                      <span className="text-2xl flex-shrink-0">{dept.emoji}</span>
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm font-semibold ${selected ? "text-primary" : "text-foreground"}`}>
-                          {dept.label}
+                          {dept.name}
                         </p>
                         <p className="text-[11px] text-muted-foreground">
                           {deptUsers.length} empleado{deptUsers.length !== 1 ? "s" : ""}

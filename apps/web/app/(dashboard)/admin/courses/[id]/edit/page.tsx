@@ -32,6 +32,7 @@ export default async function EditCoursePage({ params }: { params: Promise<{ id:
   const course = await prisma.course.findUnique({
     where: { id },
     include: {
+      departments: { select: { id: true } },
       modules: {
         include: { lessons: { orderBy: { order: "asc" } } },
         orderBy: { order: "asc" },
@@ -86,13 +87,18 @@ export default async function EditCoursePage({ params }: { params: Promise<{ id:
               status: course.status,
               isRequired: course.isRequired,
               order: course.order,
-              departments: course.departments as string[],
+              departments: course.departments.map(d => d.id),
               certificateEnabled: course.certificateEnabled,
               certificateType: course.certificateType,
               certificateValidityDays: course.certificateValidityDays,
               certSignerName: course.certSignerName,
               certSignerTitle: course.certSignerTitle,
               signatureEnabled: course.signatureEnabled,
+              isPrl: course.isPrl,
+              prlRiskLevel: course.prlRiskLevel,
+              isPublic: course.isPublic,
+              price: course.price,
+              currency: course.currency,
             }}
           />
         </section>

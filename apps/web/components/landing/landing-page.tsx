@@ -62,7 +62,7 @@ const PLANS = [
     monthly: 159,
     annual: 127,
     desc: "Para gimnasios independientes listos para digitalizar",
-    features: ["Hasta 200 miembros", "Cursos ilimitados", "Quiz con nota mínima configurable", "Certificados automáticos PDF", "Facturación Stripe", "Soporte por chat"],
+    features: ["Hasta 200 miembros", "Cursos ilimitados", "Quiz avanzado con branching", "Certificados con QR verificable", "Auto-inscripción por departamento", "Facturación Stripe", "Soporte por chat"],
     featured: false,
     cta: "Empezar gratis",
     href: "/register",
@@ -72,7 +72,7 @@ const PLANS = [
     monthly: 319,
     annual: 255,
     desc: "Para gimnasios en crecimiento que quieren escalar",
-    features: ["Hasta 1,000 miembros", "Todo en Inicio", "Itinerarios de aprendizaje", "Firma digital en certificados", "Analytics avanzado", "App móvil branded", "Soporte prioritario"],
+    features: ["Hasta 1,000 miembros", "Todo en Inicio", "Itinerarios de aprendizaje", "Firma digital en certificados", "Módulo PRL / Seguridad laboral", "Analytics avanzado", "App móvil branded", "Soporte prioritario"],
     featured: true,
     cta: "Empezar gratis",
     badge: "Más popular",
@@ -83,7 +83,7 @@ const PLANS = [
     monthly: 549,
     annual: 439,
     desc: "Para cadenas multi-sede que necesitan control total",
-    features: ["Miembros ilimitados", "Múltiples sedes", "White label completo", "API & Webhooks", "SSO / SAML", "Audit logs completos", "Manager dedicado"],
+    features: ["Miembros ilimitados", "Múltiples sedes", "White label completo", "API & Webhooks", "SSO / SAML", "Audit logs completos", "Alertas de riesgo automatizadas", "Manager dedicado"],
     featured: false,
     cta: "Hablar con ventas",
     href: "/contact",
@@ -673,7 +673,7 @@ export function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
           <div className="flex flex-col sm:flex-row justify-between items-start gap-10 sm:gap-12 mb-10 sm:mb-12">
             <div className="flex flex-col gap-3 sm:gap-4 max-w-xs">
-              <Image src="/logo-light.png" alt="Formia" width={460} height={116} className="h-28 w-auto object-contain object-left" />
+              <Image src="/logo-light.png" alt="Formia" width={460} height={116} className="h-36 w-auto object-contain object-left" />
               <p className="text-sm text-white/30 leading-relaxed">El LMS diseñado específicamente para gimnasios modernos. Crea, vende y fideliza con una sola plataforma.</p>
               <div className="flex gap-2.5 sm:gap-3">
                 <a href="#" aria-label="X" className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border border-white/10 flex items-center justify-center text-white/30 hover:text-white hover:border-white/30 transition-all">

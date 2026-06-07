@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-explicit-any
 const XLSX = require("xlsx") as any;
@@ -24,14 +24,7 @@ const ROLES = [
   { value: "MANAGER",      label: "Mánager",      desc: "Ve el progreso de su equipo" },
   { value: "BRANCH_ADMIN", label: "Administrador",desc: "Gestión completa de la org" },
 ];
-const DEPARTMENTS = [
-  { value: "",               label: "Sin departamento" },
-  { value: "ADMINISTRACION", label: "Administración" },
-  { value: "RECEPCION",      label: "Recepción" },
-  { value: "LIMPIEZA",       label: "Limpieza" },
-  { value: "MONITOR",        label: "Monitor" },
-  { value: "DEPORTIVO",      label: "Deportivo" },
-];
+interface DeptOption { id: string; name: string; }
 
 /* ── Tipos ── */
 interface ParsedRow {
@@ -85,23 +78,16 @@ function parseFile(file: File): Promise<ParsedRow[]> {
           manager: "MANAGER", mánager: "MANAGER",
           administrador: "BRANCH_ADMIN", admin: "BRANCH_ADMIN", "branch_admin": "BRANCH_ADMIN",
         };
-        const DEPT_MAP: Record<string,string> = {
-          administración: "ADMINISTRACION", administracion: "ADMINISTRACION",
-          recepción: "RECEPCION", recepcion: "RECEPCION",
-          limpieza: "LIMPIEZA",
-          monitor: "MONITOR",
-          deportivo: "DEPORTIVO",
-        };
-
+        // Department matching by name (case-insensitive) — resolved to ID later
         const parsed: ParsedRow[] = rows
           .map(row => {
             const email = String(row[emailIdx] ?? "").trim().toLowerCase();
             const rawRole = roleIdx >= 0 ? String(row[roleIdx] ?? "").trim().toLowerCase() : "";
-            const rawDept = deptIdx >= 0 ? String(row[deptIdx] ?? "").trim().toLowerCase() : "";
+            const rawDept = deptIdx >= 0 ? String(row[deptIdx] ?? "").trim() : "";
             return {
               email,
               role:       ROLE_MAP[rawRole]  ?? "EMPLOYEE",
-              department: DEPT_MAP[rawDept]  ?? "",
+              department: rawDept, // kept as name string; resolved to ID on send
               valid:      EMAIL_RE.test(email),
             };
           })
@@ -119,10 +105,19 @@ function parseFile(file: File): Promise<ParsedRow[]> {
 
 /* ── Componente ── */
 export function InviteUserModal({ open, onClose, onSent }: Props) {
+  /* Departments fetched from API */
+  const [deptOptions, setDeptOptions] = useState<DeptOption[]>([]);
+  useEffect(() => {
+    fetch("/api/admin/departments")
+      .then(r => r.json())
+      .then(data => setDeptOptions(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, []);
+
   /* Tab manual */
   const [emails,     setEmails]     = useState<string[]>([""]);
   const [role,       setRole]       = useState("EMPLOYEE");
-  const [department, setDepartment] = useState("");
+  const [department, setDepartment] = useState(""); // stores dept ID
 
   /* Tab importar */
   const [parsedRows,  setParsedRows]  = useState<ParsedRow[]>([]);
@@ -196,7 +191,11 @@ export function InviteUserModal({ open, onClose, onSent }: Props) {
   async function sendImport() {
     const validRows = parsedRows.filter(r => r.valid);
     if (validRows.length === 0) { toast.error("No hay emails válidos para enviar"); return; }
-    await doSend(validRows.map(r => ({ email: r.email, role: r.role, department: r.department || undefined })));
+    // Resolve department name → ID
+    await doSend(validRows.map(r => {
+      const found = deptOptions.find(d => d.name.toLowerCase() === r.department.toLowerCase());
+      return { email: r.email, role: r.role, department: found?.id || undefined };
+    }));
   }
 
   /* ── Envío compartido ── */
@@ -304,10 +303,15 @@ export function InviteUserModal({ open, onClose, onSent }: Props) {
               <div className="space-y-2">
                 <Label>Departamento <span className="text-muted-foreground font-normal">(opcional)</span></Label>
                 <div className="flex flex-wrap gap-2">
-                  {DEPARTMENTS.map(d => (
-                    <button key={d.value} type="button" onClick={() => setDepartment(d.value)} className="focus:outline-none">
-                      <Badge variant="outline" className={`cursor-pointer transition-colors text-xs px-3 py-1 ${department === d.value ? "border-primary bg-primary/10 text-primary" : "hover:border-muted-foreground/40"}`}>
-                        {d.label}
+                  <button type="button" onClick={() => setDepartment("")} className="focus:outline-none">
+                    <Badge variant="outline" className={`cursor-pointer transition-colors text-xs px-3 py-1 ${department === "" ? "border-primary bg-primary/10 text-primary" : "hover:border-muted-foreground/40"}`}>
+                      Sin departamento
+                    </Badge>
+                  </button>
+                  {deptOptions.map(d => (
+                    <button key={d.id} type="button" onClick={() => setDepartment(d.id)} className="focus:outline-none">
+                      <Badge variant="outline" className={`cursor-pointer transition-colors text-xs px-3 py-1 ${department === d.id ? "border-primary bg-primary/10 text-primary" : "hover:border-muted-foreground/40"}`}>
+                        {d.name}
                       </Badge>
                     </button>
                   ))}
@@ -419,13 +423,16 @@ export function InviteUserModal({ open, onClose, onSent }: Props) {
                             </select>
                           </td>
                           <td className="px-3 py-1.5">
-                            <select
+                            <input
                               value={row.department}
                               onChange={e => updateRow(i, "department", e.target.value)}
-                              className="bg-transparent text-xs text-foreground outline-none"
-                            >
-                              {DEPARTMENTS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
-                            </select>
+                              placeholder="nombre"
+                              className="bg-transparent text-xs text-foreground outline-none w-24"
+                              list={`dept-list-${i}`}
+                            />
+                            <datalist id={`dept-list-${i}`}>
+                              {deptOptions.map(d => <option key={d.id} value={d.name} />)}
+                            </datalist>
                           </td>
                           <td className="px-3 py-1.5">
                             <button onClick={() => removeRow(i)} className="text-muted-foreground hover:text-red-400 transition-colors">

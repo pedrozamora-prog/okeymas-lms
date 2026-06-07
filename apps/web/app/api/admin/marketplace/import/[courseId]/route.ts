@@ -49,10 +49,9 @@ export async function POST(_req: Request, { params }: { params: Promise<{ course
       title:              source.title,
       description:        source.description,
       thumbnailUrl:       source.thumbnailUrl,
-      status:             "DRAFT", // imported as draft so admin can review
+      status:             "DRAFT",
       isRequired:         source.isRequired,
       daysToComplete:     source.daysToComplete,
-      departments:        source.departments,
       certificateEnabled: source.certificateEnabled,
       certificateType:    source.certificateType,
       certificateValidityDays: source.certificateValidityDays,
@@ -79,6 +78,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ course
           duration:    lesson.duration,
           order:       lesson.order,
           isRequired:  lesson.isRequired,
+          content:     lesson.content ?? undefined,
           moduleId:    clonedMod.id,
         },
       });

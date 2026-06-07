@@ -141,6 +141,10 @@
     "myTeam": "Mon équipe",
     "progress": "pts pour",
     "competencies": "Compétences",
-    "jobRoles": "Postes de travail"
+    "jobRoles": "Postes de travail",
+    "prl": "Sécurité au travail",
+    "auditLogs": "Journal d'activité",
+    "learningPaths": "Plans de formation",
+    "marketplace": "Marketplace"
   }
 }
