@@ -20,17 +20,17 @@ export default async function CoursesPage() {
       where: {
         organizationId: user.organizationId,
         status: "PUBLISHED",
-        // Empleados: solo cursos de su departamento o cursos globales (sin restricción)
+        // Empleados: solo cursos de su departamento o cursos globales (sin restricción de dept)
         ...(isEmployee && user.department ? {
           OR: [
-            { departments: { isEmpty: true } },
-            { departments: { has: user.department as never } },
+            { departments: { none: {} } },
+            { departments: { some: { id: user.department } } },
           ],
         } : {}),
       },
       select: {
         id: true, title: true, description: true, thumbnailUrl: true,
-        isRequired: true, departments: true,
+        isRequired: true, departments: { select: { id: true, name: true } },
         modules: { include: { lessons: { select: { id: true } } } },
         _count: { select: { enrollments: true } },
       },
