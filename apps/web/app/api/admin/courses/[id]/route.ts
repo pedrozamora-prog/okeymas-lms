@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { createAuditLog } from "@/lib/audit";
-import { CourseStatus } from "@prisma/client";
+import { CourseStatus, CertificateType } from "@prisma/client";
 
 async function authorize(courseId: string, userId: string, role: string, orgId: string) {
   const course = await prisma.course.findUnique({ where: { id: courseId } });
@@ -51,7 +51,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
           departments: { set: (departments as string[]).map(id => ({ id })) },
         }),
         ...(certificateEnabled !== undefined && { certificateEnabled: certificateEnabled as boolean }),
-        ...(certificateType !== undefined && { certificateType: certificateType as string }),
+        ...(certificateType !== undefined && { certificateType: certificateType as CertificateType }),
         ...(certificateValidityDays !== undefined && { certificateValidityDays: (certificateValidityDays as number) ?? null }),
         ...(certSignerName  !== undefined && { certSignerName:  (certSignerName  as string) ?? null }),
         ...(certSignerTitle !== undefined && { certSignerTitle: (certSignerTitle as string) ?? null }),
