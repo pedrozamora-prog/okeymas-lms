@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { createAuditLog } from "@/lib/audit";
+import { CourseStatus } from "@prisma/client";
 
 async function authorize(courseId: string, userId: string, role: string, orgId: string) {
   const course = await prisma.course.findUnique({ where: { id: courseId } });
@@ -42,7 +43,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         ...(title !== undefined && { title: (title as string).trim() }),
         ...(description !== undefined && { description: (description as string)?.trim() || null }),
         ...(thumbnailUrl !== undefined && { thumbnailUrl: (thumbnailUrl as string)?.trim() || null }),
-        ...(status !== undefined && { status: status as string }),
+        ...(status !== undefined && { status: status as CourseStatus }),
         ...(isRequired !== undefined && { isRequired: isRequired as boolean }),
         ...(daysToComplete !== undefined && { daysToComplete: (daysToComplete as number) ?? null }),
         ...(order !== undefined && { order: order as number }),
