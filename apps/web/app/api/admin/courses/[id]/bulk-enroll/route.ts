@@ -21,7 +21,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!course) return NextResponse.json({ error: "Curso no encontrado" }, { status: 404 });
 
   const body = await req.json();
-  const departments: Department[] = body.departments ?? [];
+  const departments: string[] = body.departments ?? [];
   const userIds:     string[]     = body.userIds     ?? [];
   const deadline:    Date | null  = body.deadline ? new Date(body.deadline) : null;
   const notify:      boolean      = body.notify !== false; // true por defecto
@@ -36,7 +36,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       organizationId: admin.organizationId,
       isActive: true,
       OR: [
-        ...(departments.length > 0 ? [{ department: { in: departments } }] : []),
+        ...(departments.length > 0 ? [{ departmentId: { in: departments } }] : []),
         ...(userIds.length > 0     ? [{ id: { in: userIds } }]             : []),
       ],
     },

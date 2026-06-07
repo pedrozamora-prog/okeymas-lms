@@ -30,7 +30,9 @@ export async function POST(req: Request) {
       isRequired: isRequired ?? false,
       daysToComplete: daysToComplete ?? null,
       order: order ?? 0,
-      departments: departments ?? [],
+      ...(Array.isArray(departments) && departments.length > 0 && {
+        departments: { connect: (departments as string[]).map(id => ({ id })) },
+      }),
       status: "DRAFT",
       organizationId: user.organizationId,
     },

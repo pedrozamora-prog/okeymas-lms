@@ -36,7 +36,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
               createAuditLog({ action: "USER_LOGIN", userId: user.id, organizationId: user.organizationId, entity: "User", entityId: user.id, metadata: { method: "SSO" } })
             );
 
-            return { id: user.id, name: user.name, email: user.email, image: user.image, role: user.role, department: user.department, organizationId: user.organizationId, organizationName: user.organization.name };
+            return { id: user.id, name: user.name, email: user.email, image: user.image, role: user.role, department: user.departmentId, organizationId: user.organizationId, organizationName: user.organization.name };
           }
 
           // ── Password flow ───────────────────────────────────────────────
@@ -59,7 +59,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             createAuditLog({ action: "USER_LOGIN", userId: user.id, organizationId: user.organizationId, entity: "User", entityId: user.id })
           );
 
-          return { id: user.id, name: user.name, email: user.email, image: user.image, role: user.role, department: user.department, organizationId: user.organizationId, organizationName: user.organization.name };
+          return { id: user.id, name: user.name, email: user.email, image: user.image, role: user.role, department: user.departmentId, organizationId: user.organizationId, organizationName: user.organization.name };
         } catch (err) {
           console.error("[AUTH] error:", err);
           return null;
