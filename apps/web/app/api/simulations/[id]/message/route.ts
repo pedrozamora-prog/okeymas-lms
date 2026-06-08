@@ -7,13 +7,13 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 const MAX_TURNS = 15;
 
-export async function POST(req: NextRequest, { params }: { params: Promise<{ attemptId: string }> }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   const user = session?.user as { id?: string } | undefined;
   if (!user?.id) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
-  const { attemptId } = await params;
-  const { message }   = await req.json();
+  const { id: attemptId } = await params;
+  const { message }       = await req.json();
   if (!message?.trim()) return NextResponse.json({ error: "Mensaje vacío" }, { status: 400 });
 
   const attempt = await (prisma as any).simulationAttempt.findFirst({
@@ -28,11 +28,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ att
     return NextResponse.json({ error: "Límite de turnos alcanzado" }, { status: 400 });
   }
 
-  // Add employee message
-  const employeeMsg = { role: "employee", content: message.trim(), ts: new Date().toISOString() };
-  transcript.push(employeeMsg);
+  transcript.push({ role: "employee", content: message.trim(), ts: new Date().toISOString() });
 
-  // Build Gemini chat history
   const systemPrompt = `${attempt.scenario.customerContext}
 
 INSTRUCCIONES DE ROL:
@@ -44,24 +41,18 @@ INSTRUCCIONES DE ROL:
 - Respuestas cortas y directas (2-4 frases máximo).`;
 
   const history = transcript
-    .slice(0, -1) // exclude last employee message (will be sent as current)
+    .slice(0, -1)
     .map((m: { role: string; content: string }) => ({
       role:  m.role === "employee" ? "user" : "model",
       parts: [{ text: m.content }],
     }));
 
-  const model = genAI.getGenerativeModel({
-    model:             "gemini-2.0-flash",
-    systemInstruction: systemPrompt,
-  });
-
+  const model  = genAI.getGenerativeModel({ model: "gemini-2.0-flash", systemInstruction: systemPrompt });
   const chat   = model.startChat({ history });
   const result = await chat.sendMessage(message.trim());
   const reply  = result.response.text();
 
-  // Add customer reply
-  const customerMsg = { role: "customer", content: reply, ts: new Date().toISOString() };
-  transcript.push(customerMsg);
+  transcript.push({ role: "customer", content: reply, ts: new Date().toISOString() });
 
   await (prisma as any).simulationAttempt.update({
     where: { id: attemptId },

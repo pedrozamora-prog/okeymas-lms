@@ -5,12 +5,12 @@ import { NextResponse } from "next/server";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-export async function POST(_req: Request, { params }: { params: Promise<{ attemptId: string }> }) {
+export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   const user = session?.user as { id?: string } | undefined;
   if (!user?.id) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
-  const { attemptId } = await params;
+  const { id: attemptId } = await params;
 
   const attempt = await (prisma as any).simulationAttempt.findFirst({
     where:   { id: attemptId, userId: user.id, completedAt: null },
@@ -23,7 +23,6 @@ export async function POST(_req: Request, { params }: { params: Promise<{ attemp
     return NextResponse.json({ error: "Conversación demasiado corta para evaluar" }, { status: 400 });
   }
 
-  // Format transcript for evaluator
   const conversationText = transcript
     .map((m: { role: string; content: string }) =>
       `${m.role === "employee" ? "EMPLEADO" : "CLIENTE"}: ${m.content}`
@@ -66,14 +65,9 @@ Solo JSON, sin texto adicional.`;
     }
   } catch { /* keep defaults */ }
 
-  const updated = await (prisma as any).simulationAttempt.update({
+  await (prisma as any).simulationAttempt.update({
     where: { id: attemptId },
-    data: {
-      score,
-      feedback:    (evaluation.summary as string) ?? null,
-      evaluation,
-      completedAt: new Date(),
-    },
+    data:  { score, feedback: (evaluation.summary as string) ?? null, evaluation, completedAt: new Date() },
   });
 
   return NextResponse.json({ score, evaluation, attemptId });

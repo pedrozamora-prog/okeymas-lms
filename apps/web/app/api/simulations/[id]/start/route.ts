@@ -2,12 +2,12 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-export async function POST(_req: Request, { params }: { params: Promise<{ scenarioId: string }> }) {
+export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
   const user = session?.user as { id?: string; organizationId?: string } | undefined;
   if (!user?.id) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
-  const { scenarioId } = await params;
+  const { id: scenarioId } = await params;
 
   const scenario = await (prisma as any).scenario.findFirst({
     where: { id: scenarioId, organizationId: user.organizationId, isActive: true },
