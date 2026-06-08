@@ -36,6 +36,7 @@ import {
   Store,
   CreditCard,
   Plug,
+  MessageSquare,
 } from "lucide-react";
 
 interface NavItem {
@@ -53,10 +54,12 @@ const navItems: NavItem[] = [
   { href: "/dashboard/paths",       labelKey: "nav.learningPaths", labelFallback: "Rutas de aprendizaje", icon: GraduationCap },
   { href: "/dashboard/achievements",labelKey: "nav.achievements",  labelFallback: "Logros",               icon: Trophy },
   { href: "/dashboard/certificates",labelKey: "nav.certificates",  labelFallback: "Certificados",         icon: Award  },
-  { href: "/dashboard/skills",      labelKey: "nav.skills",        labelFallback: "Mis competencias",     icon: Target },
+  { href: "/dashboard/skills",       labelKey: "nav.skills",        labelFallback: "Mis competencias",     icon: Target },
+  { href: "/dashboard/simulations", labelKey: "",                  labelFallback: "Simulador IA",         icon: MessageSquare },
 ];
 
 const adminItems: NavItem[] = [
+  { href: "/admin/scenarios",        labelKey: "",                    labelFallback: "Simulador IA",      icon: MessageSquare,   roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/courses",          labelKey: "admin.manageCourses", labelFallback: "Gestión cursos",    icon: LibraryBig,      roles: ["SUPER_ADMIN", "BRANCH_ADMIN", "INSTRUCTOR"] },
   { href: "/admin/certificates",     labelKey: "nav.certificates",    labelFallback: "Certificados",      icon: Award,           roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/compliance",       labelKey: "admin.compliance",    labelFallback: "Cumplimiento",      icon: ShieldCheck,     roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },

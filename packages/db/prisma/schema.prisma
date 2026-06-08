@@ -77,6 +77,12 @@ enum OrgPlan {
   ENTERPRISE
 }
 
+enum ScenarioDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
 enum QuizQuestionType {
   MULTIPLE_CHOICE
   TRUE_FALSE
@@ -197,6 +203,7 @@ model Organization {
   learningPaths   LearningPath[]
   ssoConfig       OrgSsoConfig?
   departments     Department[]
+  scenarios       Scenario[]
 
   @@map("organizations")
 }
@@ -254,12 +261,13 @@ model User {
   lessonComments  LessonComment[]
   surveyResponses SurveyResponse[]
   sentInvitations    Invitation[]          @relation("InvitedBy")
-  quizAttempts       QuizAttempt[]
-  watchSessions      VideoWatchSession[]
-  interactiveAnswers InteractiveAnswer[]
-  jobRoles           UserJobRole[]
-  auditLogs          AuditLog[]
-  courseSignatures   CourseSignature[]
+  quizAttempts        QuizAttempt[]
+  watchSessions       VideoWatchSession[]
+  interactiveAnswers  InteractiveAnswer[]
+  jobRoles            UserJobRole[]
+  auditLogs           AuditLog[]
+  courseSignatures    CourseSignature[]
+  simulationAttempts  SimulationAttempt[]
 
   @@map("users")
 }
@@ -995,4 +1003,44 @@ model HrisSyncLog {
 
   @@index([organizationId, createdAt])
   @@map("hris_sync_logs")
+}
+
+// ─── SIMULATION ──────────────────────────────────────────────────────────────
+
+model Scenario {
+  id              String             @id @default(cuid())
+  organizationId  String
+  title           String
+  description     String?
+  customerContext String             // Full AI system prompt: who the customer is + situation
+  objective       String             // What the employee must achieve
+  difficulty      ScenarioDifficulty @default(MEDIUM)
+  isActive        Boolean            @default(true)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  organization Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  attempts     SimulationAttempt[]
+
+  @@index([organizationId])
+  @@map("scenarios")
+}
+
+model SimulationAttempt {
+  id          String    @id @default(cuid())
+  userId      String
+  scenarioId  String
+  transcript  Json      // [{role:"employee"|"customer", content:string, ts:string}]
+  score       Int?      // 0-100
+  feedback    String?
+  evaluation  Json?     // {objectiveAchieved, tone, strengths[], improvements[]}
+  completedAt DateTime?
+  startedAt   DateTime  @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scenario Scenario @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([scenarioId])
+  @@map("simulation_attempts")
 }
