@@ -43,6 +43,11 @@ export default async function EditCoursePage({ params }: { params: Promise<{ id:
 
   if (!course || course.organizationId !== user.organizationId) notFound();
 
+  const org = await prisma.organization.findUnique({
+    where:  { id: user.organizationId },
+    select: { name: true, logoUrl: true },
+  });
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -79,6 +84,7 @@ export default async function EditCoursePage({ params }: { params: Promise<{ id:
             Datos del curso
           </h2>
           <CourseForm
+            org={org ?? undefined}
             initial={{
               id: course.id,
               title: course.title,

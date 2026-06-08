@@ -1,23 +1,39 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Bot, X, Send, Loader2, Sparkles } from "lucide-react";
+import { Bot, X, Send, Loader2, Sparkles, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTutorContext } from "@/lib/tutor-context";
 
 interface Message {
   role: "user" | "assistant";
   text: string;
 }
 
+function getInitialMessage(lessonTitle?: string, courseTitle?: string): string {
+  if (lessonTitle && courseTitle) {
+    return `¡Hola! Soy tu tutor IA 👋 Estoy al tanto de que estás viendo **"${lessonTitle}"** en el curso *${courseTitle}*.\n\n¿Tienes alguna duda sobre el contenido? Pregúntame lo que necesites.`;
+  }
+  return "¡Hola! Soy tu asistente de formación 👋 Pregúntame cualquier cosa sobre tus cursos.";
+}
+
 export function AiChatButton() {
+  const { lessonCtx } = useTutorContext();
+
   const [open, setOpen]         = useState(false);
   const [input, setInput]       = useState("");
   const [loading, setLoading]   = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", text: "¡Hola! Soy tu asistente de formación 👋 Pregúntame cualquier cosa sobre el curso de Acondicionamiento Físico." },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef  = useRef<HTMLTextAreaElement>(null);
+
+  // Reset chat and update greeting when lesson changes
+  useEffect(() => {
+    setMessages([{
+      role: "assistant",
+      text: getInitialMessage(lessonCtx?.lessonTitle, lessonCtx?.courseTitle),
+    }]);
+  }, [lessonCtx?.lessonTitle]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -37,9 +53,13 @@ export function AiChatButton() {
 
     try {
       const res = await fetch("/api/ai/chat", {
-        method: "POST",
+        method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, history: next.slice(0, -1) }),
+        body:    JSON.stringify({
+          message:       text,
+          history:       next.slice(0, -1),
+          lessonContext: lessonCtx ?? null,
+        }),
       });
       const data = await res.json();
       setMessages(m => [...m, { role: "assistant", text: data.text ?? "Error al obtener respuesta." }]);
@@ -54,6 +74,8 @@ export function AiChatButton() {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
   }
 
+  const isContextual = !!lessonCtx;
+
   return (
     <>
       {/* Panel */}
@@ -63,19 +85,38 @@ export function AiChatButton() {
         "transition-all duration-300 origin-bottom-right",
         open ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-95 pointer-events-none"
       )} style={{ maxHeight: "70dvh" }}>
+
         {/* Header */}
         <div className="flex items-center gap-3 px-4 py-3 border-b border-border flex-shrink-0">
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
             <Sparkles className="w-4 h-4 text-yelau-black" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-foreground">Asistente IA</p>
-            <p className="text-[10px] text-muted-foreground">Powered by Gemini</p>
+            <p className="text-sm font-bold text-foreground">Tutor IA</p>
+            {isContextual ? (
+              <p className="text-[10px] text-primary/80 truncate flex items-center gap-1">
+                <BookOpen className="w-3 h-3 flex-shrink-0" />
+                {lessonCtx.lessonTitle}
+              </p>
+            ) : (
+              <p className="text-[10px] text-muted-foreground">Asistente de formación</p>
+            )}
           </div>
           <button onClick={() => setOpen(false)} className="p-1.5 rounded-md hover:bg-muted transition-colors">
             <X className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
+
+        {/* Context badge */}
+        {isContextual && (
+          <div className="px-4 py-2 bg-primary/5 border-b border-border flex-shrink-0">
+            <p className="text-[11px] text-muted-foreground">
+              <span className="text-primary font-medium">{lessonCtx.courseTitle}</span>
+              <span className="mx-1">›</span>
+              {lessonCtx.moduleTitle}
+            </p>
+          </div>
+        )}
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
@@ -119,7 +160,7 @@ export function AiChatButton() {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={onKeyDown}
-              placeholder="Escribe tu pregunta..."
+              placeholder={isContextual ? `Pregunta sobre "${lessonCtx.lessonTitle}"…` : "Escribe tu pregunta..."}
               rows={1}
               className="flex-1 resize-none bg-muted text-sm text-foreground placeholder:text-muted-foreground rounded-xl px-3 py-2.5 focus:outline-none focus:ring-1 focus:ring-primary/50 min-h-[40px] max-h-24"
               style={{ fieldSizing: "content" } as React.CSSProperties}
@@ -135,17 +176,19 @@ export function AiChatButton() {
         </div>
       </div>
 
-      {/* FAB */}
+      {/* FAB — pulses when contextual */}
       <button
         onClick={() => setOpen(o => !o)}
         className={cn(
           "fixed bottom-4 right-4 sm:right-6 z-50 w-14 h-14 rounded-2xl shadow-lg shadow-black/40",
           "flex items-center justify-center transition-all duration-300",
           open
-            ? "bg-muted text-muted-foreground rotate-0"
-            : "bg-primary text-yelau-black hover:scale-110 hover:shadow-primary/30 hover:shadow-xl"
+            ? "bg-muted text-muted-foreground"
+            : isContextual
+              ? "bg-primary text-yelau-black hover:scale-110 ring-2 ring-primary/40 ring-offset-2 ring-offset-background"
+              : "bg-primary text-yelau-black hover:scale-110 hover:shadow-primary/30 hover:shadow-xl"
         )}
-        aria-label="Asistente IA"
+        aria-label="Tutor IA"
       >
         {open ? <X className="w-5 h-5" /> : <Bot className="w-6 h-6" />}
       </button>

@@ -11,6 +11,20 @@ import { LessonCompleteButton } from "@/components/lesson/lesson-complete-button
 import { LessonComments } from "@/components/lessons/lesson-comments";
 import { BlockRenderer } from "@/components/lesson/block-renderer";
 import { Block } from "@/lib/blocks";
+import { LessonContextSetter } from "@/components/lesson/lesson-context-setter";
+
+function extractContentText(blocks: unknown[]): string {
+  return (blocks as Array<Record<string, unknown>>)
+    .map(b => {
+      if (b.type === "heading")   return `## ${b.text ?? ""}`;
+      if (b.type === "paragraph") return String(b.text ?? "");
+      if (b.type === "callout")   return `[${String(b.variant ?? "nota").toUpperCase()}]: ${b.text ?? ""}`;
+      return "";
+    })
+    .filter(Boolean)
+    .join("\n\n")
+    .slice(0, 4000); // cap to avoid token overflow
+}
 
 export default async function LessonPage({
   params,
@@ -59,8 +73,21 @@ export default async function LessonPage({
     VIDEO: "Vídeo", PDF: "PDF", QUIZ: "Quiz", LIVE_CLASS: "Directo", SCORM: "SCORM", CONTENT: "Contenido",
   };
 
+  const contentText = lesson.type === "CONTENT" && lesson.content
+    ? extractContentText(lesson.content as unknown[])
+    : lesson.description ?? "";
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
+      {/* Inject lesson context into AI tutor */}
+      <LessonContextSetter ctx={{
+        courseTitle:  lesson.module.course.title,
+        moduleTitle:  lesson.module.title,
+        lessonTitle:  lesson.title,
+        lessonType:   lesson.type,
+        contentText,
+      }} />
+
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Link href={`/dashboard/courses/${courseId}`} className="hover:text-foreground transition-colors flex items-center gap-1">

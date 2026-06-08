@@ -1,8 +1,20 @@
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import { CourseForm } from "@/components/admin/course-form";
 
 export const metadata = { title: "Nuevo curso" };
 
-export default function NewCoursePage() {
+export default async function NewCoursePage() {
+  const session = await auth();
+  const user = session?.user as { organizationId?: string } | undefined;
+
+  const org = user?.organizationId
+    ? await prisma.organization.findUnique({
+        where:  { id: user.organizationId },
+        select: { name: true, logoUrl: true },
+      })
+    : null;
+
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
@@ -11,7 +23,7 @@ export default function NewCoursePage() {
           Rellena los datos básicos. Podrás añadir módulos y lecciones después.
         </p>
       </div>
-      <CourseForm />
+      <CourseForm org={org ?? undefined} />
     </div>
   );
 }

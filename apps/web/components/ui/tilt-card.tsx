@@ -52,18 +52,20 @@ export function TiltCard({ children, className, intensity = 12 }: TiltCardProps)
   return (
     <div
       ref={ref}
-      style={{ ...style, transformStyle: "preserve-3d" }}
+      style={style}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={cn("relative", className)}
+      className={cn("relative [transform-style:preserve-3d]", className)}
+      suppressHydrationWarning
     >
-      {/* Glare overlay */}
+      {/* Glare overlay — inline style uses rgba that browsers normalize differently; suppress hydration warning */}
       <div
         className="absolute inset-0 rounded-xl pointer-events-none z-10 transition-opacity duration-300"
         style={{
           background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, rgba(252,233,0,${glare.opacity}) 0%, transparent 65%)`,
           opacity: glare.opacity > 0 ? 1 : 0,
         }}
+        suppressHydrationWarning
       />
       {children}
     </div>

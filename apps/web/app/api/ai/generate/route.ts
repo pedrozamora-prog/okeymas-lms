@@ -13,16 +13,40 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "GROQ_API_KEY no configurada en el servidor" }, { status: 500 });
   }
 
-  const { type, courseTitle, moduleTitle, lessonTitle } = await req.json();
+  const { type, courseTitle, moduleTitle, lessonTitle, contentText, numQuestions } = await req.json();
+
+  const n = Number(numQuestions) || 5;
+
+  const quizPrompt = contentText?.trim()
+    ? `OUTPUT ONLY A JSON ARRAY. NO INTRODUCTION. NO EXPLANATION. NO MARKDOWN.
+
+Generate ${n} multiple-choice questions (4 options each) based EXCLUSIVELY on this lesson content:
+
+LESSON: "${lessonTitle}"
+---
+${contentText.slice(0, 3000)}
+---
+
+REQUIRED OUTPUT FORMAT (JSON array only, start with "["):
+[{"question":"...","options":["opcion A","opcion B","opcion C","opcion D"],"correct":0,"explanation":"..."}]
+
+Rules:
+- "correct" is the index (0-3) of the correct answer
+- Write questions and options in Spanish
+- Base questions only on the provided content
+- Start your response with "[" and end with "]"`
+    : `OUTPUT ONLY A JSON ARRAY. NO INTRODUCTION. NO MARKDOWN.
+
+Generate ${n} multiple-choice questions (4 options each) for lesson "${lessonTitle}" from module "${moduleTitle}". Write in Spanish.
+
+REQUIRED FORMAT (start with "["):
+[{"question":"...","options":["A","B","C","D"],"correct":0,"explanation":"..."}]`;
 
   const prompts: Record<string, string> = {
     description: `Escribe una descripción atractiva y profesional (2-3 párrafos) para un curso de formación llamado "${courseTitle}" dentro del sector fitness y gimnasios. Incluye objetivos de aprendizaje y a quién va dirigido. Responde solo con el texto, sin títulos ni markdown.`,
     lessonDescription: `Escribe una introducción breve (3-5 frases) para la lección "${lessonTitle}" del módulo "${moduleTitle}". Explica de qué trata, qué aprenderá el alumno y por qué es importante. Responde solo con el texto, sin títulos ni markdown.`,
     objectives: `Lista 5-7 objetivos de aprendizaje concretos y medibles para el módulo "${moduleTitle}" del curso "${courseTitle}". Usa verbos de acción (identificar, aplicar, analizar...). Formato: una línea por objetivo, sin numeración, sin markdown.`,
-    quiz: `Genera 5 preguntas de test de opción múltiple (4 opciones cada una) para la lección "${lessonTitle}" del módulo "${moduleTitle}".
-Formato JSON estricto:
-[{"question":"...","options":["A","B","C","D"],"correct":0}]
-Donde "correct" es el índice (0-3) de la respuesta correcta. Solo JSON, sin texto adicional.`,
+    quiz: quizPrompt,
   };
 
   const prompt = prompts[type];

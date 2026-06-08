@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Sidebar } from "@/components/layout/sidebar";
 import { AiChatButton } from "@/components/ai/ai-chat-button";
 import { I18nProvider, type Locale } from "@/lib/i18n-context";
+import { TutorProvider } from "@/lib/tutor-context";
 import { OfflineIndicator } from "@/components/layout/offline-indicator";
 import messagesEs from "@/messages/es.json";
 import messagesEn from "@/messages/en.json";
@@ -53,6 +54,7 @@ export default async function DashboardLayout({
 
   return (
     <I18nProvider initialLocale={locale} initialMessages={ALL_MESSAGES}>
+    <TutorProvider>
     <div
       className="flex min-h-dvh bg-background"
       style={primaryColor ? { "--color-yelau-yellow": primaryColor } as React.CSSProperties : undefined}
@@ -75,6 +77,7 @@ export default async function DashboardLayout({
       <AiChatButton />
       <OfflineIndicator />
     </div>
+    </TutorProvider>
     </I18nProvider>
   );
 }

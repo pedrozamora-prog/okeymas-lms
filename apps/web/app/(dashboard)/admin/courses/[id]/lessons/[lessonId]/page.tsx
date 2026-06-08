@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { LessonBlockEditor } from "@/components/admin/lesson-block-editor";
 import { BlockRenderer } from "@/components/lesson/block-renderer";
@@ -12,7 +12,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeft, Save, Eye, Pencil, Loader2,
-  BookOpen, Clock, CheckCircle2,
+  BookOpen, Clock, CheckCircle2, Sparkles,
+  ChevronDown, ChevronUp, Plus, ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -25,12 +26,36 @@ interface LessonData {
   videoUrl: string | null;
   fileUrl: string | null;
   content: Block[] | null;
+  moduleId: string;
   module: { title: string; courseId: string; course: { title: string } };
+}
+
+interface GeneratedQuestion {
+  question:    string;
+  options:     string[];
+  correct:     number;
+  explanation?: string;
+}
+
+function extractTextFromBlocks(blocks: Block[]): string {
+  return (blocks as Array<Record<string, unknown>>)
+    .map(b => {
+      if (b.type === "heading")   return `## ${b.text ?? ""}`;
+      if (b.type === "paragraph") return String(b.text ?? "");
+      if (b.type === "callout")   return String(b.text ?? "");
+      if (b.type === "list") {
+        const items = (b.items as string[] | undefined) ?? [];
+        return items.join("\n");
+      }
+      return "";
+    })
+    .filter(Boolean)
+    .join("\n\n")
+    .slice(0, 3000);
 }
 
 export default function LessonEditorPage() {
   const params   = useParams();
-  const router   = useRouter();
   const courseId = params.id as string;
   const lessonId = params.lessonId as string;
 
@@ -41,6 +66,16 @@ export default function LessonEditorPage() {
   const [loading, setLoading] = useState(true);
   const [saving,  setSaving]  = useState(false);
   const [dirty,   setDirty]   = useState(false);
+
+  // Quiz IA state
+  const [numQuestions,   setNumQuestions]   = useState(5);
+  const [quizLoading,    setQuizLoading]    = useState(false);
+  const [generatedQs,    setGeneratedQs]    = useState<GeneratedQuestion[] | null>(null);
+  const [expandedQ,      setExpandedQ]      = useState<number | null>(null);
+  const [passingScore,   setPassingScore]   = useState(70);
+  const [maxAttempts,    setMaxAttempts]    = useState(3);
+  const [creatingQuiz,   setCreatingQuiz]   = useState(false);
+  const [createdLessonId, setCreatedLessonId] = useState<string | null>(null);
 
   const fetchLesson = useCallback(async () => {
     try {
@@ -58,6 +93,88 @@ export default function LessonEditorPage() {
   }, [lessonId]);
 
   useEffect(() => { fetchLesson(); }, [fetchLesson]);
+
+  async function generateQuiz() {
+    if (blocks.length === 0) {
+      toast.error("Añade contenido a la lección antes de generar el quiz");
+      return;
+    }
+    setQuizLoading(true);
+    setGeneratedQs(null);
+    try {
+      const contentText = extractTextFromBlocks(blocks);
+      const res = await fetch("/api/ai/generate", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({
+          type:         "quiz",
+          lessonTitle:  title,
+          moduleTitle:  lesson?.module.title ?? "",
+          contentText,
+          numQuestions,
+        }),
+      });
+      const data = await res.json();
+      if (!data.text) throw new Error(data.error ?? "Sin respuesta");
+      // Extract JSON array even if model adds surrounding text
+      const jsonMatch = data.text.match(/\[[\s\S]*\]/);
+      if (!jsonMatch) throw new Error("La IA no devolvió el formato esperado. Inténtalo de nuevo.");
+      const parsed = JSON.parse(jsonMatch[0]) as GeneratedQuestion[];
+      setGeneratedQs(parsed);
+      setExpandedQ(0);
+      toast.success(`${parsed.length} preguntas generadas — revísalas y crea la lección`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error al generar quiz");
+    } finally {
+      setQuizLoading(false);
+    }
+  }
+
+  async function createQuizLesson() {
+    if (!generatedQs || !lesson) return;
+    setCreatingQuiz(true);
+    try {
+      // 1. Create the QUIZ lesson in the same module
+      const lessonRes = await fetch(`/api/admin/modules/${lesson.moduleId}/lessons`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({
+          title:      `Quiz: ${title}`,
+          type:       "QUIZ",
+          isRequired: true,
+        }),
+      });
+      if (!lessonRes.ok) throw new Error("No se pudo crear la lección quiz");
+      const newLesson = await lessonRes.json() as { id: string };
+
+      // 2. Save the questions
+      const quizRes = await fetch(`/api/admin/lessons/${newLesson.id}/quiz`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({
+          passingScore,
+          maxAttempts,
+          questions: generatedQs.map(q => ({
+            text:        q.question,
+            type:        "MULTIPLE_CHOICE",
+            explanation: q.explanation ?? null,
+            options:     q.options.map((opt, i) => ({
+              text:      opt,
+              isCorrect: i === q.correct,
+            })),
+          })),
+        }),
+      });
+      if (!quizRes.ok) throw new Error("No se pudieron guardar las preguntas");
+
+      setCreatedLessonId(newLesson.id);
+      toast.success("¡Lección quiz creada con éxito!");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error al crear quiz");
+    } finally {
+      setCreatingQuiz(false);
+    }
+  }
 
   async function save() {
     setSaving(true);
@@ -148,6 +265,10 @@ export default function LessonEditorPage() {
               <Eye className="w-3.5 h-3.5" />
               Vista previa
             </TabsTrigger>
+            <TabsTrigger value="quiz-ia" className="gap-1.5">
+              <Sparkles className="w-3.5 h-3.5" />
+              Quiz IA
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="editor">
@@ -155,6 +276,151 @@ export default function LessonEditorPage() {
               initialBlocks={blocks}
               onChange={b => { setBlocks(b); setDirty(true); }}
             />
+          </TabsContent>
+
+          <TabsContent value="quiz-ia" className="space-y-6">
+            {/* Config */}
+            <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <h3 className="font-semibold text-sm">Generar quiz desde el contenido</h3>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                La IA leerá el contenido de esta lección y generará preguntas relevantes. Guarda la lección antes de generar si tienes cambios pendientes.
+              </p>
+
+              <div className="flex items-center gap-4 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <label className="text-xs text-muted-foreground whitespace-nowrap">Nº preguntas</label>
+                  <select
+                    value={numQuestions}
+                    onChange={e => setNumQuestions(Number(e.target.value))}
+                    className="h-8 rounded-md border border-border bg-background text-sm px-2 focus:outline-none focus:ring-1 focus:ring-primary/50"
+                  >
+                    {[3, 5, 7, 10].map(n => (
+                      <option key={n} value={n}>{n} preguntas</option>
+                    ))}
+                  </select>
+                </div>
+
+                <Button
+                  onClick={generateQuiz}
+                  disabled={quizLoading || blocks.length === 0}
+                  size="sm"
+                  className="gap-1.5"
+                >
+                  {quizLoading
+                    ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Generando…</>
+                    : <><Sparkles className="w-3.5 h-3.5" /> Generar preguntas</>
+                  }
+                </Button>
+
+                {blocks.length === 0 && (
+                  <p className="text-xs text-amber-500">Añade contenido en el Editor primero</p>
+                )}
+              </div>
+            </div>
+
+            {/* Generated questions preview */}
+            {generatedQs && (
+              <div className="space-y-3">
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+                  {generatedQs.length} preguntas generadas — revísalas antes de crear la lección
+                </p>
+
+                {generatedQs.map((q, qi) => (
+                  <div key={qi} className="rounded-lg border border-border bg-card overflow-hidden">
+                    <button
+                      onClick={() => setExpandedQ(expandedQ === qi ? null : qi)}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-muted/30 transition-colors"
+                    >
+                      <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center flex-shrink-0">
+                        {qi + 1}
+                      </span>
+                      <span className="flex-1 text-sm font-medium text-foreground line-clamp-2">{q.question}</span>
+                      {expandedQ === qi
+                        ? <ChevronUp   className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                        : <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                      }
+                    </button>
+
+                    {expandedQ === qi && (
+                      <div className="px-4 pb-4 space-y-2 border-t border-border pt-3">
+                        {q.options.map((opt, oi) => (
+                          <div key={oi} className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded-lg ${
+                            oi === q.correct
+                              ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                              : "text-muted-foreground"
+                          }`}>
+                            <span className="font-mono text-xs font-bold w-4">{["A","B","C","D"][oi]}</span>
+                            {opt}
+                            {oi === q.correct && <Badge className="ml-auto text-[10px] bg-green-500/20 text-green-400 border-green-500/30">Correcta</Badge>}
+                          </div>
+                        ))}
+                        {q.explanation && (
+                          <p className="text-xs text-muted-foreground mt-2 italic border-l-2 border-primary/30 pl-3">
+                            {q.explanation}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                {/* Create quiz lesson config */}
+                {!createdLessonId ? (
+                  <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 space-y-4">
+                    <h4 className="text-sm font-semibold">Configuración del quiz</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-xs text-muted-foreground">Nota mínima (%)</label>
+                        <Input
+                          type="number"
+                          min={0} max={100}
+                          value={passingScore}
+                          onChange={e => setPassingScore(Number(e.target.value))}
+                          className="h-8 text-sm"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-xs text-muted-foreground">Intentos máximos</label>
+                        <Input
+                          type="number"
+                          min={1} max={10}
+                          value={maxAttempts}
+                          onChange={e => setMaxAttempts(Number(e.target.value))}
+                          className="h-8 text-sm"
+                        />
+                      </div>
+                    </div>
+                    <Button
+                      onClick={createQuizLesson}
+                      disabled={creatingQuiz}
+                      className="w-full gap-2"
+                    >
+                      {creatingQuiz
+                        ? <><Loader2 className="w-4 h-4 animate-spin" /> Creando lección quiz…</>
+                        : <><Plus className="w-4 h-4" /> Crear lección quiz en este módulo</>
+                      }
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-green-500/30 bg-green-500/5 p-5 flex items-center gap-4">
+                    <CheckCircle2 className="w-8 h-8 text-green-400 flex-shrink-0" />
+                    <div className="flex-1">
+                      <p className="font-semibold text-sm">¡Lección quiz creada!</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">Se añadió al módulo con {generatedQs.length} preguntas.</p>
+                    </div>
+                    <Button size="sm" variant="outline" asChild>
+                      <Link href={`/admin/courses/${courseId}/edit`} className="gap-1.5">
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        Ver curso
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="preview">

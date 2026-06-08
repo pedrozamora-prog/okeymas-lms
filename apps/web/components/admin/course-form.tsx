@@ -19,8 +19,10 @@ import { Loader2, Save, Sparkles, Award, Users, ImagePlus, X, ShoppingCart } fro
 import { useRef } from "react";
 
 interface DeptOption { id: string; name: string; }
+interface OrgBranding { name: string; logoUrl?: string | null; }
 
 interface CourseFormProps {
+  org?: OrgBranding;
   initial?: {
     id: string;
     title: string;
@@ -45,7 +47,7 @@ interface CourseFormProps {
   };
 }
 
-export function CourseForm({ initial }: CourseFormProps) {
+export function CourseForm({ initial, org }: CourseFormProps) {
   const router = useRouter();
   const isEdit = !!initial;
 
@@ -101,6 +103,29 @@ export function CourseForm({ initial }: CourseFormProps) {
       toast.error(err instanceof Error ? err.message : "Error de red");
     } finally {
       setAiLoading(false);
+    }
+  }
+
+  async function generateCover() {
+    if (!title.trim()) { toast.error("Escribe primero el título del curso"); return; }
+    setImgLoading(true);
+    try {
+      const res = await fetch("/api/ai/generate-cover", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ title: title.trim() }),
+      });
+      const data: { url?: string; error?: string } = await res.json();
+      if (!res.ok || !data.url) {
+        toast.error(data.error ?? "Error generando la portada");
+        return;
+      }
+      setThumb(data.url);
+      toast.success("Portada generada con IA");
+    } catch {
+      toast.error("Error de conexión al generar la portada");
+    } finally {
+      setImgLoading(false);
     }
   }
 
@@ -240,7 +265,17 @@ export function CourseForm({ initial }: CourseFormProps) {
 
           {/* Imagen de portada */}
           <div className="space-y-1.5">
-            <Label>Imagen de portada</Label>
+            <div className="flex items-center justify-between">
+              <Label>Imagen de portada</Label>
+              <button
+                type="button"
+                onClick={generateCover}
+                className="flex items-center gap-1.5 text-xs text-brand hover:text-amber-600 transition-colors"
+              >
+                <Sparkles className="w-3 h-3" />
+                Generar con IA
+              </button>
+            </div>
             <p className="text-[11px] text-muted-foreground">
               Recomendado: 1280×720 px (16:9) · JPG, PNG o WEBP · Máx. 3 MB
             </p>

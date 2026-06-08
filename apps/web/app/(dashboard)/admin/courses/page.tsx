@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, BookOpen, Users, Layers, Pencil, BarChart2, Eye, ShoppingCart } from "lucide-react";
+import { Plus, BookOpen, Users, Layers, Pencil, BarChart2, Eye, ShoppingCart, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BulkEnrollButton } from "./courses-client";
 
@@ -55,12 +55,20 @@ export default async function AdminCoursesPage() {
             {stats.published} publicados · {stats.draft} borradores · {stats.total} total
           </p>
         </div>
-        <Button asChild className="bg-primary text-yelau-black hover:bg-primary/90 font-bold">
-          <Link href="/admin/courses/new">
-            <Plus className="w-4 h-4" />
-            Nuevo curso
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button asChild variant="outline" className="font-semibold">
+            <Link href="/admin/courses/ai-generate">
+              <Sparkles className="w-4 h-4" />
+              Generar con IA
+            </Link>
+          </Button>
+          <Button asChild className="bg-primary text-yelau-black hover:bg-primary/90 font-bold">
+            <Link href="/admin/courses/new">
+              <Plus className="w-4 h-4" />
+              Nuevo curso
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Course list */}
