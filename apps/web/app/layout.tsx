@@ -26,8 +26,8 @@ export const metadata: Metadata = {
     title: "Formia",
   },
   icons: {
-    icon:  "/favicon.png",
-    apple: "/favicon.png",
+    icon:  "/logo-icon.png",
+    apple: "/logo-icon.png",
   },
 };
 
