@@ -1,9 +1,9 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
+const GROQ_MODEL   = "llama-3.3-70b-versatile";
 
 export async function GET() {
   try {
@@ -201,9 +201,32 @@ Formato exacto:
 
 Prioriza: riesgos de compliance (cursos vencidos), engagement bajo, áreas de mejora en evaluaciones, y logros positivos. Sé específico con los números.`;
 
-    const model  = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-    const result = await model.generateContent(prompt);
-    const raw    = result.response.text();
+    const groqRes = await fetch(GROQ_API_URL, {
+      method:  "POST",
+      headers: {
+        "Content-Type":  "application/json",
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model:       GROQ_MODEL,
+        temperature: 0.4,
+        messages: [
+          {
+            role:    "system",
+            content: "You are an expert LMS analyst. OUTPUT ONLY A JSON ARRAY. NO INTRODUCTION. NO EXPLANATION. NO MARKDOWN CODE BLOCKS.",
+          },
+          { role: "user", content: prompt },
+        ],
+      }),
+    });
+
+    if (!groqRes.ok) {
+      const errText = await groqRes.text();
+      throw new Error(`Groq error ${groqRes.status}: ${errText}`);
+    }
+
+    const groqData = await groqRes.json();
+    const raw      = groqData.choices?.[0]?.message?.content ?? "";
 
     let insights: unknown[] = [];
     const match = raw.match(/\[[\s\S]*\]/);
