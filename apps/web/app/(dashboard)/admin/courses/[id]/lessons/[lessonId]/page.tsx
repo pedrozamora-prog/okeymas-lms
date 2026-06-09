@@ -14,6 +14,7 @@ import {
   ArrowLeft, Save, Eye, Pencil, Loader2,
   BookOpen, Clock, CheckCircle2, Sparkles,
   ChevronDown, ChevronUp, Plus, ExternalLink,
+  Mic, Trash2, Volume2,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -25,9 +26,36 @@ interface LessonData {
   isRequired: boolean;
   videoUrl: string | null;
   fileUrl: string | null;
+  audioNarrationUrl: string | null;
   content: Block[] | null;
   moduleId: string;
   module: { title: string; courseId: string; course: { title: string } };
+}
+
+const VOICES = [
+  { id: "21m00Tcm4TlvDq8ikWAM", name: "Rachel", gender: "Femenina", style: "Calmada"       },
+  { id: "ErXwobaYiN019PkySvjV", name: "Antoni", gender: "Masculina", style: "Profesional"  },
+  { id: "EXAVITQu4vr4xnSDxMaL", name: "Bella",  gender: "Femenina", style: "Suave"         },
+  { id: "TxGEqnHWrfWFTfGW9XjX", name: "Josh",   gender: "Masculina", style: "Profunda"     },
+];
+
+function extractNarrationText(blocks: Block[]): string {
+  return (blocks as Array<Record<string, unknown>>)
+    .map(b => {
+      if (b.type === "heading")   return String(b.text ?? "");
+      if (b.type === "paragraph") return String(b.text ?? "");
+      if (b.type === "callout")   return String(b.text ?? "");
+      if (b.type === "list") {
+        const items = (b.items as string[] | undefined) ?? [];
+        return items.join(". ");
+      }
+      return "";
+    })
+    .filter(Boolean)
+    .join(". ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 2500);
 }
 
 interface GeneratedQuestion {
@@ -67,6 +95,12 @@ export default function LessonEditorPage() {
   const [saving,  setSaving]  = useState(false);
   const [dirty,   setDirty]   = useState(false);
 
+  // Audio IA state
+  const [selectedVoice,   setSelectedVoice]   = useState(VOICES[0].id);
+  const [audioLoading,    setAudioLoading]    = useState(false);
+  const [audioUrl,        setAudioUrl]        = useState<string | null>(null);
+  const [deletingAudio,   setDeletingAudio]   = useState(false);
+
   // Quiz IA state
   const [numQuestions,   setNumQuestions]   = useState(5);
   const [quizLoading,    setQuizLoading]    = useState(false);
@@ -85,6 +119,7 @@ export default function LessonEditorPage() {
       setTitle(data.title);
       setDuration(data.duration?.toString() ?? "");
       setBlocks((data.content as Block[]) ?? []);
+      setAudioUrl(data.audioNarrationUrl ?? null);
     } catch {
       toast.error("Error al cargar la lección");
     } finally {
@@ -173,6 +208,48 @@ export default function LessonEditorPage() {
       toast.error(e instanceof Error ? e.message : "Error al crear quiz");
     } finally {
       setCreatingQuiz(false);
+    }
+  }
+
+  async function generateNarration() {
+    if (blocks.length === 0) {
+      toast.error("Añade contenido a la lección antes de narrar");
+      return;
+    }
+    setAudioLoading(true);
+    try {
+      const text = extractNarrationText(blocks);
+      const res  = await fetch("/api/ai/narrate", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ lessonId, text, voiceId: selectedVoice }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Error desconocido");
+      setAudioUrl(data.audioUrl);
+      toast.success("¡Narración generada y guardada en la lección!");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error al generar narración");
+    } finally {
+      setAudioLoading(false);
+    }
+  }
+
+  async function deleteNarration() {
+    setDeletingAudio(true);
+    try {
+      const res = await fetch("/api/ai/narrate", {
+        method:  "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ lessonId }),
+      });
+      if (!res.ok) throw new Error();
+      setAudioUrl(null);
+      toast.success("Narración eliminada");
+    } catch {
+      toast.error("Error al eliminar narración");
+    } finally {
+      setDeletingAudio(false);
     }
   }
 
@@ -268,6 +345,10 @@ export default function LessonEditorPage() {
             <TabsTrigger value="quiz-ia" className="gap-1.5">
               <Sparkles className="w-3.5 h-3.5" />
               Quiz IA
+            </TabsTrigger>
+            <TabsTrigger value="audio-ia" className="gap-1.5">
+              <Mic className="w-3.5 h-3.5" />
+              Audio IA
             </TabsTrigger>
           </TabsList>
 
@@ -419,6 +500,93 @@ export default function LessonEditorPage() {
                     </Button>
                   </div>
                 )}
+              </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="audio-ia" className="space-y-6">
+            {/* Config */}
+            <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <Mic className="w-4 h-4 text-primary" />
+                <h3 className="font-semibold text-sm">Narrar lección con IA</h3>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                ElevenLabs convierte el texto de la lección en audio narrado. La narración se guarda automáticamente y el alumno podrá escucharla.
+              </p>
+
+              {/* Character count */}
+              {blocks.length > 0 && (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="font-mono bg-muted px-2 py-0.5 rounded">
+                    {extractNarrationText(blocks).length} / 2500 caracteres
+                  </span>
+                  <span>aprox. {Math.ceil(extractNarrationText(blocks).length / 150)} segundos de audio</span>
+                </div>
+              )}
+
+              {/* Voice selector */}
+              <div className="space-y-2">
+                <label className="text-xs text-muted-foreground font-medium">Voz</label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {VOICES.map(v => (
+                    <button
+                      key={v.id}
+                      onClick={() => setSelectedVoice(v.id)}
+                      className={`rounded-lg border p-3 text-left transition-all ${
+                        selectedVoice === v.id
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-border/80 hover:bg-muted/30"
+                      }`}
+                    >
+                      <p className="text-sm font-semibold">{v.name}</p>
+                      <p className="text-[11px] text-muted-foreground">{v.gender} · {v.style}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <Button
+                onClick={generateNarration}
+                disabled={audioLoading || blocks.length === 0}
+                className="gap-2"
+              >
+                {audioLoading
+                  ? <><Loader2 className="w-4 h-4 animate-spin" /> Generando narración…</>
+                  : <><Mic className="w-4 h-4" /> {audioUrl ? "Regenerar narración" : "Generar narración"}</>
+                }
+              </Button>
+              {blocks.length === 0 && (
+                <p className="text-xs text-amber-500">Añade contenido en el Editor primero</p>
+              )}
+            </div>
+
+            {/* Current audio */}
+            {audioUrl && (
+              <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Volume2 className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-semibold">Narración activa</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="gap-1.5 text-red-400 hover:text-red-300 hover:bg-red-500/10 h-7 text-xs"
+                    onClick={deleteNarration}
+                    disabled={deletingAudio}
+                  >
+                    {deletingAudio
+                      ? <Loader2 className="w-3 h-3 animate-spin" />
+                      : <Trash2 className="w-3 h-3" />
+                    }
+                    Eliminar
+                  </Button>
+                </div>
+                <audio controls src={audioUrl} className="w-full h-10 accent-primary" />
+                <p className="text-xs text-muted-foreground">
+                  Los alumnos verán un reproductor de audio en la parte superior de esta lección.
+                </p>
               </div>
             )}
           </TabsContent>

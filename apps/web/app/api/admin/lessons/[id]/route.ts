@@ -14,7 +14,12 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     include: { module: { include: { course: { select: { title: true } } } } },
   });
   if (!lesson) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
-  return NextResponse.json(lesson);
+
+  // Fetch audioNarrationUrl via raw SQL (column added after client generation)
+  const audioRow = await prisma.$queryRaw<{ audio_narration_url: string | null }[]>`
+    SELECT audio_narration_url FROM lessons WHERE id = ${id}
+  `;
+  return NextResponse.json({ ...lesson, audioNarrationUrl: audioRow[0]?.audio_narration_url ?? null });
 }
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {

@@ -6,7 +6,7 @@ import { VideoLessonClient } from "@/components/lesson/video-lesson-client";
 import { QuizPlayer } from "@/components/lesson/quiz-player";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, ArrowRight, CheckCircle2, Clock, FileText, HelpCircle, Radio } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Clock, FileText, HelpCircle, Radio, Volume2 } from "lucide-react";
 import { LessonCompleteButton } from "@/components/lesson/lesson-complete-button";
 import { LessonComments } from "@/components/lessons/lesson-comments";
 import { BlockRenderer } from "@/components/lesson/block-renderer";
@@ -46,6 +46,12 @@ export default async function LessonPage({
     include: { module: { include: { course: true } } },
   });
   if (!lesson || lesson.module.courseId !== courseId) notFound();
+
+  // Fetch audioNarrationUrl via raw SQL (column added after client generation)
+  const audioRow = await prisma.$queryRaw<{ audio_narration_url: string | null }[]>`
+    SELECT audio_narration_url FROM lessons WHERE id = ${lessonId}
+  `;
+  const audioNarrationUrl = audioRow[0]?.audio_narration_url ?? null;
 
   const progress = await prisma.lessonProgress.findUnique({
     where: { userId_lessonId: { userId: user.id, lessonId } },
@@ -122,6 +128,17 @@ export default async function LessonPage({
           )}
         </div>
       </div>
+
+      {/* Audio narration player */}
+      {audioNarrationUrl && (
+        <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+          <Volume2 className="w-4 h-4 text-primary flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-primary mb-1.5">Narración de audio</p>
+            <audio controls src={audioNarrationUrl} className="w-full h-8 accent-primary" />
+          </div>
+        </div>
+      )}
 
       {/* Content */}
       {lesson.type === "VIDEO" && lesson.videoUrl && (
