@@ -40,6 +40,18 @@ export function LessonCompleteButton({ lessonId, courseId, courseTitle, isComple
       setCompleted(true);
       toast.success("¡Lección completada!");
 
+      // Mostrar toast por cada insignia nueva ganada
+      if (Array.isArray(data.newBadges)) {
+        for (const badge of data.newBadges as { name: string; description: string; emoji: string; points: number }[]) {
+          setTimeout(() => {
+            toast.success(
+              `${badge.emoji} ¡Nueva insignia desbloqueada!\n${badge.name}`,
+              { description: badge.points > 0 ? `+${badge.points} XP` : badge.description, duration: 5000 }
+            );
+          }, 600);
+        }
+      }
+
       // El curso se terminó y requiere firma
       if (data.needsSignature && data.courseId) {
         setPendingCourseId(data.courseId);

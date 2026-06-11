@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { dispatchWebhook } from "@/lib/webhooks";
+import { checkAndAwardBadges } from "@/lib/badges";
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -61,13 +62,15 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
         data: { status: "COMPLETED", completedAt: new Date() },
       });
 
+      const newBadges = !already?.completed ? await checkAndAwardBadges(user.id) : [];
+
       // Si requiere firma y no la tiene aún → pedir firma antes de emitir certificado
       if (course.signatureEnabled) {
         const existingSig = await prisma.courseSignature.findUnique({
           where: { userId_courseId: { userId: user.id, courseId: course.id } },
         });
         if (!existingSig) {
-          return NextResponse.json({ ok: true, courseFinished: true, needsSignature: true, courseId: course.id });
+          return NextResponse.json({ ok: true, courseFinished: true, needsSignature: true, courseId: course.id, newBadges });
         }
       }
 
@@ -94,7 +97,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
               userId: user.id, courseId: course.id, courseTitle: course.title,
             });
           }
-          return NextResponse.json({ ok: true, courseFinished: true, certificateIssued: true });
+          return NextResponse.json({ ok: true, courseFinished: true, certificateIssued: true, newBadges });
         }
       }
 
@@ -103,9 +106,10 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
           userId: user.id, courseId: course.id, courseTitle: course.title,
         });
       }
-      return NextResponse.json({ ok: true, courseFinished: true, certificateIssued: false });
+      return NextResponse.json({ ok: true, courseFinished: true, certificateIssued: false, newBadges });
     }
   }
 
-  return NextResponse.json({ ok: true, courseFinished: false, certificateIssued: false });
+  const newBadges = !already?.completed ? await checkAndAwardBadges(user.id) : [];
+  return NextResponse.json({ ok: true, courseFinished: false, certificateIssued: false, newBadges });
 }
