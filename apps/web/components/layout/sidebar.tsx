@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/layout/notification-bell";
+import { GlobalSearch } from "@/components/layout/global-search";
 import { useI18n, LOCALES } from "@/lib/i18n-context";
 import {
   LayoutDashboard,
@@ -130,6 +131,11 @@ export function Sidebar({ userRole, userName, userEmail, orgLogoUrl, orgName }: 
             <Image src="/logo.png" alt="Formia" width={400} height={100} className="w-full h-auto object-contain object-left" priority />
           )}
         </Link>
+      </div>
+
+      {/* Búsqueda global */}
+      <div className="px-3 pt-2 pb-1">
+        <GlobalSearch />
       </div>
 
       {/* Nav */}
