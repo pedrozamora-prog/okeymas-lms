@@ -38,6 +38,7 @@ import {
   Plug,
   MessageSquare,
   Sparkles,
+  UserCircle,
 } from "lucide-react";
 
 interface NavItem {
@@ -57,6 +58,7 @@ const navItems: NavItem[] = [
   { href: "/dashboard/certificates",labelKey: "nav.certificates",  labelFallback: "Certificados",         icon: Award  },
   { href: "/dashboard/skills",       labelKey: "nav.skills",        labelFallback: "Mis competencias",     icon: Target },
   { href: "/dashboard/simulations", labelKey: "",                  labelFallback: "Simulador IA",         icon: MessageSquare },
+  { href: "/dashboard/profile",     labelKey: "",                  labelFallback: "Mi perfil",            icon: UserCircle },
 ];
 
 const adminItems: NavItem[] = [
@@ -152,8 +154,8 @@ export function Sidebar({ userRole, userName, userEmail, orgLogoUrl, orgName }: 
         <div className="flex items-center justify-between px-2 mb-2">
           <NotificationBell />
         </div>
-        <div className="flex items-center gap-3 px-2 mb-1">
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+        <Link href="/dashboard/profile" className="flex items-center gap-3 px-2 mb-1 rounded-md hover:bg-muted py-1.5 transition-colors group">
+          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0 group-hover:ring-2 group-hover:ring-primary/40 transition-all">
             <span className="text-yelau-black font-bold text-sm">
               {userName.charAt(0).toUpperCase()}
             </span>
@@ -162,7 +164,7 @@ export function Sidebar({ userRole, userName, userEmail, orgLogoUrl, orgName }: 
             <p className="text-sm font-medium text-foreground truncate">{userName}</p>
             <p className="text-xs text-muted-foreground truncate">{userEmail}</p>
           </div>
-        </div>
+        </Link>
 
         {/* Language selector */}
         <div className="mb-1">
