@@ -1,9 +1,9 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
+const GROQ_MODEL   = "llama-3.3-70b-versatile";
 
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -18,7 +18,6 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     });
     if (!attempt) return NextResponse.json({ error: "Intento no encontrado" }, { status: 404 });
 
-    // Fetch scenario separately to avoid include relation issues
     const scenario = await (prisma as any).scenario.findFirst({
       where: { id: attempt.scenarioId },
     });
@@ -44,29 +43,47 @@ Contexto: ${scenario.customerContext}
 CONVERSACIÓN:
 ${conversationText}
 
-Evalúa la actuación del empleado y devuelve ÚNICAMENTE un JSON con este formato exacto:
+Evalúa la actuación del empleado. OUTPUT ONLY JSON. NO INTRODUCTION. NO EXPLANATION.
+
 {
   "score": <número 0-100>,
   "objectiveAchieved": <true|false>,
   "tone": "<frío|neutro|profesional|empático|excelente>",
-  "summary": "<resumen breve de la actuación en 2-3 frases>",
+  "summary": "<resumen breve 2-3 frases>",
   "strengths": ["<punto fuerte 1>", "<punto fuerte 2>"],
   "improvements": ["<área de mejora 1>", "<área de mejora 2>"]
-}
+}`;
 
-Solo JSON, sin texto adicional.`;
+    const groqRes = await fetch(GROQ_API_URL, {
+      method:  "POST",
+      headers: {
+        "Content-Type":  "application/json",
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model:       GROQ_MODEL,
+        temperature: 0.3,
+        messages: [
+          { role: "system", content: "You are an expert evaluator. OUTPUT ONLY A JSON OBJECT. NO MARKDOWN. NO EXPLANATION." },
+          { role: "user",   content: evaluatorPrompt },
+        ],
+      }),
+    });
 
-    const model  = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-    const result = await model.generateContent(evaluatorPrompt);
-    const raw    = result.response.text();
+    if (!groqRes.ok) {
+      const err = await groqRes.text();
+      throw new Error(`Groq error ${groqRes.status}: ${err}`);
+    }
+
+    const groqData = await groqRes.json();
+    const raw      = groqData.choices?.[0]?.message?.content ?? "";
 
     let evaluation: Record<string, unknown> = {};
     let score = 50;
-
     try {
-      const jsonMatch = raw.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        evaluation = JSON.parse(jsonMatch[0]);
+      const match = raw.match(/\{[\s\S]*\}/);
+      if (match) {
+        evaluation = JSON.parse(match[0]);
         score      = Number(evaluation.score) || 50;
       }
     } catch { /* keep defaults */ }

@@ -1,11 +1,10 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-
-const MAX_TURNS = 15;
+const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
+const GROQ_MODEL   = "llama-3.3-70b-versatile";
+const MAX_TURNS    = 15;
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -22,7 +21,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     });
     if (!attempt) return NextResponse.json({ error: "Intento no encontrado o ya completado" }, { status: 404 });
 
-    // Fetch scenario separately to avoid include relation issues with non-regenerated client
     const scenario = await (prisma as any).scenario.findFirst({
       where: { id: attempt.scenarioId },
     });
@@ -46,17 +44,37 @@ INSTRUCCIONES DE ROL:
 - Si el empleado es brusco o no ayuda, reacciona con más frustración.
 - Respuestas cortas y directas (2-4 frases máximo).`;
 
-    const history = transcript
-      .slice(0, -1)
-      .map((m: { role: string; content: string }) => ({
-        role:  m.role === "employee" ? "user" : "model",
-        parts: [{ text: m.content }],
-      }));
+    // Build message history in OpenAI format
+    const chatMessages = [
+      { role: "system", content: systemPrompt },
+      ...transcript.slice(0, -1).map((m: { role: string; content: string }) => ({
+        role:    m.role === "employee" ? "user" : "assistant",
+        content: m.content,
+      })),
+      { role: "user", content: message.trim() },
+    ];
 
-    const model  = genAI.getGenerativeModel({ model: "gemini-2.0-flash", systemInstruction: systemPrompt });
-    const chat   = model.startChat({ history });
-    const result = await chat.sendMessage(message.trim());
-    const reply  = result.response.text();
+    const groqRes = await fetch(GROQ_API_URL, {
+      method:  "POST",
+      headers: {
+        "Content-Type":  "application/json",
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model:       GROQ_MODEL,
+        messages:    chatMessages,
+        temperature: 0.8,
+        max_tokens:  256,
+      }),
+    });
+
+    if (!groqRes.ok) {
+      const err = await groqRes.text();
+      throw new Error(`Groq error ${groqRes.status}: ${err}`);
+    }
+
+    const groqData = await groqRes.json();
+    const reply    = groqData.choices?.[0]?.message?.content ?? "...";
 
     transcript.push({ role: "customer", content: reply, ts: new Date().toISOString() });
 
