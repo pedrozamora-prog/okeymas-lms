@@ -26,6 +26,23 @@ interface Scenario { id: string; title: string; description: string | null; obje
 
 const MAX_TURNS = 15;
 
+function playMessageSound() {
+  try {
+    const ctx  = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.setValueAtTime(1108.73, ctx.currentTime + 0.12);
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.4);
+  } catch { /* audio not supported */ }
+}
+
 export default function SimulationPage() {
   const params     = useParams();
   const router     = useRouter();
@@ -107,6 +124,7 @@ export default function SimulationPage() {
 
       setMessages(m => [...m, { role: "customer", content: data.reply, ts: new Date().toISOString() }]);
       setTurnsLeft(data.turnsLeft);
+      playMessageSound();
 
       if (data.turnsLeft <= 0) {
         toast.info("Has llegado al límite de turnos. Finaliza la conversación.");
