@@ -39,6 +39,7 @@ import {
   MessageSquare,
   Sparkles,
   UserCircle,
+  BellRing,
 } from "lucide-react";
 
 interface NavItem {
@@ -63,7 +64,8 @@ const navItems: NavItem[] = [
 ];
 
 const adminItems: NavItem[] = [
-  { href: "/admin/insights",          labelKey: "",                    labelFallback: "Insights IA",       icon: Sparkles,        roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/insights",           labelKey: "",                    labelFallback: "Insights IA",       icon: Sparkles,        roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
+  { href: "/admin/inactivity",         labelKey: "",                    labelFallback: "Inactividad",       icon: BellRing,        roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/scenarios",        labelKey: "",                    labelFallback: "Simulador IA",      icon: MessageSquare,   roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/courses",          labelKey: "admin.manageCourses", labelFallback: "Gestión cursos",    icon: LibraryBig,      roles: ["SUPER_ADMIN", "BRANCH_ADMIN", "INSTRUCTOR"] },
   { href: "/admin/certificates",     labelKey: "nav.certificates",    labelFallback: "Certificados",      icon: Award,           roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },

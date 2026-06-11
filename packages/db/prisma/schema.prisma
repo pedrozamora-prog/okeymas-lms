@@ -61,6 +61,7 @@ enum NotificationType {
   NEW_COMMENT
   PRL_EXPIRY_WARNING
   PRL_EXPIRED
+  INACTIVITY_REMINDER
 }
 
 enum SurveyQuestionType {
