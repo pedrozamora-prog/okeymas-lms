@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { SignatureModal } from "@/components/ui/signature-modal";
+import { CourseRatingModal } from "@/components/lesson/course-rating-modal";
 import { CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
 
 interface Props {
@@ -21,6 +22,7 @@ export function LessonCompleteButton({ lessonId, courseId, courseTitle, isComple
   const [completed,        setCompleted]        = useState(isCompleted);
   const [showSignature,    setShowSignature]    = useState(false);
   const [pendingCourseId,  setPendingCourseId]  = useState<string | null>(null);
+  const [showRating,       setShowRating]       = useState(false);
 
   async function markComplete() {
     setLoading(true);
@@ -66,8 +68,11 @@ export function LessonCompleteButton({ lessonId, courseId, courseTitle, isComple
       if (nextLessonId) {
         router.push(`/dashboard/courses/${courseId}/lessons/${nextLessonId}`);
       } else {
+        if (data.courseFinished) {
+          setShowRating(true); // mostrar encuesta antes de navegar
+          return;
+        }
         router.push(`/dashboard/courses/${courseId}`);
-        if (data.courseFinished) toast.success("¡Has completado el curso!");
       }
       router.refresh();
     } catch {
@@ -75,6 +80,12 @@ export function LessonCompleteButton({ lessonId, courseId, courseTitle, isComple
     } finally {
       setLoading(false);
     }
+  }
+
+  function handleRatingDone() {
+    setShowRating(false);
+    router.push(`/dashboard/courses/${courseId}`);
+    router.refresh();
   }
 
   function handleSignComplete(certificateIssued: boolean) {
@@ -119,6 +130,14 @@ export function LessonCompleteButton({ lessonId, courseId, courseTitle, isComple
           courseId={pendingCourseId}
           courseTitle={courseTitle}
           onComplete={handleSignComplete}
+        />
+      )}
+
+      {showRating && (
+        <CourseRatingModal
+          courseId={courseId}
+          courseTitle={courseTitle}
+          onDone={handleRatingDone}
         />
       )}
     </>
