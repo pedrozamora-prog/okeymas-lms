@@ -58,6 +58,7 @@ const navItems: NavItem[] = [
   { href: "/dashboard/certificates",labelKey: "nav.certificates",  labelFallback: "Certificados",         icon: Award  },
   { href: "/dashboard/skills",       labelKey: "nav.skills",        labelFallback: "Mis competencias",     icon: Target },
   { href: "/dashboard/simulations", labelKey: "",                  labelFallback: "Simulador IA",         icon: MessageSquare },
+  { href: "/dashboard/leaderboard", labelKey: "",                  labelFallback: "Clasificación",        icon: Trophy },
   { href: "/dashboard/profile",     labelKey: "",                  labelFallback: "Mi perfil",            icon: UserCircle },
 ];
 
