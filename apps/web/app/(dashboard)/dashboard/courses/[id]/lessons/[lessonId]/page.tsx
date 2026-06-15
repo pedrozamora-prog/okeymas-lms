@@ -4,6 +4,7 @@ import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { VideoLessonClient } from "@/components/lesson/video-lesson-client";
 import { QuizPlayer } from "@/components/lesson/quiz-player";
+import { ScormPlayer } from "@/components/lesson/scorm-player";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock, FileText, HelpCircle, Radio, Volume2 } from "lucide-react";
@@ -167,6 +168,16 @@ export default async function LessonPage({
         <QuizPlayer
           lessonId={lessonId}
           courseId={courseId}
+          nextLessonId={nextLesson?.id}
+        />
+      )}
+
+      {lesson.type === "SCORM" && lesson.fileUrl && (
+        <ScormPlayer
+          lessonId={lessonId}
+          courseId={courseId}
+          launchPath={lesson.fileUrl}
+          isCompleted={progress?.completed ?? false}
           nextLessonId={nextLesson?.id}
         />
       )}

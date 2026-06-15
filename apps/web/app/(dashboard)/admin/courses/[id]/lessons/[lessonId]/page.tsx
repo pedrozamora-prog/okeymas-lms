@@ -14,7 +14,7 @@ import {
   ArrowLeft, Save, Eye, Pencil, Loader2,
   BookOpen, Clock, CheckCircle2, Sparkles,
   ChevronDown, ChevronUp, Plus, ExternalLink,
-  Mic, Trash2, Volume2,
+  Mic, Trash2, Volume2, Package, UploadCloud, FileCheck2, XCircle,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -100,6 +100,12 @@ export default function LessonEditorPage() {
   const [audioLoading,    setAudioLoading]    = useState(false);
   const [audioUrl,        setAudioUrl]        = useState<string | null>(null);
   const [deletingAudio,   setDeletingAudio]   = useState(false);
+
+  // SCORM upload state
+  const [scormFile,        setScormFile]        = useState<File | null>(null);
+  const [scormUploading,   setScormUploading]   = useState(false);
+  const [scormResult,      setScormResult]      = useState<{ launchFile: string; title: string; filesUploaded: number } | null>(null);
+  const [scormRemoving,    setScormRemoving]    = useState(false);
 
   // Quiz IA state
   const [numQuestions,   setNumQuestions]   = useState(5);
@@ -253,6 +259,41 @@ export default function LessonEditorPage() {
     }
   }
 
+  async function uploadScorm() {
+    if (!scormFile) return;
+    setScormUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("package", scormFile);
+      const res = await fetch(`/api/admin/scorm/${lessonId}/upload`, { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Error al subir el paquete");
+      setScormResult(data);
+      setLesson(prev => prev ? { ...prev, type: "SCORM", fileUrl: `${lessonId}/${data.launchFile}` } : prev);
+      toast.success(`Paquete SCORM subido: ${data.filesUploaded} archivos`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error al subir");
+    } finally {
+      setScormUploading(false);
+    }
+  }
+
+  async function removeScorm() {
+    setScormRemoving(true);
+    try {
+      const res = await fetch(`/api/admin/scorm/${lessonId}/upload`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
+      setScormResult(null);
+      setScormFile(null);
+      setLesson(prev => prev ? { ...prev, type: "CONTENT", fileUrl: null } : prev);
+      toast.success("Paquete SCORM eliminado");
+    } catch {
+      toast.error("Error al eliminar el paquete");
+    } finally {
+      setScormRemoving(false);
+    }
+  }
+
   async function save() {
     setSaving(true);
     try {
@@ -349,6 +390,10 @@ export default function LessonEditorPage() {
             <TabsTrigger value="audio-ia" className="gap-1.5">
               <Mic className="w-3.5 h-3.5" />
               Audio IA
+            </TabsTrigger>
+            <TabsTrigger value="scorm" className="gap-1.5">
+              <Package className="w-3.5 h-3.5" />
+              SCORM
             </TabsTrigger>
           </TabsList>
 
@@ -589,6 +634,104 @@ export default function LessonEditorPage() {
                 </p>
               </div>
             )}
+          </TabsContent>
+
+          <TabsContent value="scorm" className="space-y-6">
+            <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <Package className="w-4 h-4 text-primary" />
+                <h3 className="font-semibold text-sm">Paquete SCORM 1.2</h3>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Sube un ZIP exportado desde Articulate Storyline, Rise, iSpring, Adobe Captivate u otras herramientas de autoría SCORM 1.2.
+                El paquete debe incluir <code className="bg-muted px-1 py-0.5 rounded font-mono text-[10px]">imsmanifest.xml</code> en la raíz.
+              </p>
+
+              {/* Already has SCORM package */}
+              {(lesson?.type === "SCORM" && lesson?.fileUrl) ? (
+                <div className="rounded-xl border border-green-500/30 bg-green-500/5 p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <FileCheck2 className="w-5 h-5 text-green-400" />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Paquete SCORM activo</p>
+                      <p className="text-xs text-muted-foreground font-mono mt-0.5">{lesson.fileUrl}</p>
+                    </div>
+                  </div>
+                  {scormResult && (
+                    <p className="text-xs text-muted-foreground">
+                      {scormResult.filesUploaded} archivos · lanzamiento: <code className="bg-muted px-1 rounded font-mono text-[10px]">{scormResult.launchFile}</code>
+                    </p>
+                  )}
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={removeScorm}
+                    disabled={scormRemoving}
+                    className="gap-1.5"
+                  >
+                    {scormRemoving
+                      ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      : <XCircle className="w-3.5 h-3.5" />
+                    }
+                    Eliminar paquete
+                  </Button>
+                </div>
+              ) : (
+                /* Upload form */
+                <div className="space-y-3">
+                  <label
+                    className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-8 cursor-pointer transition-colors ${
+                      scormFile
+                        ? "border-primary/50 bg-primary/5"
+                        : "border-border hover:border-primary/40 hover:bg-muted/30"
+                    }`}
+                  >
+                    <input
+                      type="file"
+                      accept=".zip"
+                      className="hidden"
+                      onChange={e => setScormFile(e.target.files?.[0] ?? null)}
+                      disabled={scormUploading}
+                    />
+                    <UploadCloud className={`w-8 h-8 ${scormFile ? "text-primary" : "text-muted-foreground/40"}`} />
+                    {scormFile ? (
+                      <div className="text-center">
+                        <p className="text-sm font-medium text-foreground">{scormFile.name}</p>
+                        <p className="text-xs text-muted-foreground">{(scormFile.size / 1024 / 1024).toFixed(1)} MB</p>
+                      </div>
+                    ) : (
+                      <div className="text-center">
+                        <p className="text-sm text-foreground">Haz clic para seleccionar el ZIP</p>
+                        <p className="text-xs text-muted-foreground">o arrastra y suelta aquí · máx. 200 MB</p>
+                      </div>
+                    )}
+                  </label>
+
+                  {scormFile && (
+                    <Button
+                      onClick={uploadScorm}
+                      disabled={scormUploading}
+                      className="w-full gap-2"
+                    >
+                      {scormUploading
+                        ? <><Loader2 className="w-4 h-4 animate-spin" /> Subiendo y procesando…</>
+                        : <><UploadCloud className="w-4 h-4" /> Subir paquete SCORM</>
+                      }
+                    </Button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Info */}
+            <div className="rounded-xl border border-border bg-muted/20 p-4 space-y-2 text-xs text-muted-foreground">
+              <p className="font-medium text-foreground">¿Cómo funciona?</p>
+              <ul className="space-y-1 list-disc list-inside">
+                <li>Los archivos se sirven desde el mismo dominio para cumplir con SCORM 1.2 (<code className="font-mono text-[10px] bg-muted px-0.5 rounded">window.parent.API</code>).</li>
+                <li>El progreso, puntuación y estado (<code className="font-mono text-[10px] bg-muted px-0.5 rounded">lesson_status</code>) se guardan automáticamente.</li>
+                <li>Cuando el paquete reporta <code className="font-mono text-[10px] bg-muted px-0.5 rounded">passed</code> o <code className="font-mono text-[10px] bg-muted px-0.5 rounded">completed</code>, la lección se marca como completada.</li>
+              </ul>
+            </div>
           </TabsContent>
 
           <TabsContent value="preview">
