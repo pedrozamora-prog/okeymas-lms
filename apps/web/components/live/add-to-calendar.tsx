@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarPlus, Chrome, Download, Mail } from "lucide-react";
+import { CalendarPlus, Download, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -44,17 +44,7 @@ export function AddToCalendar({ id, title, scheduledAt, durationMins, roomUrl }:
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <a href={googleUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 cursor-pointer">
-            {/* Google Calendar color */}
-            <span className="w-4 h-4 flex items-center justify-center">
-              <svg viewBox="0 0 24 24" className="w-4 h-4" aria-hidden>
-                <path fill="#4285F4" d="M21.98 6.35L17.65 2H6.35L2.02 6.35l4.33 4.33H17.65l4.33-4.33z"/>
-                <path fill="#34A853" d="M6.35 17.65L2 13.32v4.33L6.35 22h11.3L22 17.65v-4.33l-4.35 4.33H6.35z"/>
-                <path fill="#EA4335" d="M2 6.35v6.97l4.35-4.32z"/>
-                <path fill="#FBBC04" d="M22 6.35l-4.35 2.65V13l4.35-4.32V6.35z"/>
-                <rect fill="#fff" x="6" y="6" width="12" height="12" rx="1"/>
-                <text x="12" y="16" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#4285F4">G</text>
-              </svg>
-            </span>
+            <CalendarPlus className="w-4 h-4 text-[#4285F4]" />
             Google Calendar
           </a>
         </DropdownMenuItem>
