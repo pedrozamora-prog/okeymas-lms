@@ -12,7 +12,7 @@ export default async function CoursesPage() {
 
   const isEmployee = user.role === "EMPLOYEE";
 
-  const [courses, enrollments, ratingRows] = await Promise.all([
+  const [courses, enrollments] = await Promise.all([
     prisma.course.findMany({
       where: {
         organizationId: user.organizationId,
