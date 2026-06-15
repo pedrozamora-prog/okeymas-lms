@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock, FileText, HelpCircle, Radio, Volume2 } from "lucide-react";
 import { LessonCompleteButton } from "@/components/lesson/lesson-complete-button";
 import { LessonComments } from "@/components/lessons/lesson-comments";
+import { LessonNotes }    from "@/components/lesson/lesson-notes";
 import { BlockRenderer } from "@/components/lesson/block-renderer";
 import { Block } from "@/lib/blocks";
 import { LessonContextSetter } from "@/components/lesson/lesson-context-setter";
@@ -190,6 +191,9 @@ export default async function LessonPage({
           <p className="text-sm text-muted-foreground leading-relaxed">{lesson.description}</p>
         </div>
       )}
+
+      {/* Apuntes del alumno */}
+      <LessonNotes lessonId={lessonId} />
 
       {/* Foro de la lección */}
       <div className="pt-6 border-t border-border">

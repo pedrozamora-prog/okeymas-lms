@@ -1,9 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { CourseCard } from "@/components/courses/course-card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { BookOpen, Search } from "lucide-react";
+import { CoursesCatalog } from "@/components/courses/courses-catalog";
 import { getServerT } from "@/lib/server-t";
 
 export const metadata = { title: "Mis Cursos" };
@@ -15,12 +12,11 @@ export default async function CoursesPage() {
 
   const isEmployee = user.role === "EMPLOYEE";
 
-  const [courses, enrollments] = await Promise.all([
+  const [courses, enrollments, ratingRows] = await Promise.all([
     prisma.course.findMany({
       where: {
         organizationId: user.organizationId,
         status: "PUBLISHED",
-        // Empleados: solo cursos de su departamento o cursos globales (sin restricción de dept)
         ...(isEmployee && user.department ? {
           OR: [
             { departments: { none: {} } },
@@ -48,78 +44,61 @@ export default async function CoursesPage() {
 
   const progressMap = await buildProgressMap(user.id, enrollments);
 
-  const enrolled = courses.filter(c => enrollments.some(e => e.courseId === c.id));
-  const available = courses.filter(c => !enrollments.some(e => e.courseId === c.id));
+  let ratingMap: Record<string, { avg: number | null; count: number }> = {};
+  try {
+    const ratingRows = await prisma.$queryRaw<{ courseId: string; avg: number | null; count: bigint }[]>`
+      SELECT "courseId",
+             AVG(rating)::FLOAT AS avg,
+             COUNT(*) FILTER (WHERE rating IS NOT NULL) AS count
+      FROM   enrollments
+      WHERE  "courseId" IN (
+        SELECT id FROM courses WHERE "organizationId" = ${user.organizationId} AND status = 'PUBLISHED'
+      )
+      AND    rating IS NOT NULL
+      GROUP BY "courseId"
+    `;
+    ratingMap = Object.fromEntries(
+      ratingRows.map(r => [r.courseId, { avg: r.avg ? Math.round(r.avg * 10) / 10 : null, count: Number(r.count) }])
+    );
+  } catch {
+    // columna rating aún no existe — migración SQL pendiente
+  }
+
+  const enrolledIds  = new Set(enrollments.map(e => e.courseId));
+  const completedIds = new Set(
+    enrollments.filter(e => e.status === "COMPLETED").map(e => e.courseId)
+  );
+
+  const courseItems = courses.map(c => ({
+    ...c,
+    enrolled:    enrolledIds.has(c.id),
+    progress:    progressMap[c.id] ?? 0,
+    completed:   completedIds.has(c.id),
+    avgRating:   ratingMap[c.id]?.avg ?? null,
+    ratingCount: ratingMap[c.id]?.count ?? 0,
+  }));
+
+  const enrolledCount   = courseItems.filter(c => c.enrolled).length;
+  const availableCount  = courseItems.filter(c => !c.enrolled).length;
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-black text-foreground">{t("courses.title")}</h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            {enrolled.length} {t("courses.continue").toLowerCase()} · {available.length} {t("courses.start").toLowerCase()}
-          </p>
-        </div>
-        <div className="relative w-full sm:w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder={t("common.search")} className="pl-9" />
-        </div>
-      </div>
-
-      {/* Cursos inscritos */}
-      {enrolled.length > 0 && (
-        <section>
-          <div className="flex items-center gap-2 mb-4">
-            <h2 className="text-base font-semibold text-foreground">{t("dashboard.inProgress")}</h2>
-            <Badge variant="secondary">{enrolled.length}</Badge>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            {enrolled.map(course => (
-              <CourseCard
-                key={course.id}
-                course={course}
-                enrolled
-                progress={progressMap[course.id] ?? 0}
-              />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Cursos disponibles */}
-      {available.length > 0 && (
-        <section>
-          <div className="flex items-center gap-2 mb-4">
-            <h2 className="text-base font-semibold text-foreground">{t("courses.start")}</h2>
-            <Badge variant="outline">{available.length}</Badge>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            {available.map(course => (
-              <CourseCard
-                key={course.id}
-                course={course}
-                enrolled={false}
-                progress={0}
-              />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Estado vacío */}
-      {courses.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-24 text-center gap-3">
-          <BookOpen className="w-12 h-12 text-muted-foreground/30" />
-          <p className="text-foreground font-semibold">{t("courses.noCourses")}</p>
-          <p className="text-muted-foreground text-sm">{t("courses.noCoursesDesc")}</p>
-        </div>
-      )}
-    </div>
+    <CoursesCatalog
+      courses={courseItems}
+      labels={{
+        title:             t("courses.title"),
+        subtitle:          `${enrolledCount} ${t("courses.continue").toLowerCase()} · ${availableCount} ${t("courses.start").toLowerCase()}`,
+        searchPlaceholder: t("common.search"),
+        noCourses:         t("courses.noCourses"),
+        noCoursesDesc:     t("courses.noCoursesDesc"),
+      }}
+    />
   );
 }
 
-async function buildProgressMap(userId: string, enrollments: { courseId: string; course: { modules: { lessons: { id: string }[] }[] } }[]) {
+async function buildProgressMap(
+  userId: string,
+  enrollments: { courseId: string; course: { modules: { lessons: { id: string }[] }[] } }[]
+) {
   const map: Record<string, number> = {};
   for (const enrollment of enrollments) {
     const allLessons = enrollment.course.modules.flatMap(m => m.lessons);

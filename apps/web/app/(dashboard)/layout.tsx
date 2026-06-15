@@ -3,9 +3,11 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Sidebar } from "@/components/layout/sidebar";
 import { AiChatButton } from "@/components/ai/ai-chat-button";
+import { OnboardingWelcome } from "@/components/layout/onboarding-welcome";
 import { I18nProvider, type Locale } from "@/lib/i18n-context";
 import { TutorProvider } from "@/lib/tutor-context";
 import { OfflineIndicator } from "@/components/layout/offline-indicator";
+import { InstallPrompt } from "@/components/layout/install-prompt";
 import messagesEs from "@/messages/es.json";
 import messagesEn from "@/messages/en.json";
 import messagesFr from "@/messages/fr.json";
@@ -46,11 +48,22 @@ export default async function DashboardLayout({
 
   const primaryColor = org?.primaryColor ?? null;
 
-  const dbUser = user.id ? await prisma.user.findUnique({
-    where:  { id: user.id },
-    select: { locale: true },
-  }) : null;
+  let dbUser: { locale: string; onboarded_at: Date | null } | null = null;
+  try {
+    const rows = user.id ? await prisma.$queryRaw<{ locale: string; onboarded_at: Date | null }[]>`
+      SELECT locale, onboarded_at FROM users WHERE id = ${user.id} LIMIT 1
+    ` : [];
+    dbUser = rows[0] ?? null;
+  } catch {
+    // columna onboarded_at aún no existe — fallback seguro
+    const rows = user.id ? await prisma.$queryRaw<{ locale: string }[]>`
+      SELECT locale FROM users WHERE id = ${user.id} LIMIT 1
+    ` : [];
+    dbUser = rows[0] ? { ...rows[0], onboarded_at: null } : null;
+  }
   const locale = (dbUser?.locale ?? "es") as Locale;
+
+  const showOnboarding = user.role === "EMPLOYEE" && !dbUser?.onboarded_at;
 
   return (
     <I18nProvider initialLocale={locale} initialMessages={ALL_MESSAGES}>
@@ -76,6 +89,8 @@ export default async function DashboardLayout({
 
       <AiChatButton />
       <OfflineIndicator />
+      <InstallPrompt />
+      {showOnboarding && <OnboardingWelcome userName={user.name ?? "Usuario"} />}
     </div>
     </TutorProvider>
     </I18nProvider>

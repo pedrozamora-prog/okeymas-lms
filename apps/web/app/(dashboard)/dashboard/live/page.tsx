@@ -8,6 +8,7 @@ import { Video, Calendar, Clock, Users, Radio, PlayCircle } from "lucide-react";
 import { format, isToday, isTomorrow, differenceInMinutes } from "date-fns";
 import { es } from "date-fns/locale";
 import { JoinClassButton } from "@/components/live/join-class-button";
+import { AddToCalendar } from "@/components/live/add-to-calendar";
 
 export const metadata = { title: "Clases en Directo" };
 
@@ -121,12 +122,23 @@ export default async function LivePage() {
                       </div>
                       <span className="text-xs text-muted-foreground">{cls.instructor.name}</span>
                     </div>
-                    <JoinClassButton
-                      liveClassId={cls.id}
-                      roomUrl={cls.roomUrl}
-                      isLive={live}
-                      scheduledAt={cls.scheduledAt.toISOString()}
-                    />
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <JoinClassButton
+                        liveClassId={cls.id}
+                        roomUrl={cls.roomUrl}
+                        isLive={live}
+                        scheduledAt={cls.scheduledAt.toISOString()}
+                      />
+                      {!live && (
+                        <AddToCalendar
+                          id={cls.id}
+                          title={cls.title}
+                          scheduledAt={cls.scheduledAt.toISOString()}
+                          durationMins={cls.durationMins}
+                          roomUrl={cls.roomUrl}
+                        />
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
               );

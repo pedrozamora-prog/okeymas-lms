@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { BookOpen, Users } from "lucide-react";
+import { BookOpen, Users, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TiltCard } from "@/components/ui/tilt-card";
 
@@ -18,9 +18,11 @@ interface CourseCardProps {
   };
   enrolled: boolean;
   progress: number;
+  avgRating?: number | null;
+  ratingCount?: number;
 }
 
-export function CourseCard({ course, enrolled, progress }: CourseCardProps) {
+export function CourseCard({ course, enrolled, progress, avgRating, ratingCount = 0 }: CourseCardProps) {
   const totalLessons = course.modules.reduce((acc, m) => acc + m.lessons.length, 0);
 
   return (
@@ -75,6 +77,15 @@ export function CourseCard({ course, enrolled, progress }: CourseCardProps) {
               <Users className="w-3 h-3" />
               {course._count.enrollments}
             </span>
+            {avgRating != null && (
+              <span className="flex items-center gap-1 ml-auto text-yellow-500 font-semibold">
+                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                {avgRating.toFixed(1)}
+                {ratingCount > 0 && (
+                  <span className="text-muted-foreground font-normal">({ratingCount})</span>
+                )}
+              </span>
+            )}
           </div>
 
           {/* Barra de progreso si inscrito */}

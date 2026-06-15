@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Plus, BookOpen, Users, Layers, Pencil, BarChart2, Eye, ShoppingCart, Sparkles } from "lucide-react";
+import { Plus, BookOpen, Users, Layers, Pencil, BarChart2, Eye, ShoppingCart, Sparkles, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { BulkEnrollButton } from "./courses-client";
 
@@ -38,6 +38,26 @@ export default async function AdminCoursesPage() {
     },
     orderBy: [{ order: "asc" }, { createdAt: "desc" }],
   });
+
+  let ratingMap: Record<string, { avg: number | null; count: number }> = {};
+  try {
+    const ratingRows = await prisma.$queryRaw<{ courseId: string; avg: number | null; count: bigint }[]>`
+      SELECT "courseId",
+             AVG(rating)::FLOAT AS avg,
+             COUNT(*) FILTER (WHERE rating IS NOT NULL) AS count
+      FROM   enrollments
+      WHERE  "courseId" IN (
+        SELECT id FROM courses WHERE "organizationId" = ${user.organizationId}
+      )
+      AND    rating IS NOT NULL
+      GROUP BY "courseId"
+    `;
+    ratingMap = Object.fromEntries(
+      ratingRows.map(r => [r.courseId, { avg: r.avg ? Math.round(r.avg * 10) / 10 : null, count: Number(r.count) }])
+    );
+  } catch {
+    // columna rating aún no existe — migración SQL pendiente
+  }
 
   const stats = {
     total:     courses.length,
@@ -92,6 +112,7 @@ export default async function AdminCoursesPage() {
         <div className="space-y-3">
           {courses.map(course => {
             const totalLessons = course.modules.flatMap(m => m.lessons).length;
+            const rating = ratingMap[course.id];
             return (
               <Card key={course.id} className={cn(
                 "transition-colors hover:border-primary/30",
@@ -136,6 +157,13 @@ export default async function AdminCoursesPage() {
                           <Users className="w-3 h-3" />
                           {course._count.enrollments} inscritos
                         </span>
+                        {rating?.avg != null && (
+                          <span className="flex items-center gap-1 text-yellow-500 font-semibold">
+                            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                            {rating.avg.toFixed(1)}
+                            <span className="font-normal text-muted-foreground">({rating.count})</span>
+                          </span>
+                        )}
                       </div>
                     </div>
 

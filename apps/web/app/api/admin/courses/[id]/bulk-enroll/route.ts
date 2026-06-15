@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { sendNewEnrollmentEmail, OrgEmailConfig } from "@/lib/email";
+import { sendPushToMany } from "@/lib/push";
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -92,12 +93,23 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       skipDuplicates: true,
     });
 
-    // Emails (sin bloquear la respuesta — fire & forget)
-    if (notify && org?.notifyNewEnrollment) {
-      Promise.allSettled(
-        toEnroll.map(u =>
-          sendNewEnrollmentEmail(u.email, u.name, course.title, deadline, emailCfg)
-        )
+    // Emails + Push (fire & forget)
+    if (notify) {
+      if (org?.notifyNewEnrollment) {
+        Promise.allSettled(
+          toEnroll.map(u =>
+            sendNewEnrollmentEmail(u.email, u.name, course.title, deadline, emailCfg)
+          )
+        );
+      }
+      sendPushToMany(
+        toEnroll.map(u => u.id),
+        {
+          title: "Nueva formación asignada",
+          body:  `Se te ha inscrito en "${course.title}"`,
+          url:   "/dashboard/courses",
+          tag:   `enrollment-${course.title.slice(0, 20)}`,
+        }
       );
     }
   }
@@ -129,7 +141,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
         isActive: true,
         ...(departments.length > 0 ? { departmentId: { in: departments } } : {}),
       },
-      select: { id: true, name: true, email: true, department: { select: { name: true } } },
+      select: { id: true, name: true, email: true, departmentId: true, department: { select: { name: true } } },
       orderBy: { name: "asc" },
     }),
     prisma.enrollment.findMany({

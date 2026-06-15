@@ -7,7 +7,8 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { NotificationBell } from "@/components/layout/notification-bell";
-import { GlobalSearch } from "@/components/layout/global-search";
+import { GlobalSearch }     from "@/components/layout/global-search";
+import { PushToggle }       from "@/components/layout/push-toggle";
 import { useI18n, LOCALES } from "@/lib/i18n-context";
 import {
   LayoutDashboard,
@@ -69,6 +70,7 @@ const adminItems: NavItem[] = [
   { href: "/admin/inactivity",         labelKey: "",                    labelFallback: "Inactividad",       icon: BellRing,        roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/scenarios",        labelKey: "",                    labelFallback: "Simulador IA",      icon: MessageSquare,   roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/courses",          labelKey: "admin.manageCourses", labelFallback: "Gestión cursos",    icon: LibraryBig,      roles: ["SUPER_ADMIN", "BRANCH_ADMIN", "INSTRUCTOR"] },
+  { href: "/admin/live",             labelKey: "",                    labelFallback: "Clases en directo", icon: Video,           roles: ["SUPER_ADMIN", "BRANCH_ADMIN", "INSTRUCTOR"] },
   { href: "/admin/certificates",     labelKey: "nav.certificates",    labelFallback: "Certificados",      icon: Award,           roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/compliance",       labelKey: "admin.compliance",    labelFallback: "Cumplimiento",      icon: ShieldCheck,     roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
   { href: "/admin/prl",              labelKey: "admin.prl",           labelFallback: "PRL / Seguridad",   icon: HardHat,         roles: ["SUPER_ADMIN", "BRANCH_ADMIN"] },
@@ -206,6 +208,8 @@ export function Sidebar({ userRole, userName, userEmail, orgLogoUrl, orgName }: 
             </div>
           )}
         </div>
+
+        <PushToggle />
 
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}

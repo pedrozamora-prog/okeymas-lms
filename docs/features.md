@@ -9,10 +9,12 @@
 
 ### Cursos y lecciones
 - Catálogo de cursos con portada, descripción y progreso visual
+- **Búsqueda y filtros en vivo** en el catálogo: tabs Todos / En progreso / Completados / Disponibles / Obligatorios, búsqueda por título y descripción con contador por categoría
 - Tipos de lección: Vídeo, PDF, Contenido enriquecido (bloques), Quiz, Clase en directo
 - Editor de bloques para contenido estructurado (headings, párrafos, callouts, imágenes, vídeo embebido)
 - Navegación lección anterior / siguiente con barra de progreso
 - Marcar lección como completada (+10 XP)
+- **Apuntes personales por lección** — panel colapsable con auto-guardado (debounce 800ms), contador de palabras/caracteres y persistencia entre sesiones
 - Foro de comentarios por lección (preguntas y respuestas)
 - Narración de audio IA por lección (ElevenLabs, 4 voces disponibles)
 
@@ -32,6 +34,7 @@
 - Stats: cursos inscritos, completados, puntos XP, certificados
 - Cursos en progreso con barra de porcentaje
 - Próximas clases en directo
+- **Pantalla de bienvenida** (onboarding) para nuevos alumnos al entrar por primera vez
 
 ### Perfil del alumno `/dashboard/profile`
 - Avatar con iniciales, nombre, email, teléfono, departamento, fecha de alta
@@ -118,6 +121,7 @@
 
 ### Inscripciones y cumplimiento
 - Inscripción manual o por reglas automáticas (por rol, departamento)
+- **Inscripción masiva** desde el listado de cursos: inscribe a todos o por departamento de golpe, con fecha límite y notificación opcional
 - Panel de compliance por empleado y departamento
 - Alertas de riesgo (alumnos sin actividad, cursos vencidos)
 - Recordatorios de inactividad con mensaje personalizable
@@ -136,7 +140,7 @@
 ### Encuesta de satisfacción
 - Modal de 5 estrellas al completar un curso
 - Comentario opcional
-- API de media de valoraciones por curso para admins
+- **Valoraciones visibles** en tarjetas de cursos (⭐ media y número de valoraciones), tanto para alumnos como para admins
 
 ### Audit logs
 - Registro de todas las acciones administrativas con timestamp y usuario
@@ -146,7 +150,8 @@
 ## 🎥 Clases en directo
 
 - Programar clases con instructor, fecha, duración y enlace de acceso
-- Vista de próximas clases para alumnos e instructores
+- Vista de próximas clases para alumnos e instructores con widget en el dashboard
+- **Añadir al calendario**: botón en cada clase futura con 3 opciones — Google Calendar (deep-link), Outlook Web (deep-link) y descarga .ics (Apple Calendar, Outlook desktop, cualquier cliente RFC 5545)
 - Registro de asistencia
 
 ---
@@ -167,6 +172,7 @@
 - Sistema in-app con campanón en el sidebar
 - Tipos: nueva inscripción, recordatorio, expiración certificado, curso completado, nuevo comentario, recordatorio de inactividad
 - Marcar como leídas masivamente
+- **Web Push Notifications** — notificaciones push del navegador (funciona aunque la app esté cerrada). Toggle "Activar notificaciones" en el sidebar. Integrado en inscripciones masivas y recordatorios de inactividad
 
 ---
 
@@ -193,14 +199,26 @@
 | XLSX + React PDF | Exportación de informes |
 | Coolify | Self-hosted deployment |
 | Wati (WhatsApp) | Notificaciones WhatsApp (configurado) |
+| @ducanh2912/next-pwa + Workbox | Service worker, cache offline, fallbacks |
+| Web Push API (VAPID) | Notificaciones push nativas del navegador |
+
+### PWA — Instalación y offline
+- **Iconos**: generados dinámicamente vía `ImageResponse` (32×32 favicon, 180×180 Apple, 192 y 512 para manifest)
+- **Manifest**: `name`, `short_name`, `start_url`, `display: standalone`, `theme_color`, 3 shortcuts de acceso rápido
+- **Offline**: página `/offline` con diseño Formia + auto-recarga al recuperar conexión
+- **Banner instalación**: detecta `beforeinstallprompt` (Chrome/Android) e instrucción táctil para iOS Safari. Se muestra 1 vez, se descarta al instalar o cerrar.
 
 ---
 
 ## 🗺️ Roadmap sugerido
 
-- [ ] Inscripción masiva por departamento desde el curso
-- [ ] Onboarding / pantalla de bienvenida para nuevos alumnos
-- [ ] Valoraciones visibles en tarjetas de cursos
-- [ ] Notificaciones Web Push (service worker)
-- [ ] App móvil PWA
-- [ ] Integración calendario (Google Calendar / Outlook) para clases en directo
+- [x] Inscripción masiva por departamento desde el curso
+- [x] Onboarding / pantalla de bienvenida para nuevos alumnos
+- [x] Valoraciones visibles en tarjetas de cursos
+- [x] Búsqueda y filtros en vivo en el catálogo de cursos
+- [x] Apuntes personales del alumno por lección
+- [x] Analytics de curso — funnel de abandono, KPIs, tabla por lección, quiz stats
+- [x] Notificaciones Web Push (service worker + VAPID)
+- [ ] SCORM 1.2 / xAPI (importar contenido externo)
+- [x] App móvil PWA instalable — iconos 192/512 via ImageResponse, apple-icon, manifest completo, página offline, banner "Instalar app" (iOS + Android/Chrome), fallback offline automático
+- [x] Integración calendario — botón "Añadir al calendario" en clases en directo: Google Calendar (URL deep-link), Outlook Web (URL deep-link), descarga .ics (Apple Calendar, Outlook desktop, cualquier cliente compatible RFC 5545)

@@ -17,6 +17,7 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@react-pdf/renderer": "^4.5.1",
     "@supabase/supabase-js": "^2.106.1",
+    "@types/web-push": "^3.6.4",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -33,6 +34,7 @@
     "sonner": "^2.0.7",
     "stripe": "^22.2.0",
     "tailwind-merge": "^3.6.0",
+    "web-push": "^3.6.7",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

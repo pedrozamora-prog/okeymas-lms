@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { sendPushToMany } from "@/lib/push";
 
 // POST /api/admin/inactivity/remind
 // body: { userIds: string[], message?: string }
@@ -36,6 +37,14 @@ export async function POST(req: NextRequest) {
       message: notifMessage,
     })),
     skipDuplicates: false,
+  });
+
+  // Push (fire & forget)
+  sendPushToMany(validIds, {
+    title: "¡Te echamos de menos! 👋",
+    body:  notifMessage,
+    url:   "/dashboard",
+    tag:   "inactivity-reminder",
   });
 
   return NextResponse.json({ ok: true, sent: validIds.length });

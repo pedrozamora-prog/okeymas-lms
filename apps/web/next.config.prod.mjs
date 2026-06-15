@@ -3,17 +3,20 @@
 import withPWAInit from "@ducanh2912/next-pwa";
 
 const withPWA = withPWAInit({
-  dest:          "public",
-  register:      true,
-  skipWaiting:   true,
+  dest:           "public",
+  register:       true,
+  skipWaiting:    true,
   reloadOnOnline: true,
+  fallbacks: {
+    document: "/offline",
+  },
   workboxOptions: {
     runtimeCaching: [
       {
         urlPattern: /^https?.*/,
         handler: "NetworkFirst",
         options: {
-          cacheName: "fitacademy-app",
+          cacheName: "formia-app",
           expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 7 },
           networkTimeoutSeconds: 10,
         },
@@ -22,7 +25,7 @@ const withPWA = withPWAInit({
         urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/i,
         handler: "StaleWhileRevalidate",
         options: {
-          cacheName: "fitacademy-images",
+          cacheName: "formia-images",
           expiration: { maxEntries: 100, maxAgeSeconds: 60 * 60 * 24 * 30 },
         },
       },
@@ -30,9 +33,17 @@ const withPWA = withPWAInit({
         urlPattern: /\/api\/(courses|lessons|dashboard)/,
         handler: "NetworkFirst",
         options: {
-          cacheName: "fitacademy-api",
+          cacheName: "formia-api",
           expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 },
           networkTimeoutSeconds: 5,
+        },
+      },
+      {
+        urlPattern: /\/api\/pwa-icon\/.*/,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "formia-icons",
+          expiration: { maxEntries: 5, maxAgeSeconds: 60 * 60 * 24 * 365 },
         },
       },
     ],
@@ -41,6 +52,7 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const baseConfig = {
+  output: "standalone",
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "drive.google.com" },

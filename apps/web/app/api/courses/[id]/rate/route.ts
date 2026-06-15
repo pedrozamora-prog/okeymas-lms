@@ -28,8 +28,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     SET    rating = ${rating},
            rating_comment = ${comment ?? null},
            rated_at       = NOW()
-    WHERE  user_id = ${user.id}
-    AND    course_id = ${courseId}
+    WHERE  "userId" = ${user.id}
+    AND    "courseId" = ${courseId}
   `;
 
   return NextResponse.json({ ok: true });
@@ -48,7 +48,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   const rows = await prisma.$queryRaw<{ avg: number | null; count: bigint }[]>`
     SELECT AVG(rating)::FLOAT AS avg, COUNT(*) AS count
     FROM   enrollments
-    WHERE  course_id = ${courseId}
+    WHERE  "courseId" = ${courseId}
     AND    rating IS NOT NULL
   `;
 

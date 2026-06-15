@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { BookOpen, CheckCircle, Trophy, Video, Award, Users, TrendingUp, BarChart3, GraduationCap, AlertTriangle, Flame, ArrowRight, PlayCircle, Star } from "lucide-react";
 import { AlertsWidget } from "@/components/admin/alerts-widget";
+import { AddToCalendar } from "@/components/live/add-to-calendar";
 import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -353,6 +354,13 @@ export default async function DashboardPage() {
                         {format(cls.scheduledAt, "d MMM · HH:mm", { locale: es })} · {cls.durationMins}min
                       </p>
                     </div>
+                    <AddToCalendar
+                      id={cls.id}
+                      title={cls.title}
+                      scheduledAt={cls.scheduledAt.toISOString()}
+                      durationMins={cls.durationMins}
+                      roomUrl={cls.roomUrl}
+                    />
                   </div>
                 ))}
               </div>
@@ -633,13 +641,17 @@ export default async function DashboardPage() {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-foreground truncate">{cls.title}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {format(cls.scheduledAt, "d MMM · HH:mm", { locale: es })}
+                        {format(cls.scheduledAt, "d MMM · HH:mm", { locale: es })} · {cls.durationMins}min
                         {cls.instructor?.name && ` · ${cls.instructor.name}`}
                       </p>
                     </div>
-                    <Badge variant="outline" className="text-[10px] border-purple-500/30 text-purple-400 bg-purple-500/10 flex-shrink-0">
-                      {cls.durationMins}min
-                    </Badge>
+                    <AddToCalendar
+                      id={cls.id}
+                      title={cls.title}
+                      scheduledAt={cls.scheduledAt.toISOString()}
+                      durationMins={cls.durationMins}
+                      roomUrl={cls.roomUrl}
+                    />
                   </div>
                 ))}
               </div>

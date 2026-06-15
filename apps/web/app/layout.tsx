@@ -18,16 +18,16 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: { default: "Formia", template: "%s | Formia" },
-  description: "Plataforma de formación profesional Formia",
+  description: "Plataforma de formación profesional para equipos y gimnasios",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "Formia",
+    startupImage: "/api/pwa-icon/512",
   },
-  icons: {
-    icon:  "/logo-icon.png",
-    apple: "/logo-icon.png",
+  other: {
+    "mobile-web-app-capable": "yes",
   },
 };
 
