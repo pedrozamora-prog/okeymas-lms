@@ -50,10 +50,15 @@ export default async function LessonPage({
   if (!lesson || lesson.module.courseId !== courseId) notFound();
 
   // Fetch audioNarrationUrl via raw SQL (column added after client generation)
-  const audioRow = await prisma.$queryRaw<{ audio_narration_url: string | null }[]>`
-    SELECT audio_narration_url FROM lessons WHERE id = ${lessonId}
-  `;
-  const audioNarrationUrl = audioRow[0]?.audio_narration_url ?? null;
+  let audioNarrationUrl: string | null = null;
+  try {
+    const audioRow = await prisma.$queryRaw<{ audioNarrationUrl: string | null }[]>`
+      SELECT "audioNarrationUrl" FROM lessons WHERE id = ${lessonId}
+    `;
+    audioNarrationUrl = audioRow[0]?.audioNarrationUrl ?? null;
+  } catch {
+    // column pending migration
+  }
 
   const progress = await prisma.lessonProgress.findUnique({
     where: { userId_lessonId: { userId: user.id, lessonId } },
