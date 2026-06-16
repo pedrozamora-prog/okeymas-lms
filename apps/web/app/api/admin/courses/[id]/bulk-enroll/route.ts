@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { sendNewEnrollmentEmail, OrgEmailConfig } from "@/lib/email";
 import { sendPushToMany } from "@/lib/push";
+import { getOrgWhatsAppConfig, sendWhatsAppMessage } from "@/lib/whatsapp";
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth();
@@ -41,7 +42,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         ...(userIds.length > 0     ? [{ id: { in: userIds } }]             : []),
       ],
     },
-    select: { id: true, name: true, email: true },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    select: { id: true, name: true, email: true, whatsappPhone: true } as any,
   });
 
   if (users.length === 0) {
@@ -55,11 +57,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   });
   const existingIds = new Set(existing.map(e => e.userId));
 
-  // Org email config para notificaciones
+  // Org config (email + whatsapp)
   const org = await prisma.organization.findUnique({
     where:  { id: admin.organizationId },
     select: { emailFromName: true, emailFromAddress: true, emailReplyTo: true, resendApiKey: true, notifyNewEnrollment: true },
   });
+  const waCfg = await getOrgWhatsAppConfig(prisma as Parameters<typeof getOrgWhatsAppConfig>[0], admin.organizationId);
   const emailCfg: OrgEmailConfig = {
     fromName:    org?.emailFromName,
     fromAddress: org?.emailFromAddress,
@@ -111,6 +114,24 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
           tag:   `enrollment-${course.title.slice(0, 20)}`,
         }
       );
+
+      // WhatsApp (fire & forget — only if enabled and user has phone)
+      if (waCfg?.enabled) {
+        const usersWithPhone = (toEnroll as { id: string; name: string; email: string; whatsappPhone?: string | null }[])
+          .filter(u => u.whatsappPhone);
+        if (usersWithPhone.length > 0) {
+          Promise.allSettled(
+            usersWithPhone.map(u =>
+              sendWhatsAppMessage(
+                waCfg,
+                u.whatsappPhone!,
+                `📚 Hola ${u.name.split(" ")[0]}, se te ha inscrito en el curso *"${course.title}"* en Formia. ¡Empieza cuando quieras!`,
+                { externalId: `formia_enroll_${u.id}_${courseId}`, metadata: { course_id: courseId, user_id: u.id } }
+              )
+            )
+          );
+        }
+      }
     }
   }
 

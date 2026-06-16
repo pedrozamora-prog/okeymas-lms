@@ -7,9 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import {
   Zap, Copy, RefreshCw, CheckCircle2, XCircle, AlertCircle,
   Clock, ChevronDown, ChevronUp, Key, Plug, ExternalLink,
+  MessageCircle, Send, Eye, EyeOff,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -80,6 +82,54 @@ const PROVIDERS = [
   },
 ];
 
+// ── WhatsApp providers ────────────────────────────────────────────────────────
+
+const WA_PROVIDERS = [
+  {
+    id: "atendia",
+    name: "AtendIA",
+    logo: "A",
+    color: "bg-purple-600",
+    description: "Plataforma WhatsApp española. Sin configurar Meta ni tokens.",
+    fields: { apiKey: true, apiUrl: false, fromPhone: false },
+    apiKeyLabel: "API Key de AtendIA",
+    apiKeyPlaceholder: "at_...",
+  },
+  {
+    id: "wati",
+    name: "Wati",
+    logo: "W",
+    color: "bg-green-600",
+    description: "Plataforma WhatsApp Business API con panel de mensajes.",
+    fields: { apiKey: true, apiUrl: true, fromPhone: false },
+    apiKeyLabel: "Token de Wati",
+    apiKeyPlaceholder: "eyJhbGciOi...",
+    apiUrlLabel: "URL de tu servidor Wati",
+    apiUrlPlaceholder: "https://live-server-XXXXX.wati.io",
+  },
+  {
+    id: "ycloud",
+    name: "YCloud",
+    logo: "Y",
+    color: "bg-blue-600",
+    description: "API WhatsApp Business con alta tasa de entrega.",
+    fields: { apiKey: true, apiUrl: false, fromPhone: true },
+    apiKeyLabel: "API Key de YCloud",
+    apiKeyPlaceholder: "yc_...",
+    fromPhoneLabel: "Phone Number ID",
+    fromPhonePlaceholder: "+34600000000",
+  },
+] as const;
+
+interface WhatsAppCfg {
+  whatsappEnabled: boolean;
+  whatsappProvider: string | null;
+  whatsappApiKey: string | null;
+  whatsappApiKeySet: boolean;
+  whatsappApiUrl: string | null;
+  whatsappFromPhone: string | null;
+}
+
 interface SyncLog {
   id: string;
   event: string;
@@ -106,21 +156,88 @@ export default function IntegrationsPage() {
   const [saving, setSaving]         = useState(false);
   const [regenerating, setRegenerating] = useState(false);
 
+  // WhatsApp state
+  const [waCfg, setWaCfg]               = useState<WhatsAppCfg | null>(null);
+  const [waProvider, setWaProvider]     = useState<string | null>(null);
+  const [waApiKey, setWaApiKey]         = useState("");
+  const [waApiUrl, setWaApiUrl]         = useState("");
+  const [waFromPhone, setWaFromPhone]   = useState("");
+  const [waEnabled, setWaEnabled]       = useState(false);
+  const [waShowKey, setWaShowKey]       = useState(false);
+  const [waSaving, setWaSaving]         = useState(false);
+  const [waTesting, setWaTesting]       = useState(false);
+
   const fetch_ = useCallback(async () => {
     setLoading(true);
     try {
-      const res  = await fetch("/api/admin/integrations");
-      const data = await res.json();
-      setOrg(data.org);
-      setLogs(data.logs ?? []);
-      setSelectedProvider(data.org?.hrisProvider ?? null);
-      setSyncEnabled(data.org?.hrisSyncEnabled ?? false);
+      const [hrisRes, waRes] = await Promise.all([
+        fetch("/api/admin/integrations"),
+        fetch("/api/admin/integrations/whatsapp"),
+      ]);
+      const hrisData = await hrisRes.json();
+      const waData   = await waRes.json() as WhatsAppCfg;
+      setOrg(hrisData.org);
+      setLogs(hrisData.logs ?? []);
+      setSelectedProvider(hrisData.org?.hrisProvider ?? null);
+      setSyncEnabled(hrisData.org?.hrisSyncEnabled ?? false);
+      setWaCfg(waData);
+      setWaProvider(waData.whatsappProvider);
+      setWaEnabled(waData.whatsappEnabled);
+      setWaApiUrl(waData.whatsappApiUrl ?? "");
+      setWaFromPhone(waData.whatsappFromPhone ?? "");
+      // Don't pre-fill key — show masked placeholder
     } catch {
       toast.error("Error al cargar configuración");
     } finally {
       setLoading(false);
     }
   }, []);
+
+  async function saveWhatsApp() {
+    setWaSaving(true);
+    try {
+      const payload: Record<string, unknown> = {
+        whatsappEnabled:  waEnabled,
+        whatsappProvider: waProvider,
+        whatsappApiUrl:   waApiUrl.trim() || null,
+        whatsappFromPhone: waFromPhone.trim() || null,
+      };
+      // Only send key if user typed a new one
+      if (waApiKey.trim()) payload.whatsappApiKey = waApiKey.trim();
+
+      const res = await fetch("/api/admin/integrations/whatsapp", {
+        method:  "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error();
+      setWaApiKey(""); // clear — will show masked on next load
+      await fetch_();
+      toast.success("Configuración WhatsApp guardada");
+    } catch {
+      toast.error("Error al guardar");
+    } finally {
+      setWaSaving(false);
+    }
+  }
+
+  async function testWhatsApp() {
+    setWaTesting(true);
+    try {
+      const res = await fetch("/api/admin/integrations/whatsapp", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ action: "test" }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Error");
+      toast.success("¡Mensaje de prueba enviado! Revisa tu WhatsApp.");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error al enviar");
+    } finally {
+      setWaTesting(false);
+    }
+  }
 
   useEffect(() => { fetch_(); }, [fetch_]);
 
@@ -206,6 +323,139 @@ export default function IntegrationsPage() {
           />
         </div>
       </div>
+
+      {/* ── WhatsApp ─────────────────────────────────────────────────────── */}
+      <Card>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <MessageCircle className="w-4 h-4 text-green-500" />
+              Notificaciones WhatsApp
+            </CardTitle>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="wa-toggle" className="text-sm">Activar</Label>
+              <Switch
+                id="wa-toggle"
+                checked={waEnabled}
+                onCheckedChange={setWaEnabled}
+              />
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1">
+            Envía notificaciones de inscripción, recordatorios y finalización por WhatsApp.
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          {/* Provider selector */}
+          <div>
+            <p className="text-xs font-medium text-muted-foreground mb-2">Proveedor</p>
+            <div className="grid grid-cols-3 gap-2">
+              {WA_PROVIDERS.map(p => (
+                <button
+                  key={p.id}
+                  onClick={() => setWaProvider(p.id)}
+                  className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all text-sm font-medium ${
+                    waProvider === p.id
+                      ? "border-primary bg-primary/5"
+                      : "border-border hover:border-muted-foreground/30"
+                  }`}
+                >
+                  <div className={`w-10 h-10 rounded-xl ${p.color} flex items-center justify-center text-white font-black text-lg`}>
+                    {p.logo}
+                  </div>
+                  {p.name}
+                </button>
+              ))}
+            </div>
+            {waProvider && (
+              <p className="text-xs text-muted-foreground mt-2">
+                {WA_PROVIDERS.find(p => p.id === waProvider)?.description}
+              </p>
+            )}
+          </div>
+
+          {/* Provider-specific fields */}
+          {waProvider && (() => {
+            const pCfg = WA_PROVIDERS.find(p => p.id === waProvider);
+            if (!pCfg) return null;
+            return (
+              <div className="space-y-3">
+                {/* API Key */}
+                <div className="space-y-1.5">
+                  <Label className="text-xs">{pCfg.apiKeyLabel}</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type={waShowKey ? "text" : "password"}
+                      placeholder={waCfg?.whatsappApiKeySet ? "••••••••••••••••••••" + (waCfg.whatsappApiKey?.slice(-4) ?? "") : pCfg.apiKeyPlaceholder}
+                      value={waApiKey}
+                      onChange={e => setWaApiKey(e.target.value)}
+                      className="font-mono text-xs"
+                    />
+                    <Button size="icon" variant="ghost" onClick={() => setWaShowKey(s => !s)}>
+                      {waShowKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </Button>
+                  </div>
+                  {waCfg?.whatsappApiKeySet && !waApiKey && (
+                    <p className="text-[11px] text-green-600">✓ API key guardada — deja en blanco para no cambiarla</p>
+                  )}
+                </div>
+
+                {/* API URL (Wati only) */}
+                {pCfg.fields.apiUrl && (
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">{"apiUrlLabel" in pCfg ? pCfg.apiUrlLabel : "URL del servidor"}</Label>
+                    <Input
+                      type="url"
+                      placeholder={"apiUrlPlaceholder" in pCfg ? pCfg.apiUrlPlaceholder : ""}
+                      value={waApiUrl}
+                      onChange={e => setWaApiUrl(e.target.value)}
+                      className="text-xs"
+                    />
+                  </div>
+                )}
+
+                {/* From Phone (Wati/YCloud) */}
+                {pCfg.fields.fromPhone && (
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">{"fromPhoneLabel" in pCfg ? pCfg.fromPhoneLabel : "Teléfono remitente"}</Label>
+                    <Input
+                      placeholder={"fromPhonePlaceholder" in pCfg ? pCfg.fromPhonePlaceholder : "+34..."}
+                      value={waFromPhone}
+                      onChange={e => setWaFromPhone(e.target.value)}
+                      className="text-xs"
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* Actions */}
+          <div className="flex items-center gap-2 pt-1 flex-wrap">
+            <Button onClick={saveWhatsApp} disabled={waSaving || !waProvider} className="gap-1.5">
+              {waSaving ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : null}
+              Guardar configuración
+            </Button>
+            <Button
+              variant="outline"
+              onClick={testWhatsApp}
+              disabled={waTesting || !waCfg?.whatsappApiKeySet}
+              className="gap-1.5"
+            >
+              <Send className={`w-3.5 h-3.5 ${waTesting ? "animate-pulse" : ""}`} />
+              Enviar mensaje de prueba
+            </Button>
+          </div>
+          {!waCfg?.whatsappApiKeySet && (
+            <p className="text-xs text-muted-foreground">Guarda la configuración primero para poder enviar un mensaje de prueba.</p>
+          )}
+          <p className="text-xs text-muted-foreground">
+            El mensaje de prueba se enviará a tu propio número (configúralo en <strong>Perfil → WhatsApp</strong>).
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* ── HRIS ─────────────────────────────────────────────────────────── */}
 
       {/* Cómo funciona */}
       {!syncEnabled && (
