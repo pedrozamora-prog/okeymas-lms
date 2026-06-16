@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
   Trophy, Award, BookOpen, CheckCircle, Star, Download,
-  Mail, Phone, Building2, Calendar, Medal, GraduationCap,
+  Mail, Phone, Building2, Calendar, Medal, GraduationCap, MessageCircle,
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import Link from "next/link";
+import { EditProfileDialog } from "@/components/profile/edit-profile-dialog";
 
 const ROLE_LABEL: Record<string, string> = {
   EMPLOYEE:     "Empleado",
@@ -31,7 +32,7 @@ export default async function ProfilePage() {
       where: { id: user.id },
       select: {
         id: true, name: true, email: true, image: true, role: true,
-        phone: true, createdAt: true,
+        phone: true, whatsappPhone: true, createdAt: true,
         department: { select: { name: true } },
         organization: { select: { name: true } },
       },
@@ -116,6 +117,12 @@ export default async function ProfilePage() {
                     <Phone className="w-3.5 h-3.5 text-primary/60" /> {dbUser.phone}
                   </span>
                 )}
+                {(dbUser as { whatsappPhone?: string | null }).whatsappPhone && (
+                  <span className="flex items-center gap-1.5 text-green-500">
+                    <MessageCircle className="w-3.5 h-3.5" />
+                    {(dbUser as { whatsappPhone?: string | null }).whatsappPhone}
+                  </span>
+                )}
                 {dbUser.department && (
                   <span className="flex items-center gap-1.5">
                     <Building2 className="w-3.5 h-3.5 text-primary/60" /> {dbUser.department.name}
@@ -125,6 +132,13 @@ export default async function ProfilePage() {
                   <Calendar className="w-3.5 h-3.5 text-primary/60" />
                   Miembro desde {format(dbUser.createdAt, "MMM yyyy", { locale: es })}
                 </span>
+              </div>
+              <div className="mt-3">
+                <EditProfileDialog
+                  initialName={dbUser.name ?? ""}
+                  initialPhone={dbUser.phone ?? null}
+                  initialWhatsappPhone={(dbUser as { whatsappPhone?: string | null }).whatsappPhone ?? null}
+                />
               </div>
             </div>
           </div>
