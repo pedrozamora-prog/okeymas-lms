@@ -42,8 +42,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
         ...(userIds.length > 0     ? [{ id: { in: userIds } }]             : []),
       ],
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    select: { id: true, name: true, email: true, whatsappPhone: true } as any,
+    select: { id: true, name: true, email: true, whatsappPhone: true },
   });
 
   if (users.length === 0) {
