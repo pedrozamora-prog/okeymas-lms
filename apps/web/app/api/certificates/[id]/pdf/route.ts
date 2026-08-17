@@ -63,9 +63,9 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     issuedAt:     format(cert.issuedAt, "d 'de' MMMM 'de' yyyy", { locale: es }),
     certId:       cert.id.slice(0, 12).toUpperCase(),
     signerName:   cert.course?.certSignerName  ?? "Director de Formación",
-    signerTitle:  cert.course?.certSignerTitle ?? "FitAcademy",
+    signerTitle:  cert.course?.certSignerTitle ?? "Formia",
     logoUrl:      org?.logoUrl ?? fallbackLogo,
-    orgName:      org?.name ?? "FitAcademy",
+    orgName:      org?.name ?? "Formia",
   }) as unknown as ReactElement<DocumentProps>;
 
   const pdfBuffer = await renderToBuffer(element);

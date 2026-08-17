@@ -114,7 +114,7 @@ export default function InvitePage() {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-transparent pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
         <div className="relative z-10 text-center space-y-6 max-w-xs">
-          <img src="/fitacademy-logo.svg" alt="FitAcademy" className="h-12 w-auto mx-auto" />
+          <img src="/formia-logo.svg" alt="Formia" className="h-12 w-auto mx-auto" />
           <div>
             <h2 className="text-2xl font-black text-white leading-tight">
               Bienvenido a <span className="text-primary">{invite?.orgName}</span>
@@ -139,7 +139,7 @@ export default function InvitePage() {
 
         {/* Logo mobile */}
         <div className="lg:hidden mb-8">
-          <img src="/fitacademy-logo-dark.svg" alt="FitAcademy" className="h-10 w-auto" />
+          <img src="/formia-logo-dark.svg" alt="Formia" className="h-10 w-auto" />
         </div>
 
         <div className="w-full max-w-sm">

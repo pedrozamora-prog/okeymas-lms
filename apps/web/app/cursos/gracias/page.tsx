@@ -106,8 +106,7 @@ export default function GraciasPage() {
       <header className="border-b border-white/10 bg-[#0C0C0C]/80 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center">
           <Link href="/" className={`${anton.className} text-xl`}>
-            <span className="text-[#A855F7]">Fit</span>
-            <span className="text-white">Academy</span>
+            <span className="text-white">Formia</span>
           </Link>
         </div>
       </header>

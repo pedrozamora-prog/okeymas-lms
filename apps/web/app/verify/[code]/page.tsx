@@ -13,7 +13,7 @@ const TYPE_LABELS: Record<string, string> = {
 
 export async function generateMetadata({ params }: Props) {
   const { code } = await params;
-  return { title: `Verificación — ${code} · FitAcademy` };
+  return { title: `Verificación — ${code} · Formia` };
 }
 
 export default async function VerifyCertPage({ params }: Props) {
@@ -41,7 +41,7 @@ export default async function VerifyCertPage({ params }: Props) {
       {/* Header */}
       <header className="bg-[#0C0C0C] px-6 py-4">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <img src="/fitacademy-logo.svg" alt="FitAcademy" className="h-9 w-auto" />
+          <img src="/formia-logo.svg" alt="Formia" className="h-9 w-auto" />
           <Link
             href="/verify"
             className="flex items-center gap-1.5 text-[#666] hover:text-white transition-colors text-sm"
@@ -66,7 +66,7 @@ export default async function VerifyCertPage({ params }: Props) {
                 </div>
                 <div>
                   <p className="text-white font-black text-lg leading-tight">Certificado verificado</p>
-                  <p className="text-green-100 text-xs">Este certificado es auténtico y fue emitido por FitAcademy</p>
+                  <p className="text-green-100 text-xs">Este certificado es auténtico y fue emitido por Formia</p>
                 </div>
                 <div className="ml-auto bg-white/20 rounded-full px-3 py-1">
                   <span className="text-white text-xs font-bold tracking-wider">VÁLIDO</span>
@@ -147,7 +147,7 @@ export default async function VerifyCertPage({ params }: Props) {
                   </div>
                   <div className="flex items-center gap-1.5 text-[#999]">
                     <Building2 className="w-3.5 h-3.5" />
-                    <span className="text-xs">FitAcademy</span>
+                    <span className="text-xs">Formia</span>
                   </div>
                 </div>
               </div>
@@ -201,7 +201,7 @@ export default async function VerifyCertPage({ params }: Props) {
                 <ul className="text-sm text-[#777] space-y-1.5 list-disc list-inside">
                   <li>El código fue introducido con errores — comprueba mayúsculas y números</li>
                   <li>El certificado puede haber sido revocado</li>
-                  <li>El código no pertenece a un certificado emitido por FitAcademy</li>
+                  <li>El código no pertenece a un certificado emitido por Formia</li>
                 </ul>
               </div>
             </div>
@@ -222,7 +222,7 @@ export default async function VerifyCertPage({ params }: Props) {
 
       <footer className="py-6 px-4 border-t border-[#eee] text-center">
         <p className="text-xs text-[#999]">
-          © {new Date().getFullYear()} FitAcademy · Sistema de verificación de certificados
+          © {new Date().getFullYear()} Formia · Sistema de verificación de certificados
         </p>
       </footer>
     </div>

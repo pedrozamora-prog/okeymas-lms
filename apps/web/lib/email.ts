@@ -33,7 +33,7 @@ function baseTemplate(content: string, orgName?: string) {
       <table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb">
         <!-- Header -->
         <tr><td style="background:#0C0C0C;padding:28px 32px">
-          <p style="margin:0;font-size:22px;font-weight:900;font-family:Arial Black,sans-serif"><span style="color:#A855F7">Fit</span><span style="color:#ffffff">Academy</span></p>
+          <p style="margin:0;font-size:22px;font-weight:900;font-family:Arial Black,sans-serif"><span style="color:#ffffff">Formia</span></p>
           <p style="margin:4px 0 0;font-size:10px;font-weight:400;letter-spacing:3px;color:#888888;text-transform:uppercase">Learning Platform</p>
         </td></tr>
         <!-- Content -->

@@ -51,8 +51,7 @@ export default async function CursosPage() {
       <header className="border-b border-white/10 bg-[#0C0C0C]/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className={`${anton.className} text-xl`}>
-            <span className="text-[#A855F7]">Fit</span>
-            <span className="text-white">Academy</span>
+            <span className="text-white">Formia</span>
           </Link>
           <Link
             href="/login"
