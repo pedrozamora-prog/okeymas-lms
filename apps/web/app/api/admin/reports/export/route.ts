@@ -26,13 +26,31 @@ const STATUS_LABELS: Record<string, string> = {
 
 export async function GET(req: NextRequest) {
   const session = await auth();
-  const user = session?.user as { role: string; organizationId: string; name?: string } | undefined;
-  if (!user || !["SUPER_ADMIN", "BRANCH_ADMIN"].includes(user.role)) {
+  const user = session?.user as { id: string; role: string; organizationId: string; name?: string } | undefined;
+  if (!user || !["SUPER_ADMIN", "BRANCH_ADMIN", "MANAGER"].includes(user.role)) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
   const { searchParams } = new URL(req.url);
-  const dept   = searchParams.get("dept") || "";
+  let dept     = searchParams.get("dept") || "";
+
+  // MANAGER: el departamento sale siempre de la DB, nunca del query string
+  if (user.role === "MANAGER") {
+    const manager = await prisma.user.findUnique({
+      where:  { id: user.id },
+      select: { departmentId: true, organizationId: true, isActive: true },
+    });
+    if (!manager || !manager.isActive || manager.organizationId !== user.organizationId) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 403 });
+    }
+    if (!manager.departmentId) {
+      return NextResponse.json(
+        { error: "No tienes un departamento asignado. Pide a un administrador que te asigne uno para poder generar informes." },
+        { status: 403 }
+      );
+    }
+    dept = manager.departmentId;
+  }
   const from   = searchParams.get("from") || "";
   const to     = searchParams.get("to")   || "";
   const format_type = searchParams.get("format") || "excel";

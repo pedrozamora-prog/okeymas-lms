@@ -22,8 +22,9 @@ export function ReportExport({ fixedDept }: Props = {}) {
 
   useEffect(() => {
     fetch("/api/admin/departments")
-      .then(r => r.json())
-      .then((data: DeptOption[]) => {
+      .then(r => (r.ok ? r.json() : []))
+      .then((body: unknown) => {
+        const data = Array.isArray(body) ? (body as DeptOption[]) : [];
         setDepts(data);
         if (fixedDept) {
           const found = data.find((d: DeptOption) => d.id === fixedDept);
@@ -45,7 +46,10 @@ export function ReportExport({ fixedDept }: Props = {}) {
     setLoading(format);
     try {
       const res = await fetch(buildUrl(format));
-      if (!res.ok) throw new Error("Error al generar el informe");
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.error ?? "Error al generar el informe");
+      }
 
       const blob = await res.blob();
       const url  = URL.createObjectURL(blob);
@@ -55,8 +59,8 @@ export function ReportExport({ fixedDept }: Props = {}) {
       a.click();
       URL.revokeObjectURL(url);
       toast.success(`Informe ${format === "excel" ? "Excel" : "PDF"} descargado`);
-    } catch {
-      toast.error("Error al generar el informe");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Error al generar el informe");
     } finally {
       setLoading(null);
     }

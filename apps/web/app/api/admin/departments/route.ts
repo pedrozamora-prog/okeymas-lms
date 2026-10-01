@@ -4,13 +4,21 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const session = await auth();
-  const user = session?.user as { role: string; organizationId: string } | undefined;
-  if (!user || !["SUPER_ADMIN", "BRANCH_ADMIN", "INSTRUCTOR"].includes(user.role)) {
+  const user = session?.user as { id: string; role: string; organizationId: string } | undefined;
+  if (!user || !["SUPER_ADMIN", "BRANCH_ADMIN", "INSTRUCTOR", "MANAGER"].includes(user.role)) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
+  // MANAGER: solo su propio departamento (leído de la DB)
+  let onlyDeptId: string | undefined;
+  if (user.role === "MANAGER") {
+    const manager = await prisma.user.findUnique({ where: { id: user.id }, select: { departmentId: true } });
+    if (!manager?.departmentId) return NextResponse.json([]);
+    onlyDeptId = manager.departmentId;
+  }
+
   const departments = await prisma.department.findMany({
-    where: { organizationId: user.organizationId },
+    where: { organizationId: user.organizationId, ...(onlyDeptId ? { id: onlyDeptId } : {}) },
     orderBy: { name: "asc" },
     select: { id: true, name: true, _count: { select: { users: true } } },
   });

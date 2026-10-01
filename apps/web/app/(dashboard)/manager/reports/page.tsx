@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import { BarChart3 } from "lucide-react";
+import { AlertCircle, BarChart3 } from "lucide-react";
 import { ReportExport } from "@/components/admin/report-export";
 
 export const metadata = { title: "Informes — Mi equipo" };
@@ -28,7 +28,14 @@ export default async function ManagerReportsPage() {
         </p>
       </div>
 
-      <ReportExport fixedDept={manager?.departmentId ?? undefined} />
+      {manager?.departmentId ? (
+        <ReportExport fixedDept={manager.departmentId} />
+      ) : (
+        <div className="flex items-start gap-2 text-sm text-amber-500 bg-amber-500/10 border border-amber-500/20 px-4 py-3 rounded-lg">
+          <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+          No tienes un departamento asignado. Pide a un administrador que te asigne uno para poder generar informes.
+        </div>
+      )}
     </div>
   );
 }
